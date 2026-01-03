@@ -8,8 +8,19 @@
  */
 #ifndef GUARD_TOURMALINE_TYPES_H
 #define GUARD_TOURMALINE_TYPES_H
-#include <string>
+#include <cstdint>
+#include <memory>
 namespace Tourmaline::Type {
-using UUID = std::string;
-}
+struct UUID {
+  [[nodiscard]]
+  std::string asString() const;
+
+  UUID(uint64_t firstHalf, uint64_t secondHalf);
+  UUID(const std::string &uuid);
+  UUID(UUID &&uuid) noexcept;
+
+private:
+  std::unique_ptr<uint64_t[]> data = std::make_unique<uint64_t[]>(2);
+};
+} // namespace Tourmaline::Type
 #endif

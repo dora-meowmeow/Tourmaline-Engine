@@ -10,7 +10,6 @@
 #include <bit>
 #include <cstdint>
 #include <ctime>
-#include <format>
 
 using namespace Tourmaline::Systems;
 
@@ -23,5 +22,5 @@ Tourmaline::Type::UUID Random::GenerateUUID() {
   random_ab = std::rotl(hold, 12);
   random_c = ((random_c >> 2) << 2) + 2;
 
-  return std::format("{:X}{:X}", random_ab, random_c);
+  return Tourmaline::Type::UUID(random_ab, random_c);
 }
