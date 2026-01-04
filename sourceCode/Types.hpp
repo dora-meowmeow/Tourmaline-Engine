@@ -12,15 +12,24 @@
 #include <memory>
 namespace Tourmaline::Type {
 struct UUID {
+  constexpr static uint8_t BitLength = 128;
+  constexpr static uint8_t QWORDLength = BitLength / 64;
+  constexpr static uint8_t ByteLength = BitLength / 8;
+
   [[nodiscard]]
   std::string asString() const;
 
   UUID(uint64_t firstHalf, uint64_t secondHalf);
   UUID(const std::string &uuid);
+
+  UUID(const UUID &uuid);
   UUID(UUID &&uuid) noexcept;
+  UUID &operator=(const UUID &uuid);
+  UUID &operator=(UUID &&uuid);
+  ~UUID() = default;
 
 private:
-  std::unique_ptr<uint64_t[]> data = std::make_unique<uint64_t[]>(2);
+  std::unique_ptr<uint64_t[]> data = std::make_unique<uint64_t[]>(QWORDLength);
 };
 } // namespace Tourmaline::Type
 #endif
