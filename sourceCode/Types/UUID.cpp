@@ -25,7 +25,7 @@ UUID::UUID(const UUID &uuid) {
 }
 
 UUID &UUID::operator=(const UUID &uuid) {
-  if (this != &uuid) {
+  if (this != &uuid) [[likely]] {
     std::memcpy(data.get(), uuid.data.get(), UUID::ByteLength);
   }
 
@@ -33,7 +33,7 @@ UUID &UUID::operator=(const UUID &uuid) {
 }
 
 UUID &UUID::operator=(UUID &&uuid) {
-  if (this != &uuid) {
+  if (this != &uuid) [[likely]] {
     data.swap(uuid.data);
   }
 
