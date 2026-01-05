@@ -22,8 +22,8 @@ using namespace Tourmaline::Systems;
 
 // This is what happens when it takes you 50 years to implement
 // reflections to a language
-std::array<const std::string, 5> Logging::LogLevelToString{
-    "Critical", "Error", "Info", "Debug", "Trace"};
+std::array<const std::string, 6> Logging::LogLevelToString{
+    "Critical", "Error", "Warning", "Info", "Debug", "Trace"};
 std::fstream Logging::File;
 
 void Logging::LogToFile(std::string File) {
@@ -53,7 +53,8 @@ void Logging::Log(const std::string &message, const std::string &position,
       Logging::File.flush(); // Terrible but necessary sadly
     }
 
-    if (severity == Logging::LogLevel::Critical) {
+    // Error and Critical
+    if (severity < Logging::LogLevel::Warning) {
       throw std::runtime_error(output);
     }
   }

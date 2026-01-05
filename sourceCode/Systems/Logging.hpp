@@ -17,9 +17,10 @@ public:
   enum class LogLevel {
     Critical = 0,
     Error = 1,
-    Info = 2,
-    Debug = 3,
-    Trace = 4
+    Warning = 2,
+    Info = 3,
+    Debug = 4,
+    Trace = 5
   };
 
   static void LogToFile(std::string File = "");
@@ -29,6 +30,6 @@ public:
 
 private:
   static std::fstream File;
-  static std::array<const std::string, 5> LogLevelToString;
+  static std::array<const std::string, 6> LogLevelToString;
 };
 } // namespace Tourmaline::Systems
