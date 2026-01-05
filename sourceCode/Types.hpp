@@ -9,15 +9,18 @@
 #ifndef GUARD_TOURMALINE_TYPES_H
 #define GUARD_TOURMALINE_TYPES_H
 #include <cstdint>
+#include <functional>
 #include <memory>
 namespace Tourmaline::Type {
-struct UUID {
+class UUID {
+public:
   constexpr static uint8_t BitLength = 128;
   constexpr static uint8_t QWORDLength = BitLength / 64;
   constexpr static uint8_t ByteLength = BitLength / 8;
 
   [[nodiscard]]
   std::string asString() const;
+  bool operator==(const UUID &rhs) const;
 
   UUID(uint64_t firstHalf, uint64_t secondHalf);
   UUID(const std::string &uuid);
@@ -30,6 +33,22 @@ struct UUID {
 
 private:
   std::unique_ptr<uint64_t[]> data = std::make_unique<uint64_t[]>(QWORDLength);
+  friend struct std::hash<Tourmaline::Type::UUID>;
 };
 } // namespace Tourmaline::Type
+
+namespace std {
+template <> struct hash<Tourmaline::Type::UUID> {
+  size_t operator()(const Tourmaline::Type::UUID &uuid) const noexcept {
+    const auto data = uuid.data.get();
+    size_t h1 = std::hash<uint64_t>{}(data[0]);
+    size_t h2 = std::hash<uint64_t>{}(data[1]);
+
+    // Combine the two hashes
+    return h1 ^ (h2 << 1);
+  }
+};
+
+} // namespace std
+
 #endif

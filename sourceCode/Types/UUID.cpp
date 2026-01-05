@@ -20,6 +20,16 @@ std::string UUID::asString() const {
   return std::format("{:016X}{:016X}", data[0], data[1]);
 }
 
+bool UUID::operator==(const UUID &rhs) const {
+  // Since size may be increased
+  for (uint8_t index = 0; index < QWORDLength; index++) {
+    if (this->data[index] != rhs.data[index]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 UUID::UUID(const UUID &uuid) {
   std::memcpy(data.get(), uuid.data.get(), UUID::ByteLength);
 }
