@@ -7,7 +7,8 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../Logging.hpp"
+#include "../../headers/Systems/Logging.hpp"
+
 #include <cerrno>
 #include <chrono>
 #include <cstddef>

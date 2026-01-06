@@ -6,7 +6,8 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
-
+#ifndef GUARD_TOURMALINE_LOGGING_H
+#define GUARD_TOURMALINE_LOGGING_H
 #include <array>
 #include <fstream>
 #include <string>
@@ -33,3 +34,4 @@ private:
   static std::array<const std::string, 6> LogLevelToString;
 };
 } // namespace Tourmaline::Systems
+#endif
