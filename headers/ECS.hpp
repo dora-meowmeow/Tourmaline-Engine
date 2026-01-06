@@ -49,7 +49,6 @@ public:
   // Components
   template <Component T, typename... Args>
   T &AddComponent(const Entity &entity, Args &&...constructionArguments) {
-    // Insert to entity list
     auto entityIter = GetEntityIterator(
         entity,
         std::format(

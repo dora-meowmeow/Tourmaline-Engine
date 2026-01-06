@@ -41,10 +41,8 @@ namespace std {
 template <> struct hash<Tourmaline::Type::UUID> {
   size_t operator()(const Tourmaline::Type::UUID &uuid) const noexcept {
     const auto data = uuid.data.get();
-    size_t h1 = std::hash<uint64_t>{}(data[0]);
-    size_t h2 = std::hash<uint64_t>{}(data[1]);
-
-    // Combine the two hashes
+    size_t h1 = std::hash<uint64_t>{}(data[0]),
+           h2 = std::hash<uint64_t>{}(data[1]);
     return h1 ^ (h2 << 1);
   }
 };
