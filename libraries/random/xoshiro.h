@@ -73,7 +73,7 @@ static inline void jump_state(const int_t jump_table[4], rng_t &rng)
     int_t s3 = 0;
     for (int i = 0; i < 4; i++)
     {
-        for (int b = 0; b < 8*sizeof(int_t); b++)
+        for (int b = 0; b < static_cast<int>(8*sizeof(int_t)); b++) // static_cast has been added by Tourmaline Engine!
         {
             if (jump_table[i] & ((int_t)1) << b)
             {
