@@ -12,8 +12,8 @@ include(GNUInstallDirs)
 
 include_directories(headers)
 add_library(${PROJECT_NAME} SHARED
-            "source/ECS/Component.cpp"
-            "source/ECS/World.cpp"
+            "source/Systems/ECS/Component.cpp"
+            "source/Systems/ECS/World.cpp"
             "source/Systems/Logging.cpp"
             "source/Systems/Random.cpp"
             "source/Types/UUID.cpp")

@@ -15,10 +15,10 @@
 #include <unordered_map>
 #include <utility>
 
-#include "Systems/Logging.hpp"
-#include "Types.hpp"
+#include "../Types.hpp"
+#include "Logging.hpp"
 
-namespace Tourmaline::ECS {
+namespace Tourmaline::Systems::ECS {
 using Entity = Tourmaline::Type::UUID;
 class World;
 
@@ -142,5 +142,5 @@ private:
                     Tourmaline::Systems::Logging::LogLevel severity =
                         Systems::Logging::LogLevel::Warning);
 };
-} // namespace Tourmaline::ECS
+} // namespace Tourmaline::Systems::ECS
 #endif

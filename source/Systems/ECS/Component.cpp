@@ -7,8 +7,8 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../../headers/ECS.hpp"
+#include "../../../headers/Systems/ECS.hpp"
 
-using namespace Tourmaline::ECS;
+using namespace Tourmaline::Systems::ECS;
 
 const Entity &BaseComponent::GetOwner() { return *this->owner; }
