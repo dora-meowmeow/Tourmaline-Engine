@@ -31,7 +31,8 @@ public:
 
 private:
   static std::fstream File;
-  static std::array<const std::string, 6> LogLevelToString;
+  static std::array<std::pair<const std::string, const std::string>, 6>
+      LogLevelToString;
 };
 } // namespace Tourmaline::Systems
 #endif

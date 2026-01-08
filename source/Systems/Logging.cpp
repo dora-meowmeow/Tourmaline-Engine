@@ -18,13 +18,19 @@
 #include <print>
 #include <stdexcept>
 #include <string>
+#include <utility>
 
 using namespace Tourmaline::Systems;
 
 // This is what happens when it takes you 50 years to implement
 // reflections to a language
-std::array<const std::string, 6> Logging::LogLevelToString{
-    "Critical", "Error", "Warning", "Info", "Debug", "Trace"};
+std::array<std::pair<const std::string, const std::string>, 6>
+    Logging::LogLevelToString{std::pair{"Critical", "[0;31m"},
+                              {"Error", "[0;91m"},
+                              {"Warning", "[0;33m"},
+                              {"Info", "[0;37m"},
+                              {"Debug", "[0;92m"},
+                              {"Trace", "[0;36m"}};
 std::fstream Logging::File;
 
 void Logging::LogToFile(std::string File) {
@@ -43,12 +49,12 @@ void Logging::LogToFile(std::string File) {
 void Logging::Log(const std::string &message, const std::string &position,
                   Logging::LogLevel severity, bool assertion) {
   if (assertion) [[likely]] {
+    auto loglevelData =
+        Logging::LogLevelToString[static_cast<size_t>(severity)];
     std::string output =
-        std::format("[{}@{}] {}\n",
-                    Logging::LogLevelToString[static_cast<size_t>(severity)],
-                    position, message);
+        std::format("[{}@{}] {}\n", loglevelData.first, position, message);
 
-    std::print("{}", output);
+    std::print("\033{} {}\033[0m", loglevelData.second, output);
     if (Logging::File.is_open()) {
       Logging::File.write(output.c_str(), output.size());
       Logging::File.flush(); // Terrible but necessary sadly
