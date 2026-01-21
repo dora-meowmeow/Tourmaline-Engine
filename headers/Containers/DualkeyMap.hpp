@@ -9,23 +9,52 @@
 #ifndef GUARD_TOURMALINE_DUALKEYMAP_H
 #define GUARD_TOURMALINE_DUALKEYMAP_H
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 
 namespace Tourmaline::Containers {
-template <typename A, typename B, typename Value> class DualkeyMap {
+template <typename AKey, typename BKey, typename Value,
+          uint64_t baseReservation = 1024,
+          float reservationGrowthExponent = 1.5>
+class DualkeyMap {
+  constexpr static uint64_t EmptyKey = -1;
+  DualkeyMap() {
+    ValueList.reserve(baseReservation);
+    HashList.reserve(baseReservation);
+  }
+
+  ~DualkeyMap() {
+    // I'm sure there is a better way to do this
+    for (auto value : ValueList) {
+      delete value;
+    }
+
+    for (auto hash : HashList) {
+      delete hash.Apointer;
+      delete hash.Bpointer;
+    }
+  }
+
+  // No copying, No moving. Moving may be valid in the future.
+  // However as of now it is not a wise way to use this map.
+  DualkeyMap(const DualkeyMap &) = delete;
+  DualkeyMap(DualkeyMap &&) = delete;
+  DualkeyMap &operator=(const DualkeyMap &) = delete;
+  DualkeyMap &operator=(DualkeyMap &&) = delete;
 
 private:
   struct DualkeyHash {
-    DualkeyHash(std::size_t AHash, A *APointer, std::size_t BHash, B *BPointer)
+    DualkeyHash(std::size_t AHash, AKey *APointer, std::size_t BHash,
+                BKey *BPointer)
         : AKeyHash(AHash), APointer(APointer), BKeyHash(BHash),
           BPointer(BPointer) {}
     std::size_t AKeyHash = 0;
     std::size_t BKeyHash = 0;
-    A *APointer;
-    B *BPointer;
+    AKey *APointer;
+    BKey *BPointer;
   };
   std::vector<Value *> ValueList;
-  std::vector<DualkeyHash> HashList{};
+  std::vector<DualkeyHash> HashList;
 };
 } // namespace Tourmaline::Containers
 #endif
