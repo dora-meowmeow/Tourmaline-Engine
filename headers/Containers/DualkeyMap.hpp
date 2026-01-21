@@ -8,16 +8,17 @@
  */
 #ifndef GUARD_TOURMALINE_DUALKEYMAP_H
 #define GUARD_TOURMALINE_DUALKEYMAP_H
+#include "Hashing.hpp"
+
 #include <cstddef>
 #include <cstdint>
 #include <vector>
 
 namespace Tourmaline::Containers {
-template <typename AKey, typename BKey, typename Value,
+template <Hashable AKey, Hashable BKey, typename Value,
           uint64_t baseReservation = 1024,
           float reservationGrowthExponent = 1.5>
 class DualkeyMap {
-  constexpr static uint64_t EmptyKey = -1;
   DualkeyMap() {
     ValueList.reserve(baseReservation);
     HashList.reserve(baseReservation);

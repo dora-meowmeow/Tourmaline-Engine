@@ -14,7 +14,7 @@
 
 namespace Tourmaline::Containers {
 template <typename T>
-concept hashable = requires(T x) {
+concept Hashable = requires(T x) {
   { std::hash<T>{x}() } -> std::convertible_to<std::size_t>;
 };
 } // namespace Tourmaline::Containers
