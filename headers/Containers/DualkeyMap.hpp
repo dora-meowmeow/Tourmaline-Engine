@@ -11,69 +11,88 @@
 #include "../Systems/Logging.hpp"
 #include "Hashing.hpp"
 
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
 #include <functional>
 #include <optional>
-#include <span>
 #include <utility>
 #include <variant>
 #include <vector>
 
 namespace Tourmaline::Containers {
 template <Hashable AKey, Hashable BKey, typename Value,
-          uint64_t baseReservation = 1024,
-          float reservationGrowthExponent = 1.5>
+          uint64_t baseReservation = 2048>
 class DualkeyMap {
-  DualkeyMap() { HashList.reserve(baseReservation); }
+public:
+  using ResultPair =
+      std::pair<std::variant<std::monostate, std::reference_wrapper<AKey>,
+                             std::reference_wrapper<BKey>>,
+                Value &>;
 
+  DualkeyMap() { HashList.reserve(baseReservation); }
   ~DualkeyMap() {
     // I'm sure there is a better way to do this
-    for (DualkeyHash hash : HashList) {
-      delete hash.Apointer;
-      delete hash.Bpointer;
-      delete hash.ValuePointer;
+    for (DualkeyHash *hash : HashList) {
+      delete hash;
     }
   }
 
-  std::span<std::pair<std::variant<std::monostate, AKey &, BKey &>, Value &>>
-  operator[](std::optional<AKey> FirstKey, std::optional<BKey> SecondKey) {
-    bool isFirstKeyGiven = FirstKey.has_value();
-    bool isSecondKeyGiven = SecondKey.has_value();
+  // Insertion
+  void Insert(AKey firstKey, BKey secondKey, Value value) {
+    std::size_t firstKeyHash = std::hash<AKey>{}(firstKey);
+    std::size_t secondKeyHash = std::hash<BKey>{}(secondKey);
+    HashList.push_back(new DualkeyHash(firstKeyHash, std::move(firstKey),
+                                       secondKeyHash, std::move(secondKey),
+                                       std::move(value)));
+  }
+
+  // Indexing
+  std::vector<ResultPair> Query(std::optional<AKey> firstKey,
+                                std::optional<BKey> secondKey) {
+    bool isFirstKeyGiven = firstKey.has_value();
+    bool isSecondKeyGiven = secondKey.has_value();
 
     if (!isFirstKeyGiven && !isSecondKeyGiven) [[unlikely]] {
       Systems::Logging::Log("Failed to index! Dualkey maps require at least 1 "
-                            "key to be given, returning an empty span.",
+                            "key to be given, returning an empty vector.",
                             "Dualkey Map", Systems::Logging::LogLevel::Warning);
       return {};
     }
     std::size_t firstKeyHash =
-        isFirstKeyGiven ? std::hash<AKey>{}(*FirstKey.value()) : 0;
+        isFirstKeyGiven ? std::hash<AKey>{}(firstKey.value()) : 0;
     std::size_t secondKeyHash =
-        isSecondKeyGiven ? std::hash<BKey>{}(*SecondKey.value()) : 0;
+        isSecondKeyGiven ? std::hash<BKey>{}(secondKey.value()) : 0;
 
-    std::vector<
-        std::pair<std::variant<std::monostate, AKey &, BKey &>, Value &>>
-        finishedQuery{};
+    std::vector<ResultPair> finishedQuery{};
 
     uint8_t stateOfIndexing = isFirstKeyGiven + (isSecondKeyGiven << 1);
-    for (DualkeyHash hash : HashList) {
+    // Putting hash checks first to benefit from short circuits
+    for (DualkeyHash *hash : HashList) {
       switch (stateOfIndexing) {
       case 1: // Only first key is given
-        if (firstKeyHash == hash.AKeyHash) {
-          finishedQuery.emplace_back(hash.BPointer, hash.ValuePointer);
+        if (firstKeyHash == hash->firstKeyHash &&
+            firstKey.value() == hash->firstKey) {
+          finishedQuery.emplace_back(
+              std::reference_wrapper<BKey>{hash->secondKey}, hash->value);
         }
         continue;
       case 2: // Only second key is given
-        if (secondKeyHash == hash.BKeyHash) {
-          finishedQuery.emplace_back(hash.APointer, hash.ValuePointer);
+        if (secondKeyHash == hash->secondKeyHash &&
+            secondKey.value() == hash->secondKey) {
+          finishedQuery.emplace_back(
+              std::reference_wrapper<AKey>{hash->firstKey}, hash->value);
         }
         continue;
       case 3: // Both are given
-        if (firstKeyHash == hash.AKeyHash && secondKeyHash == hash.BKeyHash) {
-          finishedQuery.emplace_back(std::monostate{}, hash.ValuePointer);
+        if (firstKeyHash == hash->firstKeyHash &&
+            secondKeyHash == hash->secondKeyHash &&
+            firstKey.value() == hash->firstKey &&
+            secondKey.value() == hash->secondKey) {
+          finishedQuery.emplace_back(std::monostate{}, hash->value);
+          break;
         }
-        break;
+        continue;
       }
       break;
     }
@@ -90,18 +109,21 @@ class DualkeyMap {
 
 private:
   struct DualkeyHash {
-    DualkeyHash(std::size_t AHash, AKey *APointer, std::size_t BHash,
-                BKey *BPointer)
-        : AKeyHash(AHash), APointer(APointer), BKeyHash(BHash),
-          BPointer(BPointer) {}
-    std::size_t AKeyHash = 0;
-    std::size_t BKeyHash = 0;
-    AKey *APointer;
-    BKey *BPointer;
-    Value *ValuePointer;
+    DualkeyHash(std::size_t firstKeyHash, AKey &&firstKey,
+                std::size_t secondKeyHash, BKey &&secondKey, Value &&value)
+        : firstKeyHash(firstKeyHash), firstKey(std::move(firstKey)),
+          secondKeyHash(secondKeyHash), secondKey(std::move(secondKey)),
+          value(std::move(value)) {}
+
+    std::size_t firstKeyHash = 0;
+    std::size_t secondKeyHash = 0;
+    AKey firstKey;
+    BKey secondKey;
+    Value value;
   };
 
-  std::vector<DualkeyHash> HashList;
+  // It makes more sense to store the individual hash
+  std::vector<DualkeyHash *> HashList;
 };
 } // namespace Tourmaline::Containers
 #endif
