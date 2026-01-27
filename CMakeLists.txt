@@ -44,4 +44,5 @@ install(
 )
 
 install(DIRECTORY headers/ DESTINATION include/${PROJECT_NAME})
-install(DIRECTORY ${PROJECT_NAME}External/ DESTINATION include/${PROJECT_NAME}External)
+install(DIRECTORY ${PROJECT_NAME}External/ DESTINATION
+        include/${PROJECT_NAME}External)
