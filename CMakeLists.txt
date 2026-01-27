@@ -17,7 +17,6 @@ endif()
 
 include(GNUInstallDirs)
 
-include_directories(headers)
 add_library(${PROJECT_NAME} SHARED
             "source/Systems/ECS/Component.cpp"
             "source/Systems/ECS/World.cpp"
@@ -29,11 +28,20 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 
 # Nothing to link right now
 target_link_libraries(${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headers>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+)
 
 install(
   TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}Targets
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION bin)
+  INCLUDES DESTINATION include
+)
+
 install(DIRECTORY headers/ DESTINATION include/${PROJECT_NAME})
+install(DIRECTORY ${PROJECT_NAME}External/ DESTINATION include/${PROJECT_NAME}External)
