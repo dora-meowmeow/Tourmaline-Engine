@@ -38,7 +38,6 @@ public:
     }
   }
 
-  // Insertion
   void Insert(AKey firstKey, BKey secondKey, Value value) {
     std::size_t firstKeyHash = std::hash<AKey>{}(firstKey);
     std::size_t secondKeyHash = std::hash<BKey>{}(secondKey);
@@ -47,7 +46,7 @@ public:
                                        std::move(value)));
   }
 
-  // Indexing
+  [[nodiscard("Discarding an expensive operation's result!")]]
   std::vector<ResultPair> Query(std::optional<AKey> firstKey,
                                 std::optional<BKey> secondKey) {
     bool isFirstKeyGiven = firstKey.has_value();
