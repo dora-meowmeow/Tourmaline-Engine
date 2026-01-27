@@ -7,7 +7,7 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../../../headers/Systems/ECS.hpp"
+#include <Systems/ECS.hpp>
 
 using namespace Tourmaline::Systems::ECS;
 

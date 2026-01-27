@@ -9,8 +9,9 @@
 
 #ifndef GUARD_TOURMALINE_RANDOM_H
 #define GUARD_TOURMALINE_RANDOM_H
-#include "../../libraries/random/xoshiro.h"
 #include "../Types.hpp"
+#include <TourmalineExternal/random/xoshiro.h>
+
 #include <type_traits>
 
 namespace Tourmaline::Systems {

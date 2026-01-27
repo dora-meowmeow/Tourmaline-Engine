@@ -7,8 +7,8 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../../../headers/Systems/ECS.hpp"
-#include "../../../headers/Systems/Random.hpp"
+#include <Systems/ECS.hpp>
+#include <Systems/Random.hpp>
 
 using namespace Tourmaline::Systems::ECS;
 
