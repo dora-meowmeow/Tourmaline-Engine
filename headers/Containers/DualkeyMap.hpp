@@ -16,6 +16,7 @@
 #include <cstdint>
 #include <functional>
 #include <optional>
+#include <queue>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -30,20 +31,62 @@ public:
                              std::reference_wrapper<BKey>>,
                 Value &>;
 
-  DualkeyMap() { HashList.reserve(baseReservation); }
+  DualkeyMap() { hashList.reserve(baseReservation); }
   ~DualkeyMap() {
     // I'm sure there is a better way to do this
-    for (DualkeyHash *hash : HashList) {
-      delete hash;
+    for (DualkeyHash *hash : hashList) {
+      if (hash != nullptr) [[likely]] {
+        delete hash;
+      }
     }
   }
 
   void Insert(AKey firstKey, BKey secondKey, Value value) {
     std::size_t firstKeyHash = std::hash<AKey>{}(firstKey);
     std::size_t secondKeyHash = std::hash<BKey>{}(secondKey);
-    HashList.push_back(new DualkeyHash(firstKeyHash, std::move(firstKey),
-                                       secondKeyHash, std::move(secondKey),
-                                       std::move(value)));
+    DualkeyHash *hash =
+        new DualkeyHash(firstKeyHash, std::move(firstKey), secondKeyHash,
+                        std::move(secondKey), std::move(value));
+
+    if (tombstones.empty()) {
+      hashList.push_back(hash);
+    } else {
+      std::size_t tombstone = tombstones.back();
+      tombstones.pop();
+      hashList[tombstone] = hash;
+    }
+  }
+
+  bool Delete(std::optional<AKey> firstKey, std::optional<BKey> secondKey) {
+    bool isFirstKeyGiven = firstKey.has_value();
+    bool isSecondKeyGiven = secondKey.has_value();
+
+    if (!isFirstKeyGiven && !isSecondKeyGiven) [[unlikely]] {
+      Systems::Logging::Log("Failed to Delete! Dualkey maps require at least 1 "
+                            "key to be given, doing nothing.",
+                            "Dualkey Map", Systems::Logging::LogLevel::Warning);
+      return false;
+    }
+
+    std::size_t firstKeyHash =
+        isFirstKeyGiven ? std::hash<AKey>{}(firstKey.value()) : 0;
+    std::size_t secondKeyHash =
+        isSecondKeyGiven ? std::hash<BKey>{}(secondKey.value()) : 0;
+    std::size_t index = 0;
+
+    for (DualkeyHash *hash : hashList) {
+      if (firstKeyHash == hash->firstKeyHash &&
+          secondKeyHash == hash->secondKeyHash &&
+          firstKey.value() == hash->firstKey &&
+          secondKey.value() == hash->secondKey) {
+        delete hash;
+        hashList[index] = nullptr;
+        tombstones.push(index);
+        return true;
+      }
+      ++index;
+    }
+    return false;
   }
 
   [[nodiscard("Discarding an expensive operation's result!")]]
@@ -53,7 +96,7 @@ public:
     bool isSecondKeyGiven = secondKey.has_value();
 
     if (!isFirstKeyGiven && !isSecondKeyGiven) [[unlikely]] {
-      Systems::Logging::Log("Failed to index! Dualkey maps require at least 1 "
+      Systems::Logging::Log("Failed to Query! Dualkey maps require at least 1 "
                             "key to be given, returning an empty vector.",
                             "Dualkey Map", Systems::Logging::LogLevel::Warning);
       return {};
@@ -67,7 +110,12 @@ public:
 
     uint8_t stateOfIndexing = isFirstKeyGiven + (isSecondKeyGiven << 1);
     // Putting hash checks first to benefit from short circuits
-    for (DualkeyHash *hash : HashList) {
+    for (DualkeyHash *hash : hashList) {
+      // Tombstone
+      if (hash == nullptr) [[unlikely]] {
+        continue;
+      }
+
       switch (stateOfIndexing) {
       case 1: // Only first key is given
         if (firstKeyHash == hash->firstKeyHash &&
@@ -122,7 +170,8 @@ private:
   };
 
   // It makes more sense to store the individual hash
-  std::vector<DualkeyHash *> HashList;
+  std::vector<DualkeyHash *> hashList;
+  std::queue<std::size_t> tombstones;
 };
 } // namespace Tourmaline::Containers
 #endif
