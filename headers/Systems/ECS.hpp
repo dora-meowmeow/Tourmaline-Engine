@@ -13,7 +13,6 @@
 #include <concepts>
 #include <format>
 #include <typeindex>
-#include <utility>
 
 #include "../Containers/DualkeyMap.hpp"
 #include "../Types.hpp"
@@ -26,10 +25,8 @@ class World;
 struct BaseComponent {
 public:
   virtual ~BaseComponent() = default;
-  const Entity &GetOwner();
 
 private:
-  const Entity *owner;
   friend World;
 };
 
