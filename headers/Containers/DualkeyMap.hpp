@@ -26,7 +26,7 @@ template <Hashable AKey, Hashable BKey, typename Value,
           uint64_t baseReservation = 2048, double maxTombstoneRatio = 0.25>
 class DualkeyMap {
 public:
-  using ResultPair =
+  using QueryResult =
       std::pair<std::variant<std::monostate, std::reference_wrapper<const AKey>,
                              std::reference_wrapper<const BKey>>,
                 Value &>;
@@ -121,8 +121,8 @@ public:
   }
 
   [[nodiscard("Discarding an expensive operation's result!")]]
-  std::vector<ResultPair> query(std::optional<AKey> firstKey,
-                                std::optional<BKey> secondKey) {
+  std::vector<QueryResult> query(std::optional<AKey> firstKey,
+                                 std::optional<BKey> secondKey) {
     bool isFirstKeyGiven = firstKey.has_value();
     bool isSecondKeyGiven = secondKey.has_value();
 
@@ -137,7 +137,7 @@ public:
     std::size_t secondKeyHash =
         isSecondKeyGiven ? std::hash<BKey>{}(secondKey.value()) : 0;
 
-    std::vector<ResultPair> finishedQuery{};
+    std::vector<QueryResult> finishedQuery{};
 
     uint8_t stateOfIndexing = isFirstKeyGiven + (isSecondKeyGiven << 1);
     // Putting hash checks first to benefit from short circuits
