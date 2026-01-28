@@ -23,7 +23,7 @@
 
 namespace Tourmaline::Containers {
 template <Hashable AKey, Hashable BKey, typename Value,
-          uint64_t baseReservation = 2048>
+          uint64_t baseReservation = 2048, double maxTombstoneRatio = 0.25>
 class DualkeyMap {
 public:
   using ResultPair =
@@ -48,11 +48,11 @@ public:
         new DualkeyHash(firstKeyHash, std::move(firstKey), secondKeyHash,
                         std::move(secondKey), std::move(value));
 
-    if (tombstones.empty()) {
+    if (graveyard.empty()) {
       hashList.push_back(hash);
     } else {
-      std::size_t tombstone = tombstones.back();
-      tombstones.pop();
+      std::size_t tombstone = graveyard.front();
+      graveyard.pop();
       hashList[tombstone] = hash;
     }
   }
@@ -88,20 +88,20 @@ public:
             firstKey.value() == hash->firstKey) {
           delete hash;
           hashList[index] = nullptr;
-          tombstones.push(index);
+          graveyard.push(index);
           ++amountDeleted;
         }
-        continue;
+        break;
 
       case 2: // Only second key is given
         if (secondKeyHash == hash->secondKeyHash &&
             secondKey.value() == hash->secondKey) {
           delete hash;
           hashList[index] = nullptr;
-          tombstones.push(index);
+          graveyard.push(index);
           ++amountDeleted;
         }
-        continue;
+        break;
 
       case 3:
         if (firstKeyHash == hash->firstKeyHash &&
@@ -110,12 +110,11 @@ public:
             secondKey.value() == hash->secondKey) {
           delete hash;
           hashList[index] = nullptr;
-          tombstones.push(index);
+          graveyard.push(index);
           return 1;
         }
-        continue;
+        break;
       }
-
       ++index;
     }
     return amountDeleted;
@@ -203,7 +202,7 @@ private:
 
   // It makes more sense to store the individual hash
   std::vector<DualkeyHash *> hashList;
-  std::queue<std::size_t> tombstones;
+  std::queue<std::size_t> graveyard;
 };
 } // namespace Tourmaline::Containers
 #endif
