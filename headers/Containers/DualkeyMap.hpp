@@ -27,8 +27,8 @@ template <Hashable AKey, Hashable BKey, typename Value,
 class DualkeyMap {
 public:
   using ResultPair =
-      std::pair<std::variant<std::monostate, std::reference_wrapper<AKey>,
-                             std::reference_wrapper<BKey>>,
+      std::pair<std::variant<std::monostate, std::reference_wrapper<const AKey>,
+                             std::reference_wrapper<const BKey>>,
                 Value &>;
 
   DualkeyMap() { hashList.reserve(baseReservation); }
@@ -41,7 +41,7 @@ public:
     }
   }
 
-  void Insert(AKey firstKey, BKey secondKey, Value value) {
+  void insert(AKey firstKey, BKey secondKey, Value value) {
     std::size_t firstKeyHash = std::hash<AKey>{}(firstKey);
     std::size_t secondKeyHash = std::hash<BKey>{}(secondKey);
     DualkeyHash *hash =
@@ -57,7 +57,7 @@ public:
     }
   }
 
-  std::size_t Delete(std::optional<AKey> firstKey,
+  std::size_t remove(std::optional<AKey> firstKey,
                      std::optional<BKey> secondKey) {
     bool isFirstKeyGiven = firstKey.has_value();
     bool isSecondKeyGiven = secondKey.has_value();
@@ -121,7 +121,7 @@ public:
   }
 
   [[nodiscard("Discarding an expensive operation's result!")]]
-  std::vector<ResultPair> Query(std::optional<AKey> firstKey,
+  std::vector<ResultPair> query(std::optional<AKey> firstKey,
                                 std::optional<BKey> secondKey) {
     bool isFirstKeyGiven = firstKey.has_value();
     bool isSecondKeyGiven = secondKey.has_value();
@@ -151,15 +151,13 @@ public:
       case 1: // Only first key is given
         if (firstKeyHash == hash->firstKeyHash &&
             firstKey.value() == hash->firstKey) {
-          finishedQuery.emplace_back(
-              std::reference_wrapper<BKey>{hash->secondKey}, hash->value);
+          finishedQuery.emplace_back(std::cref(hash->secondKey), hash->value);
         }
         continue;
       case 2: // Only second key is given
         if (secondKeyHash == hash->secondKeyHash &&
             secondKey.value() == hash->secondKey) {
-          finishedQuery.emplace_back(
-              std::reference_wrapper<AKey>{hash->firstKey}, hash->value);
+          finishedQuery.emplace_back(std::cref(hash->firstKey), hash->value);
         }
         continue;
       case 3: // Both are given
@@ -176,6 +174,11 @@ public:
     }
 
     return finishedQuery;
+  }
+
+  [[nodiscard]]
+  std::size_t count() {
+    return hashList.size() - graveyard.size();
   }
 
   // No copying, No moving. Moving may be valid in the future.
@@ -195,9 +198,9 @@ private:
 
     std::size_t firstKeyHash = 0;
     std::size_t secondKeyHash = 0;
-    AKey firstKey;
-    BKey secondKey;
-    Value value;
+    const AKey firstKey;
+    const BKey secondKey;
+    mutable Value value;
   };
 
   // It makes more sense to store the individual hash
