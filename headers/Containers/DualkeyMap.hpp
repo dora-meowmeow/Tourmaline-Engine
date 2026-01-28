@@ -124,7 +124,7 @@ public:
     return amountDeleted;
   }
 
-  [[nodiscard("Discarding an expensive operation's result!")]]
+  [[nodiscard("Discarding an expensive query!")]]
   std::vector<QueryResult> query(std::optional<AKey> firstKey,
                                  std::optional<BKey> secondKey) {
     bool isFirstKeyGiven = firstKey.has_value();
@@ -178,6 +178,18 @@ public:
     }
 
     return finishedQuery;
+  }
+
+  void
+  scan(std::function<bool(const AKey &, const BKey &, Value &)> scanFunction) {
+    for (DualkeyHash *hash : hashList) {
+      if (hash == nullptr) {
+        continue;
+      }
+      if (scanFunction(hash->firstKey, hash->secondKey, hash->value)) {
+        return;
+      }
+    }
   }
 
   [[nodiscard]]
