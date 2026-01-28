@@ -57,7 +57,8 @@ public:
     }
   }
 
-  bool Delete(std::optional<AKey> firstKey, std::optional<BKey> secondKey) {
+  std::size_t Delete(std::optional<AKey> firstKey,
+                     std::optional<BKey> secondKey) {
     bool isFirstKeyGiven = firstKey.has_value();
     bool isSecondKeyGiven = secondKey.has_value();
 
@@ -65,28 +66,59 @@ public:
       Systems::Logging::Log("Failed to Delete! Dualkey maps require at least 1 "
                             "key to be given, doing nothing.",
                             "Dualkey Map", Systems::Logging::LogLevel::Warning);
-      return false;
+      return 0;
     }
 
     std::size_t firstKeyHash =
         isFirstKeyGiven ? std::hash<AKey>{}(firstKey.value()) : 0;
     std::size_t secondKeyHash =
         isSecondKeyGiven ? std::hash<BKey>{}(secondKey.value()) : 0;
-    std::size_t index = 0;
-
+    std::size_t index = 0, amountDeleted = 0;
+    uint8_t stateOfIndexing = isFirstKeyGiven + (isSecondKeyGiven << 1);
     for (DualkeyHash *hash : hashList) {
-      if (firstKeyHash == hash->firstKeyHash &&
-          secondKeyHash == hash->secondKeyHash &&
-          firstKey.value() == hash->firstKey &&
-          secondKey.value() == hash->secondKey) {
-        delete hash;
-        hashList[index] = nullptr;
-        tombstones.push(index);
-        return true;
+
+      // Tombstone
+      if (hash == nullptr) [[unlikely]] {
+        continue;
       }
+
+      switch (stateOfIndexing) {
+      case 1: // Only first key is given
+        if (firstKeyHash == hash->firstKeyHash &&
+            firstKey.value() == hash->firstKey) {
+          delete hash;
+          hashList[index] = nullptr;
+          tombstones.push(index);
+          ++amountDeleted;
+        }
+        continue;
+
+      case 2: // Only second key is given
+        if (secondKeyHash == hash->secondKeyHash &&
+            secondKey.value() == hash->secondKey) {
+          delete hash;
+          hashList[index] = nullptr;
+          tombstones.push(index);
+          ++amountDeleted;
+        }
+        continue;
+
+      case 3:
+        if (firstKeyHash == hash->firstKeyHash &&
+            secondKeyHash == hash->secondKeyHash &&
+            firstKey.value() == hash->firstKey &&
+            secondKey.value() == hash->secondKey) {
+          delete hash;
+          hashList[index] = nullptr;
+          tombstones.push(index);
+          return 1;
+        }
+        continue;
+      }
+
       ++index;
     }
-    return false;
+    return amountDeleted;
   }
 
   [[nodiscard("Discarding an expensive operation's result!")]]
