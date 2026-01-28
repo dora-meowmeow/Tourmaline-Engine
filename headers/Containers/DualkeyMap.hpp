@@ -200,8 +200,8 @@ private:
           firstKey(std::move(firstKey)), secondKey(std::move(secondKey)),
           value(std::move(value)) {}
 
-    std::size_t firstKeyHash = 0;
-    std::size_t secondKeyHash = 0;
+    const std::size_t firstKeyHash;
+    const std::size_t secondKeyHash;
     const AKey firstKey;
     const BKey secondKey;
     mutable Value value;
