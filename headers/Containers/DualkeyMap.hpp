@@ -17,6 +17,7 @@
 #include <functional>
 #include <optional>
 #include <queue>
+#include <tuple>
 #include <utility>
 #include <variant>
 #include <vector>
@@ -30,6 +31,7 @@ public:
       std::pair<std::variant<std::monostate, std::reference_wrapper<const AKey>,
                              std::reference_wrapper<const BKey>>,
                 Value &>;
+  using Entry = std::tuple<const AKey &, const BKey &, Value &>;
 
   DualkeyMap() { hashList.reserve(baseReservation); }
   ~DualkeyMap() {
@@ -41,7 +43,7 @@ public:
     }
   }
 
-  void insert(AKey firstKey, BKey secondKey, Value value) {
+  Entry insert(AKey firstKey, BKey secondKey, Value value) {
     std::size_t firstKeyHash = std::hash<AKey>{}(firstKey);
     std::size_t secondKeyHash = std::hash<BKey>{}(secondKey);
     DualkeyHash *hash =
@@ -55,6 +57,8 @@ public:
       graveyard.pop();
       hashList[tombstone] = hash;
     }
+
+    return {hash->firstKey, hash->secondKey, hash->value};
   }
 
   std::size_t remove(std::optional<AKey> firstKey,
@@ -192,8 +196,8 @@ private:
   struct DualkeyHash {
     DualkeyHash(std::size_t firstKeyHash, AKey &&firstKey,
                 std::size_t secondKeyHash, BKey &&secondKey, Value &&value)
-        : firstKeyHash(firstKeyHash), firstKey(std::move(firstKey)),
-          secondKeyHash(secondKeyHash), secondKey(std::move(secondKey)),
+        : firstKeyHash(firstKeyHash), secondKeyHash(secondKeyHash),
+          firstKey(std::move(firstKey)), secondKey(std::move(secondKey)),
           value(std::move(value)) {}
 
     std::size_t firstKeyHash = 0;

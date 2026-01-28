@@ -14,8 +14,7 @@
 
 namespace Tourmaline::Containers {
 template <typename T>
-concept Hashable = requires(T x) {
-  std::equality_comparable<T>;
+concept Hashable = std::equality_comparable<T> && requires(T x) {
   { std::hash<T>{}(x) } -> std::convertible_to<std::size_t>;
 };
 } // namespace Tourmaline::Containers
