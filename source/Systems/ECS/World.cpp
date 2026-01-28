@@ -8,48 +8,27 @@
  */
 
 #include <Systems/ECS.hpp>
+#include <Systems/ECS/BuiltinComponents.hpp>
 #include <Systems/Random.hpp>
+#include <optional>
 
 using namespace Tourmaline::Systems::ECS;
 
+// It is preferable to send a copy of the UUID instead of reference since
+// the entity itself may be destroyed in the memory
 Entity World::CreateEntity() {
-  auto [iterator, success] =
-      entityComponentList.try_emplace(Systems::Random::GenerateUUID());
+  auto newEntity = entityComponentMap.insert(
+      Random::GenerateUUID(), typeid(Tourmaline::Systems::Components::Position),
+      Tourmaline::Systems::Components::Position());
 
-  Systems::Logging::Log("Failed to create an entity! Possibly by incredible "
-                        "luck generated already existing UUID?",
-                        "CreateEntity", Systems::Logging::LogLevel::Critical,
-                        !success);
-  return iterator->first;
+  return Entity(std::get<0>(newEntity));
 }
 
 bool World::EntityExists(const Entity &entity) noexcept {
-  return entityComponentList.find(entity) != entityComponentList.end();
-}
-
-bool World::DestroyEntity(Entity entity) {
-  auto entityIter = GetEntityIterator(
-      entity,
-      std::format("Cannot delete entity \"{}\", it does not exist!",
-                  entity.asString()),
-      "DestroyEntity");
-
-  if (entityIter == entityComponentList.end()) {
-    return false;
-  }
-
-  entityComponentList.erase(entityIter);
+  // TO BE IMPLEMENTED
   return true;
 }
 
-// Very repetitive code
-decltype(World::entityComponentList)::iterator
-World::GetEntityIterator(const Entity &entity, const std::string &errorMessage,
-                         const std::string &position,
-                         Tourmaline::Systems::Logging::LogLevel severity) {
-  auto iter = entityComponentList.find(entity);
-
-  Systems::Logging::Log(errorMessage, "GetEntityIterator/" + position, severity,
-                        iter == entityComponentList.end());
-  return iter;
+bool World::DestroyEntity(Entity entity) {
+  return entityComponentMap.remove(entity, std::nullopt);
 }
