@@ -40,6 +40,7 @@ concept Component = std::derived_from<T, BaseComponent>;
 class World {
 public:
   // Entity
+  [[nodiscard]]
   Entity CreateEntity();
   bool EntityExists(const Entity &entity) noexcept;
   [[nodiscard("It is not guaranteed that an entity can always be destroyed, "
