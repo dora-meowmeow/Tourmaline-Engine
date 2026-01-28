@@ -69,8 +69,7 @@ public:
   template <Component component>
   [[nodiscard("Discarding an expensive operation's result!")]]
   bool HasComponent(const Entity &entity) {
-    // TO BE IMPLEMENTED
-    return true;
+    return entityComponentMap.query(entity, typeid(component)).size();
   }
 
   template <Component component>

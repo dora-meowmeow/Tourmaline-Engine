@@ -25,8 +25,17 @@ Entity World::CreateEntity() {
 }
 
 bool World::EntityExists(const Entity &entity) noexcept {
-  // TO BE IMPLEMENTED
-  return true;
+  bool exists = false;
+  entityComponentMap.scan(
+      [&exists, entity](const Tourmaline::Type::UUID &currentEntity,
+                        const std::type_index &, std::any &) -> bool {
+        if (currentEntity == entity) {
+          exists = true;
+          return true;
+        }
+        return false;
+      });
+  return exists;
 }
 
 bool World::DestroyEntity(Entity entity) {
