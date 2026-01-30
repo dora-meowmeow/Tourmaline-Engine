@@ -12,16 +12,23 @@
 #include <Systems/Random.hpp>
 #include <optional>
 
-using namespace Tourmaline::Systems::ECS;
+using namespace Tourmaline::Systems;
+using namespace ECS;
 
-// It is preferable to send a copy of the UUID instead of reference since
-// the entity itself may be destroyed in the memory
 Entity World::CreateEntity() {
-  auto newEntity = entityComponentMap.insert(
-      Random::GenerateUUID(), typeid(Tourmaline::Systems::Components::Position),
-      Tourmaline::Systems::Components::Position());
+  auto newEntity = Random::GenerateUUID();
 
-  return Entity(std::get<0>(newEntity));
+  // Default components
+  entityComponentMap.insert(newEntity, typeid(Components::Position),
+                            Components::Position());
+  entityComponentMap.insert(newEntity, typeid(Components::Enabled),
+                            Components::Enabled(this));
+
+  return newEntity;
+}
+
+const Components::Enabled &World::EntityEnable(const Entity &entity) noexcept {
+  return this->GetComponent<Components::Enabled>(entity);
 }
 
 bool World::EntityExists(const Entity &entity) noexcept {
