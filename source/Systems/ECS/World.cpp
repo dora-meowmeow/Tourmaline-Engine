@@ -15,6 +15,26 @@
 using namespace Tourmaline::Systems;
 using namespace ECS;
 
+void World::Step() {
+  preSystems();
+  // Actual systems will happen here
+  postSystems();
+}
+
+void World::preSystems() {
+  // Defined for future use
+}
+
+void World::postSystems() {
+  // Can't do a foreach with a std::stack
+  while (!entitiesToDisable.empty()) {
+    std::pair<Components::Enabled *, bool> &request = entitiesToDisable.top();
+    request.first->enabled = request.second;
+    entitiesToDisable.pop();
+  }
+}
+
+// Entities
 Entity World::CreateEntity() {
   auto newEntity = Random::GenerateUUID();
 

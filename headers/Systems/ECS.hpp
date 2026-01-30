@@ -11,6 +11,7 @@
 #define GUARD_TOURMALINE_ECS_H
 #include <any>
 #include <format>
+#include <stack>
 #include <typeindex>
 
 #include "../Containers/DualkeyMap.hpp"
@@ -24,6 +25,9 @@ class World;
 
 class World {
 public:
+  // ====== World controls ======
+  void Step();
+
   // ========  Entities  ========
   [[nodiscard]]
   Entity CreateEntity();
@@ -75,9 +79,13 @@ private:
 
   // All of this is done so entities are not disabled during the
   // run of the systems
-  std::vector<std::pair<Components::Enabled *, bool>> entitiesToDisable;
+  std::stack<std::pair<Components::Enabled *, bool>> entitiesToDisable;
   // Oh here comes the jank
   friend void Components::Enabled::setEnabled(bool);
+
+  // ======== Life-cycle ========
+  void preSystems();
+  void postSystems();
 };
 } // namespace Tourmaline::Systems::ECS
 #endif
