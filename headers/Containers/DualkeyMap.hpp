@@ -175,8 +175,22 @@ public:
     return finishedQuery;
   }
 
-  void
-  scan(std::function<bool(const AKey &, const BKey &, Value &)> scanFunction) {
+  void scan(std::function<bool(const std::size_t firstKeyHash,
+                               const std::size_t secondKeyHash, Value &value)>
+                scanFunction) {
+    for (DualkeyHash *hash : hashList) {
+      if (hash == nullptr) {
+        continue;
+      }
+      if (scanFunction(hash->firstKeyHash, hash->secondKeyHash, hash->value)) {
+        return;
+      }
+    }
+  }
+
+  void scan(std::function<bool(const AKey &firstKey, const BKey &secondKey,
+                               Value &value)>
+                scanFunction) {
     for (DualkeyHash *hash : hashList) {
       if (hash == nullptr) {
         continue;
