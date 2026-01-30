@@ -44,11 +44,8 @@ public:
   }
 
   Entry insert(AKey firstKey, BKey secondKey, Value value) {
-    std::size_t firstKeyHash = std::hash<AKey>{}(firstKey);
-    std::size_t secondKeyHash = std::hash<BKey>{}(secondKey);
-    DualkeyHash *hash =
-        new DualkeyHash(firstKeyHash, std::move(firstKey), secondKeyHash,
-                        std::move(secondKey), std::move(value));
+    DualkeyHash *hash = new DualkeyHash(std::move(firstKey),
+                                        std::move(secondKey), std::move(value));
 
     if (graveyard.empty()) {
       hashList.push_back(hash);
@@ -79,7 +76,6 @@ public:
     std::size_t index = 0, amountDeleted = 0;
     uint8_t stateOfIndexing = isFirstKeyGiven + (isSecondKeyGiven << 1);
     for (DualkeyHash *hash : hashList) {
-
       // Tombstone
       if (hash == nullptr) [[unlikely]] {
         continue;
@@ -205,16 +201,16 @@ public:
 
 private:
   struct DualkeyHash {
-    DualkeyHash(std::size_t firstKeyHash, AKey &&firstKey,
-                std::size_t secondKeyHash, BKey &&secondKey, Value &&value)
-        : firstKeyHash(firstKeyHash), secondKeyHash(secondKeyHash),
-          firstKey(std::move(firstKey)), secondKey(std::move(secondKey)),
+    DualkeyHash(AKey &&firstKey, BKey &&secondKey, Value &&value)
+        : firstKey(std::move(firstKey)), secondKey(std::move(secondKey)),
+          firstKeyHash(std::hash<AKey>{}(this->firstKey)),
+          secondKeyHash(std::hash<BKey>{}(this->secondKey)),
           value(std::move(value)) {}
 
-    const std::size_t firstKeyHash;
-    const std::size_t secondKeyHash;
     const AKey firstKey;
     const BKey secondKey;
+    const std::size_t firstKeyHash;
+    const std::size_t secondKeyHash;
     mutable Value value;
   };
 
