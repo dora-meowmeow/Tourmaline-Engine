@@ -9,9 +9,5 @@
 
 #include <Systems/ECS.hpp>
 #include <Systems/ECS/BuiltinComponents.hpp>
-#include <utility>
 
-bool Tourmaline::Systems::Components::Enabled::isEnabled() { return enabled; }
-void Tourmaline::Systems::Components::Enabled::setEnabled(bool enable) {
-  ownerWorld->entitiesToDisable.emplace(std::pair{this, enable});
-}
+// Empty until future use

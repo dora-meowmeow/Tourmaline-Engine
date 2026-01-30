@@ -26,12 +26,7 @@ void World::preSystems() {
 }
 
 void World::postSystems() {
-  // Can't do a foreach with a std::stack
-  while (!entitiesToDisable.empty()) {
-    std::pair<Components::Enabled *, bool> &request = entitiesToDisable.top();
-    request.first->enabled = request.second;
-    entitiesToDisable.pop();
-  }
+  // Defined for future use
 }
 
 // Entities
@@ -39,16 +34,10 @@ Entity World::CreateEntity() {
   auto newEntity = Random::GenerateUUID();
 
   // Default components
-  entityComponentMap.insert(newEntity, typeid(Components::Position),
-                            Components::Position());
-  entityComponentMap.insert(newEntity, typeid(Components::Enabled),
-                            Components::Enabled(this));
+  entityComponentMap.insert(newEntity, typeid(Components::Base),
+                            Components::Base());
 
   return newEntity;
-}
-
-const Components::Enabled &World::EntityEnable(const Entity &entity) noexcept {
-  return this->GetComponent<Components::Enabled>(entity);
 }
 
 bool World::EntityExists(const Entity &entity) noexcept {

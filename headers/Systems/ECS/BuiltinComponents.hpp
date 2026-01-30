@@ -13,36 +13,18 @@
 #include <concepts>
 
 namespace Tourmaline::Systems::ECS {
-class World;
-}
+struct Component {
+public:
+  virtual ~Component() = default;
+};
+template <typename T>
+concept isAComponent = std::derived_from<T, ECS::Component>;
+} // namespace Tourmaline::Systems::ECS
 
 namespace Tourmaline::Systems::Components {
-// Base
-struct BaseComponent {
-public:
-  virtual ~BaseComponent() = default;
-};
-
-template <typename T>
-concept Component = std::derived_from<T, BaseComponent>;
-
 // Builtin
-struct Position : public BaseComponent {
-  Position(double x = 0, double y = 0, double z = 0) : x(x), y(y), z(z) {}
-  double x, y, z;
-};
-
-struct Enabled : public BaseComponent {
-  Enabled(ECS::World *world) : ownerWorld(world) {}
-
-  [[nodiscard]]
-  bool isEnabled();
-  void setEnabled(bool enable = true);
-
-private:
-  bool enabled = true;
-  ECS::World *ownerWorld;
-  friend ECS::World;
+struct Base : public ECS::Component {
+  Base() {}
 };
 } // namespace Tourmaline::Systems::Components
 #endif

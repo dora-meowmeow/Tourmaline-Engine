@@ -11,7 +11,6 @@
 #define GUARD_TOURMALINE_ECS_H
 #include <any>
 #include <format>
-#include <stack>
 #include <typeindex>
 
 #include "../Containers/DualkeyMap.hpp"
@@ -31,15 +30,13 @@ public:
   // ========  Entities  ========
   [[nodiscard]]
   Entity CreateEntity();
-  const Components::Enabled &EntityEnable(const Entity &entity) noexcept;
   bool EntityExists(const Entity &entity) noexcept;
   [[nodiscard("It is not guaranteed that an entity can always be destroyed, "
               "please make sure by checking the returned bool")]]
   bool DestroyEntity(Entity entity);
 
   // ======== Components ========
-  template <Tourmaline::Systems::Components::Component component,
-            typename... Args>
+  template <isAComponent component, typename... Args>
   component &AddComponent(const Entity &entity,
                           Args &&...constructionArguments) {
     auto newComponent = entityComponentMap.insert(
@@ -48,7 +45,7 @@ public:
     return std::any_cast<component &>(std::get<2>(newComponent));
   }
 
-  template <Tourmaline::Systems::Components::Component component>
+  template <isAComponent component>
   [[nodiscard("Discarding an expensive operation's result!")]]
   component &GetComponent(const Entity &entity) {
     auto result = entityComponentMap.query(entity, typeid(component));
@@ -60,13 +57,13 @@ public:
     return std::any_cast<component &>(result.begin()->second);
   }
 
-  template <Tourmaline::Systems::Components::Component component>
+  template <isAComponent component>
   [[nodiscard("Discarding an expensive operation's result!")]]
   bool HasComponent(const Entity &entity) {
     return entityComponentMap.query(entity, typeid(component)).size();
   }
 
-  template <Tourmaline::Systems::Components::Component component>
+  template <isAComponent component>
   [[nodiscard("It is not guaranteed that a component can always be removed, "
               "please make sure by checking the returned bool")]]
   bool RemoveComponent(const Entity &entity) {
@@ -76,12 +73,6 @@ public:
 private:
   Tourmaline::Containers::DualkeyMap<Entity, std::type_index, std::any>
       entityComponentMap{};
-
-  // All of this is done so entities are not disabled during the
-  // run of the systems
-  std::stack<std::pair<Components::Enabled *, bool>> entitiesToDisable;
-  // Oh here comes the jank
-  friend void Components::Enabled::setEnabled(bool);
 
   // ======== Life-cycle ========
   void preSystems();
