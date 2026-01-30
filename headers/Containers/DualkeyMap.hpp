@@ -16,7 +16,7 @@
 #include <cstdint>
 #include <functional>
 #include <optional>
-#include <queue>
+#include <stack>
 #include <tuple>
 #include <utility>
 #include <variant>
@@ -53,9 +53,8 @@ public:
     if (graveyard.empty()) {
       hashList.push_back(hash);
     } else {
-      std::size_t tombstone = graveyard.front();
+      hashList[graveyard.top()] = hash;
       graveyard.pop();
-      hashList[tombstone] = hash;
     }
 
     return {hash->firstKey, hash->secondKey, hash->value};
@@ -221,7 +220,7 @@ private:
 
   // It makes more sense to store the individual hash
   std::vector<DualkeyHash *> hashList;
-  std::queue<std::size_t> graveyard;
+  std::stack<std::size_t> graveyard;
 };
 } // namespace Tourmaline::Containers
 #endif
