@@ -21,9 +21,6 @@ namespace Tourmaline::Systems::Components {
 struct BaseComponent {
 public:
   virtual ~BaseComponent() = default;
-
-private:
-  friend class World;
 };
 
 template <typename T>
@@ -36,7 +33,7 @@ struct Position : public BaseComponent {
 };
 
 struct Enabled : public BaseComponent {
-  Enabled(Tourmaline::Systems::ECS::World *world) : ownerWorld(world) {}
+  Enabled(ECS::World *world) : ownerWorld(world) {}
 
   [[nodiscard]]
   bool isEnabled();
@@ -44,7 +41,8 @@ struct Enabled : public BaseComponent {
 
 private:
   bool enabled = true;
-  Tourmaline::Systems::ECS::World *ownerWorld;
+  ECS::World *ownerWorld;
+  friend ECS::World;
 };
 } // namespace Tourmaline::Systems::Components
 #endif
