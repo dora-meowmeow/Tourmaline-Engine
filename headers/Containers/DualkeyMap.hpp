@@ -206,12 +206,10 @@ public:
     return hashList.size() - graveyard.size();
   }
 
-  // No copying, No moving. Moving may be valid in the future.
-  // However as of now it is not a wise way to use this map.
+  // No copying due to the container expected to be the sole
+  // owner of the data
   DualkeyMap(const DualkeyMap &) = delete;
-  DualkeyMap(DualkeyMap &&) = delete;
   DualkeyMap &operator=(const DualkeyMap &) = delete;
-  DualkeyMap &operator=(DualkeyMap &&) = delete;
 
 private:
   struct DualkeyHash {
