@@ -43,7 +43,7 @@ public:
     }
   }
 
-  Entry insert(AKey firstKey, BKey secondKey, Value value) {
+  Entry Insert(AKey firstKey, BKey secondKey, Value value) {
     DualkeyHash *hash = new DualkeyHash(std::move(firstKey),
                                         std::move(secondKey), std::move(value));
 
@@ -57,7 +57,7 @@ public:
     return {hash->firstKey, hash->secondKey, hash->value};
   }
 
-  std::size_t remove(std::optional<AKey> firstKey,
+  std::size_t Remove(std::optional<AKey> firstKey,
                      std::optional<BKey> secondKey) {
     bool isFirstKeyGiven = firstKey.has_value();
     bool isSecondKeyGiven = secondKey.has_value();
@@ -120,7 +120,7 @@ public:
   }
 
   [[nodiscard("Discarding an expensive query!")]]
-  std::vector<QueryResult> query(std::optional<AKey> firstKey,
+  std::vector<QueryResult> Query(std::optional<AKey> firstKey,
                                  std::optional<BKey> secondKey) {
     bool isFirstKeyGiven = firstKey.has_value();
     bool isSecondKeyGiven = secondKey.has_value();
@@ -175,7 +175,7 @@ public:
     return finishedQuery;
   }
 
-  void scan(std::function<bool(const std::size_t firstKeyHash,
+  void Scan(std::function<bool(const std::size_t firstKeyHash,
                                const std::size_t secondKeyHash, Value &value)>
                 scanFunction) {
     for (DualkeyHash *hash : hashList) {
@@ -188,7 +188,7 @@ public:
     }
   }
 
-  void scan(std::function<bool(const AKey &firstKey, const BKey &secondKey,
+  void Scan(std::function<bool(const AKey &firstKey, const BKey &secondKey,
                                Value &value)>
                 scanFunction) {
     for (DualkeyHash *hash : hashList) {
@@ -202,7 +202,7 @@ public:
   }
 
   [[nodiscard]]
-  std::size_t count() {
+  std::size_t Count() {
     return hashList.size() - graveyard.size();
   }
 

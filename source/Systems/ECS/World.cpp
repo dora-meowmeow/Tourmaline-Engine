@@ -34,7 +34,7 @@ Entity World::CreateEntity() {
   auto newEntity = Random::GenerateUUID();
 
   // Default components
-  entityComponentMap.insert(newEntity, typeid(Components::Base),
+  entityComponentMap.Insert(newEntity, typeid(Components::Base),
                             Components::Base());
 
   return newEntity;
@@ -42,7 +42,7 @@ Entity World::CreateEntity() {
 
 bool World::EntityExists(const Entity &entity) noexcept {
   bool exists = false;
-  entityComponentMap.scan(
+  entityComponentMap.Scan(
       [&exists, entity](const Tourmaline::Type::UUID &currentEntity,
                         const std::type_index &, std::any &) -> bool {
         if (currentEntity == entity) {
@@ -55,5 +55,5 @@ bool World::EntityExists(const Entity &entity) noexcept {
 }
 
 bool World::DestroyEntity(Entity entity) {
-  return entityComponentMap.remove(entity, std::nullopt);
+  return entityComponentMap.Remove(entity, std::nullopt);
 }

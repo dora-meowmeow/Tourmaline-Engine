@@ -39,7 +39,7 @@ public:
   template <isAComponent component, typename... Args>
   component &AddComponent(const Entity &entity,
                           Args &&...constructionArguments) {
-    auto newComponent = entityComponentMap.insert(
+    auto newComponent = entityComponentMap.Insert(
         entity, typeid(component), component(constructionArguments...));
 
     return std::any_cast<component &>(std::get<2>(newComponent));
@@ -48,7 +48,7 @@ public:
   template <isAComponent component>
   [[nodiscard("Discarding an expensive operation's result!")]]
   component &GetComponent(const Entity &entity) {
-    auto result = entityComponentMap.query(entity, typeid(component));
+    auto result = entityComponentMap.Query(entity, typeid(component));
     if (result.empty()) {
       Logging::Log(std::format("Entity {} does not have component {}!",
                                entity.asString(), typeid(component).name()),
@@ -60,14 +60,14 @@ public:
   template <isAComponent component>
   [[nodiscard("Discarding an expensive operation's result!")]]
   bool HasComponent(const Entity &entity) {
-    return entityComponentMap.query(entity, typeid(component)).size();
+    return entityComponentMap.Query(entity, typeid(component)).size();
   }
 
   template <isAComponent component>
   [[nodiscard("It is not guaranteed that a component can always be removed, "
               "please make sure by checking the returned bool")]]
   bool RemoveComponent(const Entity &entity) {
-    return entityComponentMap.remove(entity, typeid(component));
+    return entityComponentMap.Remove(entity, typeid(component));
   }
 
   // Copying is not allowed since the ECS world is meant to be
