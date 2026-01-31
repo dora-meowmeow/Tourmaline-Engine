@@ -70,6 +70,11 @@ public:
     return entityComponentMap.remove(entity, typeid(component));
   }
 
+  // Copying is not allowed since the ECS world is meant to be
+  // a session with its own private session sensitive variables
+  World(const World &) = delete;
+  World &operator=(const World &) = delete;
+
 private:
   Tourmaline::Containers::DualkeyMap<Entity, std::type_index, std::any>
       entityComponentMap{};
