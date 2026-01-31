@@ -9,7 +9,15 @@ A lot of the info regarding Tourmaline has been removed from here. This is due t
 - [miniaudio](https://miniaud.io/) - audio playback and capture library by David "Mackron" Reid.
 - [Xohiro](https://github.com/david-cortes/xoshiro_cpp/blob/master/xoshiro.h) implementation by David Blackman and Sebastiano Vigna
 
-# What is Tourmaline and Why is that the name?
+# Special Thanks to
+- [Lars "harmonyisdead"](https://github.com/larsl2005) for hosting the thenight.club services.
+- [Vladimír "Mosra" Vondruš](https://github.com/mosra) for their mentorship of my C++ knowledge/projects, and the people at the [magnum gitter channel](https://matrix.to/#/#mosra_magnum:gitter.im), for their continous support and feedback of this project.
+- [Kae "voxelfoxkae"](https://voxelfox.co.uk/) for getting me into programming seriously and mentorship.
+- The members of The Night Club discord server, for being there for me. 
+
+
+# Not-so frequently asked questions
+### What is Tourmaline and Why is that the name?
 From [Wikipedia](https://en.wikipedia.org/wiki/Tourmaline)
 > Tourmaline is a crystalline silicate mineral group in which boron is compounded with elements such as aluminium, iron, magnesium, sodium, lithium, or potassium. 
 
