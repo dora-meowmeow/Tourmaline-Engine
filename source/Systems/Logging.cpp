@@ -13,6 +13,7 @@
 #include <chrono>
 #include <cstddef>
 #include <cstring>
+#include <exception>
 #include <format>
 #include <fstream>
 #include <print>
@@ -60,9 +61,12 @@ void Logging::Log(const std::string &message, const std::string &position,
       Logging::File.flush(); // Terrible but necessary sadly
     }
 
-    // Error and Critical
-    if (severity < Logging::LogLevel::Warning) {
+    if (severity == Logging::LogLevel::Error) {
       throw std::runtime_error(output);
+    }
+
+    if (severity == Logging::LogLevel::Critical) {
+      std::terminate();
     }
   }
 }
