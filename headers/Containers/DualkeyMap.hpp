@@ -183,76 +183,7 @@ public:
     requires(std::same_as<Key, AKey> || std::same_as<Key, BKey>)
   [[nodiscard("Discarding a very expensive query!")]]
   int QueryWithAll(const Key (&keys)[keyCount]) {
-    constexpr bool searchingInFirstKey = std::is_same_v<Key, AKey>;
-
-    // I really can't wait for C++26 contracts
-    if constexpr (keyCount == 0) {
-      Systems::Logging::Log("Failed to Query! QueryWithAll require at least 2 "
-                            "key to be given, zero was given! Terminating",
-                            "Dualkey Map",
-                            Systems::Logging::LogLevel::Critical);
-    }
-
-    // Hoping this never ever gets triggered :sigh:
-    if constexpr (keyCount == 1) {
-      Systems::Logging::Log("QueryWithAll should not be used for single key "
-                            "entry! Please use Query for this instead.",
-                            "Dualkey Map", Systems::Logging::LogLevel::Error);
-    }
-
-    // While we don't necessary need the hashes,
-    // it just helps us tremendously benefit from short circuit checks
-    std::array<std::size_t, keyCount> keyHashes;
-    for (uint64_t index = 0; index < keyCount; index++) {
-      keyHashes[index] = std::hash<Key>{}(keys[index]);
-    }
-
-    std::vector<MultiQueryResult<
-        std::conditional_t<searchingInFirstKey, BKey, AKey>, keyCount>>
-        queryResults;
-    uint64_t hashToCompare;
-    Key *keyToCompare;
-    std::conditional_t<searchingInFirstKey, BKey *, AKey *> resultKey;
-    for (DualkeyHash *hash : hashList) {
-      // The hell of doing 2 conditions with similar logics in
-      // the same logical block
-      if constexpr (searchingInFirstKey) {
-        hashToCompare = hash->firstKeyHash;
-        keyToCompare = const_cast<AKey *>(&hash->firstKey);
-        resultKey = const_cast<BKey *>(&hash->secondKey);
-      } else {
-        hashToCompare = hash->secondKeyHash;
-        keyToCompare = const_cast<BKey *>(&hash->secondKey);
-        resultKey = const_cast<AKey *>(&hash->firstKey);
-      }
-
-      // The code above was done to make this code more uniform
-      for (uint64_t index = 0; index < keyCount; index++) {
-        if (keyHashes[index] == hashToCompare && keys[index] == *keyToCompare) {
-
-          bool doesExist = false;
-          for (auto &queryRecord : queryResults) {
-            if (*queryRecord.resultKey == *resultKey) {
-              queryRecord.valueQueryResults[index] = &hash->value;
-              ++queryRecord.howManyFound;
-              doesExist = true;
-              break;
-            }
-          }
-
-          if (doesExist) {
-            break;
-          }
-
-          // Since the result record is not present
-          // we have to make it
-          queryResults.emplace_back();
-          auto &newRecord = queryResults.back();
-          newRecord.resultKey = resultKey;
-          newRecord.valueQueryResults[index] = &hash->value;
-        }
-      }
-    }
+    auto queryResults = queryWithMany<Key>(keys);
 
     for (const auto &queryRecord : queryResults) {
       Systems::Logging::Log(
@@ -323,6 +254,84 @@ private:
     const std::size_t secondKeyHash;
     mutable Value value;
   };
+
+  template <typename Key, std::size_t keyCount>
+  inline std::vector<MultiQueryResult<
+      std::conditional_t<std::is_same_v<Key, AKey>, BKey, AKey>, keyCount>>
+  queryWithMany(const Key (&keys)[keyCount]) {
+    constexpr bool searchingInFirstKey = std::is_same_v<Key, AKey>;
+
+    // I really can't wait for C++26 contracts
+    if constexpr (keyCount == 0) {
+      Systems::Logging::Log("Failed to Query! QueryWithAll require at least 2 "
+                            "key to be given, zero was given! Terminating",
+                            "Dualkey Map",
+                            Systems::Logging::LogLevel::Critical);
+    }
+
+    // Hoping this never ever gets triggered :sigh:
+    if constexpr (keyCount == 1) {
+      Systems::Logging::Log("QueryWithAll should not be used for single key "
+                            "entry! Please use Query for this instead.",
+                            "Dualkey Map", Systems::Logging::LogLevel::Error);
+    }
+
+    // While we don't necessary need the hashes,
+    // it just helps us tremendously benefit from short circuit checks
+    std::array<std::size_t, keyCount> keyHashes;
+    for (uint64_t index = 0; index < keyCount; index++) {
+      keyHashes[index] = std::hash<Key>{}(keys[index]);
+    }
+
+    uint64_t hashToCompare;
+    Key *keyToCompare;
+    std::conditional_t<searchingInFirstKey, BKey *, AKey *> resultKey;
+    std::vector<MultiQueryResult<
+        std::conditional_t<searchingInFirstKey, BKey, AKey>, keyCount>>
+        queryResults;
+    for (DualkeyHash *hash : hashList) {
+      // The hell of doing 2 conditions with similar logics in
+      // the same logical block
+      if constexpr (searchingInFirstKey) {
+        hashToCompare = hash->firstKeyHash;
+        keyToCompare = const_cast<AKey *>(&hash->firstKey);
+        resultKey = const_cast<BKey *>(&hash->secondKey);
+      } else {
+        hashToCompare = hash->secondKeyHash;
+        keyToCompare = const_cast<BKey *>(&hash->secondKey);
+        resultKey = const_cast<AKey *>(&hash->firstKey);
+      }
+
+      // The code above was done to make this code more uniform
+      for (uint64_t index = 0; index < keyCount; index++) {
+        if (keyHashes[index] == hashToCompare && keys[index] == *keyToCompare) {
+
+          bool doesExist = false;
+          for (auto &queryRecord : queryResults) {
+            if (*queryRecord.resultKey == *resultKey) {
+              queryRecord.valueQueryResults[index] = &hash->value;
+              ++queryRecord.howManyFound;
+              doesExist = true;
+              break;
+            }
+          }
+
+          if (doesExist) {
+            break;
+          }
+
+          // Since the result record is not present
+          // we have to make it
+          queryResults.emplace_back();
+          auto &newRecord = queryResults.back();
+          newRecord.resultKey = resultKey;
+          newRecord.valueQueryResults[index] = &hash->value;
+        }
+      }
+    }
+
+    return queryResults;
+  }
 
   // It makes more sense to store the individual hash
   std::vector<DualkeyHash *> hashList;
