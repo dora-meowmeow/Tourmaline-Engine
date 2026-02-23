@@ -7,8 +7,8 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef GUARD_TOURMALINE_HASHING_H
-#define GUARD_TOURMALINE_HASHING_H
+#ifndef GUARD_TOURMALINE_CONCEPTS_H
+#define GUARD_TOURMALINE_CONCEPTS_H
 #include <concepts>
 #include <functional>
 
@@ -17,5 +17,8 @@ template <typename T>
 concept Hashable = std::equality_comparable<T> && requires(T x) {
   { std::hash<T>{}(x) } -> std::convertible_to<std::size_t>;
 };
+
+template <typename Base, typename Type1, typename Type2>
+concept Either = std::same_as<Base, Type1> || std::same_as<Base, Type2>;
 } // namespace Tourmaline::Containers
 #endif
