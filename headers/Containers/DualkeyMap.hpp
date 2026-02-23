@@ -9,14 +9,12 @@
 #ifndef GUARD_TOURMALINE_DUALKEYMAP_H
 #define GUARD_TOURMALINE_DUALKEYMAP_H
 #include "../Systems/Logging.hpp"
-#include "Hashing.hpp"
+#include "Concepts.hpp"
 
 #include <array>
 #include <cmath>
-#include <concepts>
 #include <cstddef>
 #include <cstdint>
-#include <format>
 #include <functional>
 #include <optional>
 #include <stack>
@@ -31,12 +29,20 @@ template <Hashable AKey, Hashable BKey, typename Value,
           uint64_t baseReservation = 2048>
 class DualkeyMap {
 public:
+  // Return Types
+  template <typename OppositeKey, std::size_t resultKeyCount,
+            std::size_t resultValueCount>
+    requires Either<OppositeKey, AKey, BKey>
+  using MultiQueryResult =
+      std::pair<std::array<OppositeKey, resultKeyCount>,
+                std::array<std::reference_wrapper<Value>, resultValueCount>>;
   using QueryResult =
       std::pair<std::variant<std::monostate, std::reference_wrapper<const AKey>,
                              std::reference_wrapper<const BKey>>,
                 Value &>;
   using Entry = std::tuple<const AKey &, const BKey &, Value &>;
 
+  // Construct/Destruct
   DualkeyMap() { hashList.reserve(baseReservation); }
   ~DualkeyMap() {
     // I'm sure there is a better way to do this
@@ -47,6 +53,12 @@ public:
     }
   }
 
+  // No copying due to the container expected to be the sole
+  // owner of the data
+  DualkeyMap(const DualkeyMap &) = delete;
+  DualkeyMap &operator=(const DualkeyMap &) = delete;
+
+  // Public controls
   Entry Insert(AKey firstKey, BKey secondKey, Value value) {
     DualkeyHash *hash = new DualkeyHash(std::move(firstKey),
                                         std::move(secondKey), std::move(value));
@@ -106,7 +118,7 @@ public:
         }
         break;
 
-      case 3:
+      case 3: // Both given
         if (firstKeyHash == hash->firstKeyHash &&
             secondKeyHash == hash->secondKeyHash &&
             firstKey.value() == hash->firstKey &&
@@ -123,6 +135,12 @@ public:
     return amountDeleted;
   }
 
+  [[nodiscard]]
+  std::size_t Count() {
+    return hashList.size() - graveyard.size();
+  }
+
+  // Queries
   [[nodiscard("Discarding an expensive query!")]]
   std::vector<QueryResult> Query(std::optional<AKey> firstKey,
                                  std::optional<BKey> secondKey) {
@@ -180,18 +198,18 @@ public:
   }
 
   template <typename Key, std::size_t keyCount>
-    requires(std::same_as<Key, AKey> || std::same_as<Key, BKey>)
+    requires Either<Key, AKey, BKey>
   [[nodiscard("Discarding a very expensive query!")]]
   int QueryWithAll(const Key (&keys)[keyCount]) {
     auto queryResults = queryWithMany<Key>(keys);
 
-    for (const auto &queryRecord : queryResults) {
-      Systems::Logging::Log(
-          std::format("Opposite = {}, found = {}",
-                      reinterpret_cast<uint64_t>(queryRecord.resultKey),
-                      queryRecord.howManyFound),
-          "DKM", Systems::Logging::LogLevel::Info,
-          queryRecord.howManyFound == keyCount);
+    // You could very well use auto here but this helps
+    // with LSP hints
+    for (const unprocessedMultiQueryResult<
+             std::conditional_t<std::is_same_v<Key, AKey>, BKey, AKey>,
+             keyCount> &queryRecord : queryResults) {
+      if (queryRecord.howManyFound == keyCount) {
+      }
     }
 
     return 0;
@@ -223,19 +241,10 @@ public:
     }
   }
 
-  [[nodiscard]]
-  std::size_t Count() {
-    return hashList.size() - graveyard.size();
-  }
-
-  // No copying due to the container expected to be the sole
-  // owner of the data
-  DualkeyMap(const DualkeyMap &) = delete;
-  DualkeyMap &operator=(const DualkeyMap &) = delete;
-
 private:
+  // Interal data structures
   template <typename OppositeKey, std::size_t keyCount>
-  struct MultiQueryResult {
+  struct unprocessedMultiQueryResult {
     OppositeKey *resultKey = nullptr;
     std::size_t howManyFound = 1;
     std::array<Value *, keyCount> valueQueryResults;
@@ -255,8 +264,13 @@ private:
     mutable Value value;
   };
 
+  // Actual data
+  std::vector<DualkeyHash *> hashList;
+  std::stack<std::size_t> graveyard;
+
+  // Interal querying
   template <typename Key, std::size_t keyCount>
-  inline std::vector<MultiQueryResult<
+  inline std::vector<unprocessedMultiQueryResult<
       std::conditional_t<std::is_same_v<Key, AKey>, BKey, AKey>, keyCount>>
   queryWithMany(const Key (&keys)[keyCount]) {
     constexpr bool searchingInFirstKey = std::is_same_v<Key, AKey>;
@@ -286,7 +300,7 @@ private:
     uint64_t hashToCompare;
     Key *keyToCompare;
     std::conditional_t<searchingInFirstKey, BKey *, AKey *> resultKey;
-    std::vector<MultiQueryResult<
+    std::vector<unprocessedMultiQueryResult<
         std::conditional_t<searchingInFirstKey, BKey, AKey>, keyCount>>
         queryResults;
     for (DualkeyHash *hash : hashList) {
@@ -332,10 +346,6 @@ private:
 
     return queryResults;
   }
-
-  // It makes more sense to store the individual hash
-  std::vector<DualkeyHash *> hashList;
-  std::stack<std::size_t> graveyard;
 };
 } // namespace Tourmaline::Containers
 #endif
