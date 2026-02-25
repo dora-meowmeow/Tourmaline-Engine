@@ -8,8 +8,8 @@
  */
 #ifndef GUARD_TOURMALINE_DUALKEYMAP_H
 #define GUARD_TOURMALINE_DUALKEYMAP_H
+#include "../Concepts.hpp"
 #include "../Systems/Logging.hpp"
-#include "Concepts.hpp"
 
 #include <array>
 #include <cmath>
@@ -25,17 +25,16 @@
 #include <vector>
 
 namespace Tourmaline::Containers {
-template <Hashable AKey, Hashable BKey, typename Value,
+template <Concepts::Hashable AKey, Concepts::Hashable BKey, typename Value,
           uint64_t baseReservation = 2048>
 class DualkeyMap {
 public:
   // Return Types
-  template <typename OppositeKey, std::size_t resultKeyCount,
-            std::size_t resultValueCount>
-    requires Either<OppositeKey, AKey, BKey>
+  template <typename OppositeKey, std::size_t Count>
+    requires Concepts::Either<OppositeKey, AKey, BKey>
   using MultiQueryResult =
-      std::pair<std::array<OppositeKey, resultKeyCount>,
-                std::array<std::reference_wrapper<Value>, resultValueCount>>;
+      std::pair<const OppositeKey &,
+                std::array<std::reference_wrapper<Value>, Count>>;
   using QueryResult =
       std::pair<std::variant<std::monostate, std::reference_wrapper<const AKey>,
                              std::reference_wrapper<const BKey>>,
@@ -197,17 +196,19 @@ public:
     return finishedQuery;
   }
 
-  template <typename Key, std::size_t keyCount>
-    requires Either<Key, AKey, BKey>
+  template <typename Key,
+            typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>,
+            std::size_t keyCount>
+    requires Concepts::Either<Key, AKey, BKey>
   [[nodiscard("Discarding a very expensive query!")]]
   int QueryWithAll(const Key (&keys)[keyCount]) {
-    auto queryResults = queryWithMany<Key>(keys);
+    std::vector<unprocessedMultiQueryResult<OppositeKey, keyCount>>
+        queryResults = queryWithMany<Key>(keys);
 
     // You could very well use auto here but this helps
     // with LSP hints
-    for (const unprocessedMultiQueryResult<
-             std::conditional_t<std::is_same_v<Key, AKey>, BKey, AKey>,
-             keyCount> &queryRecord : queryResults) {
+    for (const unprocessedMultiQueryResult<OppositeKey, keyCount> &queryRecord :
+         queryResults) {
       if (queryRecord.howManyFound == keyCount) {
       }
     }
@@ -269,9 +270,10 @@ private:
   std::stack<std::size_t> graveyard;
 
   // Interal querying
-  template <typename Key, std::size_t keyCount>
-  inline std::vector<unprocessedMultiQueryResult<
-      std::conditional_t<std::is_same_v<Key, AKey>, BKey, AKey>, keyCount>>
+  template <typename Key,
+            typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>,
+            std::size_t keyCount>
+  inline std::vector<unprocessedMultiQueryResult<OppositeKey, keyCount>>
   queryWithMany(const Key (&keys)[keyCount]) {
     constexpr bool searchingInFirstKey = std::is_same_v<Key, AKey>;
 
@@ -299,10 +301,10 @@ private:
 
     uint64_t hashToCompare;
     Key *keyToCompare;
-    std::conditional_t<searchingInFirstKey, BKey *, AKey *> resultKey;
-    std::vector<unprocessedMultiQueryResult<
-        std::conditional_t<searchingInFirstKey, BKey, AKey>, keyCount>>
+    OppositeKey *resultKey;
+    std::vector<unprocessedMultiQueryResult<OppositeKey, keyCount>>
         queryResults;
+
     for (DualkeyHash *hash : hashList) {
       // The hell of doing 2 conditions with similar logics in
       // the same logical block
