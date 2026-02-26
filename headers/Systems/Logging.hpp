@@ -10,7 +10,7 @@
 #define GUARD_TOURMALINE_LOGGING_H
 #include <array>
 #include <fstream>
-#include <string>
+#include <string_view>
 
 namespace Tourmaline::Systems {
 class Logging {
@@ -25,8 +25,8 @@ public:
   };
 
   static void LogToFile(std::string File = "");
-  static void Log(const std::string &message,
-                  const std::string &position = "Unknown",
+  static void Log(std::string_view message,
+                  std::string_view position = "Unknown",
                   LogLevel severity = LogLevel::Info, bool assertion = true);
 
 private:

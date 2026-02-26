@@ -7,7 +7,7 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <Systems/Logging.hpp>
+#include "../../headers/Systems/Logging.hpp"
 
 #include <cerrno>
 #include <chrono>
@@ -16,9 +16,11 @@
 #include <exception>
 #include <format>
 #include <fstream>
+#include <iterator>
 #include <print>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <utility>
 
 using namespace Tourmaline::Systems;
@@ -47,13 +49,15 @@ void Logging::LogToFile(std::string File) {
   }
 }
 
-void Logging::Log(const std::string &message, const std::string &position,
+void Logging::Log(std::string_view message, std::string_view position,
                   Logging::LogLevel severity, bool assertion) {
   if (assertion) [[likely]] {
-    auto loglevelData =
+    static std::string
+        output; // This is done to stop allocations per std::format
+    const auto &loglevelData =
         Logging::LogLevelToString[static_cast<size_t>(severity)];
-    std::string output =
-        std::format("[{}@{}] {}\n", loglevelData.first, position, message);
+    std::format_to(std::back_inserter(output), "[{}@{}] {}\n",
+                   loglevelData.first, position, message);
 
     std::print("\033{} {}\033[0m", loglevelData.second, output);
     if (Logging::File.is_open()) {
@@ -68,5 +72,7 @@ void Logging::Log(const std::string &message, const std::string &position,
     if (severity == Logging::LogLevel::Critical) {
       std::terminate();
     }
+
+    output.clear();
   }
 }
