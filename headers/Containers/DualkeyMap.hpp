@@ -11,6 +11,7 @@
 #include "../Concepts.hpp"
 #include "../Systems/Logging.hpp"
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 #include <cstddef>
@@ -30,11 +31,16 @@ template <Concepts::Hashable AKey, Concepts::Hashable BKey, typename Value,
 class DualkeyMap {
 public:
   // Return Types
-  template <typename OppositeKey, std::size_t Count>
+  template <typename OppositeKey, std::size_t keyCount>
     requires Concepts::Either<OppositeKey, AKey, BKey>
-  using MultiQueryResult =
-      std::pair<const OppositeKey &,
-                std::array<std::reference_wrapper<Value>, Count>>;
+  struct MultiQueryResult {
+    // Having to use pointers here over references was not fun
+    // but it was for greater good
+    const OppositeKey *oppositeKey;
+    std::size_t howManyFound = 1;
+    std::array<Value *, keyCount> valueQueryResults;
+  };
+
   using QueryResult =
       std::pair<std::variant<std::monostate, std::reference_wrapper<const AKey>,
                              std::reference_wrapper<const BKey>>,
@@ -201,19 +207,16 @@ public:
             std::size_t keyCount>
     requires Concepts::Either<Key, AKey, BKey>
   [[nodiscard("Discarding a very expensive query!")]]
-  int QueryWithAll(const Key (&keys)[keyCount]) {
-    std::vector<unprocessedMultiQueryResult<OppositeKey, keyCount>>
-        queryResults = queryWithMany<Key>(keys);
-
-    // You could very well use auto here but this helps
-    // with LSP hints
-    for (const unprocessedMultiQueryResult<OppositeKey, keyCount> &queryRecord :
-         queryResults) {
-      if (queryRecord.howManyFound == keyCount) {
-      }
-    }
-
-    return 0;
+  std::vector<MultiQueryResult<OppositeKey, keyCount>>
+  QueryWithAll(const Key (&keys)[keyCount]) {
+    std::vector<MultiQueryResult<OppositeKey, keyCount>> queryResult =
+        queryWithMany<Key>(keys);
+    std::erase_if(
+        queryResult,
+        [](const MultiQueryResult<OppositeKey, keyCount> &queryRecord) {
+          return queryRecord.howManyFound != keyCount;
+        });
+    return queryResult;
   }
 
   void Scan(std::function<bool(const std::size_t firstKeyHash,
@@ -244,13 +247,6 @@ public:
 
 private:
   // Interal data structures
-  template <typename OppositeKey, std::size_t keyCount>
-  struct unprocessedMultiQueryResult {
-    OppositeKey *resultKey = nullptr;
-    std::size_t howManyFound = 1;
-    std::array<Value *, keyCount> valueQueryResults;
-  };
-
   struct DualkeyHash {
     DualkeyHash(AKey &&firstKey, BKey &&secondKey, Value &&value)
         : firstKey(std::move(firstKey)), secondKey(std::move(secondKey)),
@@ -273,7 +269,7 @@ private:
   template <typename Key,
             typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>,
             std::size_t keyCount>
-  inline std::vector<unprocessedMultiQueryResult<OppositeKey, keyCount>>
+  inline std::vector<MultiQueryResult<OppositeKey, keyCount>>
   queryWithMany(const Key (&keys)[keyCount]) {
     constexpr bool searchingInFirstKey = std::is_same_v<Key, AKey>;
 
@@ -301,9 +297,9 @@ private:
 
     uint64_t hashToCompare;
     Key *keyToCompare;
-    OppositeKey *resultKey;
-    std::vector<unprocessedMultiQueryResult<OppositeKey, keyCount>>
-        queryResults;
+    OppositeKey *oppositeKey;
+    std::vector<MultiQueryResult<OppositeKey, keyCount>> queryResults;
+    queryResults.reserve(512);
 
     for (DualkeyHash *hash : hashList) {
       // The hell of doing 2 conditions with similar logics in
@@ -311,11 +307,11 @@ private:
       if constexpr (searchingInFirstKey) {
         hashToCompare = hash->firstKeyHash;
         keyToCompare = const_cast<AKey *>(&hash->firstKey);
-        resultKey = const_cast<BKey *>(&hash->secondKey);
+        oppositeKey = const_cast<BKey *>(&hash->secondKey);
       } else {
         hashToCompare = hash->secondKeyHash;
         keyToCompare = const_cast<BKey *>(&hash->secondKey);
-        resultKey = const_cast<AKey *>(&hash->firstKey);
+        oppositeKey = const_cast<AKey *>(&hash->firstKey);
       }
 
       // The code above was done to make this code more uniform
@@ -324,7 +320,7 @@ private:
 
           bool doesExist = false;
           for (auto &queryRecord : queryResults) {
-            if (*queryRecord.resultKey == *resultKey) {
+            if (*queryRecord.oppositeKey == *oppositeKey) {
               queryRecord.valueQueryResults[index] = &hash->value;
               ++queryRecord.howManyFound;
               doesExist = true;
@@ -338,9 +334,8 @@ private:
 
           // Since the result record is not present
           // we have to make it
-          queryResults.emplace_back();
+          queryResults.emplace_back(oppositeKey);
           auto &newRecord = queryResults.back();
-          newRecord.resultKey = resultKey;
           newRecord.valueQueryResults[index] = &hash->value;
         }
       }
