@@ -302,6 +302,11 @@ private:
     queryResults.reserve(512);
 
     for (DualkeyHash *hash : hashList) {
+      // Tombstone
+      if (hash == nullptr) {
+        continue;
+      }
+
       // The hell of doing 2 conditions with similar logics in
       // the same logical block
       if constexpr (searchingInFirstKey) {
