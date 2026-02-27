@@ -165,3 +165,6 @@ build-iPhoneSimulator/
 # Custom
 # For personal testing cases
 test/
+
+# clangd
+.cache/
