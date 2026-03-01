@@ -7,14 +7,14 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
+#ifndef GUARD_TOURMALINE_HASHMAP_H
+#define GUARD_TOURMALINE_HASHMAP_H
 #include "../Concepts.hpp"
 #include "../Systems/Logging.hpp"
 
 #include <cstddef>
 #include <vector>
 
-#ifndef GUARD_TOURMALINE_HASHMAP_H
-#define GUARD_TOURMALINE_HASHMAP_H
 namespace Tourmaline::Containers {
 template <Concepts::Hashable Key, typename Value,
           std::size_t baseBucketCount = 1024>
