@@ -300,12 +300,9 @@ private:
     Key *keyToCompare;
     OppositeKey *oppositeKey;
 
-    // TO DO, merge std::vector with Containers::Hashmap!!
-    std::vector<MultiQueryResult<OppositeKey, keyCount>> queryResults;
-    queryResults.reserve(2048);
-    Containers::Hashmap<OppositeKey, MultiQueryResult<OppositeKey, keyCount> *,
+    Containers::Hashmap<OppositeKey, MultiQueryResult<OppositeKey, keyCount>,
                         8.0f, 2048, 0.01f> // Aggressive hashmap :o
-        locations;
+        queryResults;
 
     for (DualkeyHash *hash : hashList) {
       // Tombstone
@@ -328,20 +325,22 @@ private:
       // The code above was done to make this code more uniform
       for (uint64_t index = 0; index < keyCount; index++) {
         if (keyHashes[index] == hashToCompare && keys[index] == *keyToCompare) {
-          if (locations.Has(*oppositeKey)) {
-            locations.Get(*oppositeKey)->valueQueryResults[index] =
-                &hash->value;
-          } else {
-            queryResults.emplace_back(oppositeKey);
-            auto &newRecord = queryResults.back();
-            newRecord.valueQueryResults[index] = &hash->value;
-            locations.Insert(*oppositeKey, &newRecord);
+          if (queryResults.Has(*oppositeKey)) {
+            auto &entry = queryResults.Get(*oppositeKey);
+            entry.valueQueryResults[index] = &hash->value;
+            ++entry.howManyFound;
+            break;
           }
+
+          queryResults
+              .Insert(*oppositeKey,
+                      MultiQueryResult<OppositeKey, keyCount>(oppositeKey))
+              .valueQueryResults[index] = &hash->value;
         }
       }
     }
 
-    return queryResults;
+    return queryResults.ExtractValuesToArray();
   }
 };
 } // namespace Tourmaline::Containers

@@ -100,6 +100,25 @@ public:
                           "Hashmap", Systems::Logging::LogLevel::Error);
   }
 
+  [[nodiscard("Discarding an expensive operation!")]]
+  std::vector<Value> ExtractValuesToArray() {
+    std::vector<Value> result;
+    result.reserve(count);
+
+    for (bucket &entry : storage) {
+      for (hashStorage &hash : entry) {
+        result.emplace_back(std::move(hash.value));
+      }
+      entry.clear();
+    }
+
+    count = 0;
+    bucketCount = minimumBucketCount;
+    std::vector<bucket> newStorage;
+    storage.swap(newStorage);
+    return result;
+  }
+
   void Clear() noexcept {
     storage.clear();
     count = 0;
