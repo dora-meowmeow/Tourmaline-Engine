@@ -304,7 +304,7 @@ private:
     std::vector<MultiQueryResult<OppositeKey, keyCount>> queryResults;
     queryResults.reserve(2048);
     Containers::Hashmap<OppositeKey, MultiQueryResult<OppositeKey, keyCount> *,
-                        3.0f, 2048, 0.01f> // Aggressive hashmap :o
+                        8.0f, 2048, 0.01f> // Aggressive hashmap :o
         locations;
 
     for (DualkeyHash *hash : hashList) {
