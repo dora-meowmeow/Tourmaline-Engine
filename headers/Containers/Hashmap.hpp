@@ -15,32 +15,32 @@
 #include <vector>
 
 namespace Tourmaline::Containers {
-template <Concepts::Hashable Key, typename Value, float maxLoadFactor = 0.75f,
-          std::size_t baseBucketCount = 1024>
+template <Concepts::Hashable Key, typename Value, float loadFactor = 0.75f,
+          std::size_t minimumBucketCount = 256, float minimizeFactor = 0.20f>
 class Hashmap {
 public:
-  Hashmap() { storage.resize(baseBucketCount); }
+  Hashmap() { storage.resize(minimumBucketCount); }
   ~Hashmap() { Clear(); }
 
   Value &Insert(Key key, Value value) {
     std::size_t keyHash = std::hash<Key>{}(key),
                 keyHashPosition = keyHash % storage.size();
+    if (currentLoadFactor >= loadFactor && currentlyRehashing == false) {
+      rehash();
+    }
 
     // Empty bucket
     if (storage[keyHashPosition] == nullptr) {
       storage[keyHashPosition] = new std::vector<hashStorage>;
-      storage[keyHashPosition]->emplace_back(key, std::move(value), keyHash);
-      ++count;
-      return storage[keyHashPosition]->back().value;
+    } else {
+      // Throws
+      Systems::Logging::Log("Trying to inserting same key twice! Throwing...",
+                            "Hashmap", Systems::Logging::LogLevel::Error,
+                            Has(key));
     }
 
-    // Throws
-    Systems::Logging::Log("Trying to inserting same key twice! Throwing...",
-                          "Hashmap", Systems::Logging::LogLevel::Error,
-                          Has(key));
-
     storage[keyHashPosition]->emplace_back(key, std::move(value), keyHash);
-    ++count;
+    currentLoadFactor = (++count) / static_cast<float>(bucketCount);
     return storage[keyHashPosition]->back().value;
   }
 
@@ -56,7 +56,11 @@ public:
                   [keyHash, &key](const hashStorage &hash) {
                     return hash.hash == keyHash && hash.key == key;
                   });
-    --count;
+
+    currentLoadFactor = (--count) / static_cast<float>(bucketCount);
+    if (currentLoadFactor <= minimizeFactor) {
+      rehash();
+    }
   }
 
   [[nodiscard("Unnecessary call of Has function")]]
@@ -116,6 +120,54 @@ public:
   }
 
 private:
+  bool rehash(std::size_t goalSize = 0) {
+    // Minimum
+    goalSize = goalSize == 0 ? count : goalSize;
+    float wouldBeLoadFactor = goalSize / static_cast<float>(bucketCount);
+    if (wouldBeLoadFactor < loadFactor && wouldBeLoadFactor > minimizeFactor)
+        [[unlikely]] {
+      return false; // No rehashing is required
+    }
+
+    // Putting it closer to minimizeFactor
+    std::size_t goalBucketCount =
+        goalSize / ((loadFactor + minimizeFactor) / 2.5); // Magic number
+    if (goalBucketCount < minimumBucketCount) [[unlikely]] {
+      goalBucketCount = minimumBucketCount;
+    }
+
+    // No need to reallocate
+    if (goalBucketCount == bucketCount) {
+      return false;
+    }
+
+    currentlyRehashing = true;
+    std::vector<bucket *> oldStorage = std::move(storage);
+    storage = std::vector<bucket *>();
+    storage.resize(goalBucketCount);
+
+    // Repopulate and cleanup
+    for (bucket *entry : oldStorage) {
+      if (entry == nullptr) {
+        continue;
+      }
+
+      for (const hashStorage &hash : *entry) {
+        Insert(hash.key, hash.value);
+      }
+
+      entry->clear();
+      delete entry;
+    }
+
+    // It's necessary to write these again due to insert above
+    currentLoadFactor = goalSize / static_cast<float>(goalBucketCount);
+    bucketCount = goalBucketCount;
+    count = goalSize;
+    currentlyRehashing = false;
+    return true;
+  }
+
   struct hashStorage {
     Key key;
     Value value;
@@ -124,7 +176,9 @@ private:
 
   using bucket = std::vector<hashStorage>;
   std::vector<bucket *> storage;
-  std::size_t count = 0;
+  std::size_t count = 0, bucketCount = minimumBucketCount;
+  float currentLoadFactor = 0;
+  bool currentlyRehashing = false; // Lock for Insert in rehash
 };
 } // namespace Tourmaline::Containers
 #endif
