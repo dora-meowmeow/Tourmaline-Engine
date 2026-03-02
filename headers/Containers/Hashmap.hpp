@@ -1,4 +1,3 @@
-
 /*
  * SPDX-FileCopyrightText: Dora "cat" <cat@thenight.club>
  * SPDX-License-Identifier: MPL-2.0
@@ -16,22 +15,31 @@
 #include <vector>
 
 namespace Tourmaline::Containers {
-template <Concepts::Hashable Key, typename Value,
+template <Concepts::Hashable Key, typename Value, float maxLoadFactor = 0.75f,
           std::size_t baseBucketCount = 1024>
 class Hashmap {
 public:
   Hashmap() { storage.resize(baseBucketCount); }
   ~Hashmap() { Clear(); }
 
-  void Insert(Key key, Value value) {
+  Value &Insert(Key key, Value value) {
     std::size_t keyHash = std::hash<Key>{}(key),
                 keyHashPosition = keyHash % storage.size();
 
     // Empty bucket
     if (storage[keyHashPosition] == nullptr) {
       storage[keyHashPosition] = new std::vector<hashStorage>;
+      storage[keyHashPosition]->emplace_back(key, std::move(value), keyHash);
+      return storage[keyHashPosition]->back().value;
     }
-    storage[keyHashPosition]->emplace_back(keyHash, key, std::move(value));
+
+    // Throws
+    Systems::Logging::Log("Trying to inserting same key twice! Throwing...",
+                          "Hashmap", Systems::Logging::LogLevel::Error,
+                          Has(key));
+
+    storage[keyHashPosition]->emplace_back(key, std::move(value), keyHash);
+    return storage[keyHashPosition]->back().value;
   }
 
   void Remove(const Key &key) {
@@ -43,7 +51,7 @@ public:
                           "Hashmap", Systems::Logging::LogLevel::Error,
                           storage[keyHashPosition] == nullptr);
     std::erase_if(*storage[keyHashPosition],
-                  [key, keyHash](const hashStorage &hash) {
+                  [keyHash, &key](const hashStorage &hash) {
                     return hash.hash == keyHash && hash.key == key;
                   });
   }
@@ -75,7 +83,7 @@ public:
         "Hashmap", Systems::Logging::LogLevel::Error,
         storage[keyHashPosition] == nullptr);
 
-    for (const hashStorage &hash : *storage[keyHashPosition]) {
+    for (hashStorage &hash : *storage[keyHashPosition]) {
       if (hash.hash == keyHash && hash.key == key) {
         return hash.value;
       }
@@ -98,9 +106,9 @@ public:
 
 private:
   struct hashStorage {
-    const std::size_t hash;
-    const Key key;
-    mutable Value value;
+    Key key;
+    Value value;
+    std::size_t hash;
   };
 
   using bucket = std::vector<hashStorage>;
