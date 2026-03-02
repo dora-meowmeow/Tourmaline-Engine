@@ -30,18 +30,16 @@ public:
                 keyHashPosition = keyHash % storage.size();
 
     // Empty bucket
-    if (storage[keyHashPosition] == nullptr) {
-      storage[keyHashPosition] = new std::vector<hashStorage>;
-    } else {
+    if (!storage[keyHashPosition].empty()) {
       // Throws
       Systems::Logging::Log("Trying to inserting same key twice! Throwing...",
                             "Hashmap", Systems::Logging::LogLevel::Error,
                             Has(key));
     }
 
-    storage[keyHashPosition]->emplace_back(key, std::move(value), keyHash);
+    storage[keyHashPosition].emplace_back(key, std::move(value), keyHash);
     currentLoadFactor = (++count) / static_cast<float>(bucketCount);
-    return storage[keyHashPosition]->back().value;
+    return storage[keyHashPosition].back().value;
   }
 
   void Remove(const Key &key) {
@@ -51,8 +49,8 @@ public:
     // Throws
     Systems::Logging::Log("Trying to remove a non-existant key! Throwing...",
                           "Hashmap", Systems::Logging::LogLevel::Error,
-                          storage[keyHashPosition] == nullptr);
-    std::erase_if(*storage[keyHashPosition],
+                          storage[keyHashPosition].empty());
+    std::erase_if(storage[keyHashPosition],
                   [keyHash, &key](const hashStorage &hash) {
                     return hash.hash == keyHash && hash.key == key;
                   });
@@ -69,11 +67,11 @@ public:
                 keyHashPosition = keyHash % storage.size();
 
     // Empty bucket
-    if (storage[keyHashPosition] == nullptr) {
+    if (storage[keyHashPosition].empty()) {
       return false;
     }
 
-    for (const hashStorage &hash : *storage[keyHashPosition]) {
+    for (const hashStorage &hash : storage[keyHashPosition]) {
       if (hash.hash == keyHash && hash.key == key) {
         return true;
       }
@@ -90,9 +88,9 @@ public:
     Systems::Logging::Log(
         "Trying to access a non-existant bucket for a key! Throwing...",
         "Hashmap", Systems::Logging::LogLevel::Error,
-        storage[keyHashPosition] == nullptr);
+        storage[keyHashPosition].empty());
 
-    for (hashStorage &hash : *storage[keyHashPosition]) {
+    for (hashStorage &hash : storage[keyHashPosition]) {
       if (hash.hash == keyHash && hash.key == key) {
         return hash.value;
       }
@@ -103,14 +101,7 @@ public:
   }
 
   void Clear() noexcept {
-    for (bucket *entry : storage) {
-      if (entry == nullptr) {
-        continue;
-      }
-
-      entry->clear();
-      delete entry;
-    }
+    storage.clear();
     count = 0;
   }
 
@@ -142,22 +133,17 @@ private:
     }
 
     currentlyRehashing = true;
-    std::vector<bucket *> oldStorage = std::move(storage);
-    storage = std::vector<bucket *>();
+    std::vector<bucket> oldStorage = std::move(storage);
+    storage = std::vector<bucket>();
     storage.resize(goalBucketCount);
 
     // Repopulate and cleanup
-    for (bucket *entry : oldStorage) {
-      if (entry == nullptr) {
-        continue;
-      }
-
-      for (const hashStorage &hash : *entry) {
+    for (bucket &entry : oldStorage) {
+      for (const hashStorage &hash : entry) {
         Insert(hash.key, hash.value);
       }
 
-      entry->clear();
-      delete entry;
+      entry.clear();
     }
 
     // It's necessary to write these again due to insert above
@@ -175,7 +161,7 @@ private:
   };
 
   using bucket = std::vector<hashStorage>;
-  std::vector<bucket *> storage;
+  std::vector<bucket> storage;
   std::size_t count = 0, bucketCount = minimumBucketCount;
   float currentLoadFactor = 0;
   bool currentlyRehashing = false; // Lock for Insert in rehash
