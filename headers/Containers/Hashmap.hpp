@@ -59,7 +59,8 @@ public:
     --count;
   }
 
-  bool Has(const Key &key) {
+  [[nodiscard("Unnecessary call of Has function")]]
+  bool Has(const Key &key) noexcept {
     std::size_t keyHash = std::hash<Key>{}(key),
                 keyHashPosition = keyHash % storage.size();
 
@@ -77,6 +78,7 @@ public:
     return false;
   }
 
+  [[nodiscard("Unnecessary call of Get function")]]
   Value &Get(const Key &key) {
     std::size_t keyHash = std::hash<Key>{}(key),
                 keyHashPosition = keyHash % storage.size();
@@ -108,7 +110,10 @@ public:
     count = 0;
   }
 
-  std::size_t Count() { return count; }
+  [[nodiscard("Unnecessary call of Count function")]]
+  std::size_t Count() noexcept {
+    return count;
+  }
 
 private:
   struct hashStorage {
