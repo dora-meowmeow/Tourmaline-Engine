@@ -10,6 +10,7 @@
 #define GUARD_TOURMALINE_DUALKEYMAP_H
 #include "../Concepts.hpp"
 #include "../Systems/Logging.hpp"
+#include "ContainerOptions.hpp"
 #include "Hashmap.hpp"
 
 #include <algorithm>
@@ -28,7 +29,7 @@
 
 namespace Tourmaline::Containers {
 template <Concepts::Hashable AKey, Concepts::Hashable BKey, typename Value,
-          uint64_t baseReservation = 2048>
+          DualKeyMapOptions Options = {}>
 class DualkeyMap {
 public:
   // Return Types
@@ -49,7 +50,7 @@ public:
   using Entry = std::tuple<const AKey &, const BKey &, Value &>;
 
   // Construct/Destruct
-  DualkeyMap() { hashList.reserve(baseReservation); }
+  DualkeyMap() { hashList.reserve(Options.baseReservation); }
   ~DualkeyMap() {
     // I'm sure there is a better way to do this
     for (DualkeyHash *hash : hashList) {
@@ -301,7 +302,7 @@ private:
     OppositeKey *oppositeKey;
 
     Containers::Hashmap<OppositeKey, MultiQueryResult<OppositeKey, keyCount>,
-                        8.0f, 2048, 0.01f> // Aggressive hashmap :o
+                        {8.0f, 0.01f, 2.5f, 2048, 8}> // Aggressive hashmap :o
         queryResults;
 
     for (DualkeyHash *hash : hashList) {
@@ -325,7 +326,7 @@ private:
       // The code above was done to make this code more uniform
       for (uint64_t index = 0; index < keyCount; index++) {
         if (keyHashes[index] == hashToCompare && keys[index] == *keyToCompare) {
-          if (queryResults.Has(*oppositeKey)) {
+          if (queryResults.Has(*oppositeKey)) [[likely]] {
             auto &entry = queryResults.Get(*oppositeKey);
             entry.valueQueryResults[index] = &hash->value;
             ++entry.howManyFound;

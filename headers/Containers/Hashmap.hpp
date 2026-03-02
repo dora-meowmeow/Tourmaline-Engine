@@ -10,20 +10,21 @@
 #define GUARD_TOURMALINE_HASHMAP_H
 #include "../Concepts.hpp"
 #include "../Systems/Logging.hpp"
+#include "ContainerOptions.hpp"
 
 #include <cstddef>
 #include <vector>
 
 namespace Tourmaline::Containers {
-template <Concepts::Hashable Key, typename Value, float loadFactor = 0.75f,
-          std::size_t minimumBucketCount = 256, float minimizeFactor = 0.20f>
+template <Concepts::Hashable Key, typename Value, HashmapOptions Options = {}>
 class Hashmap {
 public:
-  Hashmap() { storage.resize(minimumBucketCount); }
+  Hashmap() { storage.resize(Options.minimumBucketCount); }
   ~Hashmap() { Clear(); }
 
   Value &Insert(Key key, Value value) {
-    if (currentLoadFactor >= loadFactor && currentlyRehashing == false) {
+    if (currentLoadFactor >= Options.loadFactor &&
+        currentlyRehashing == false) {
       rehash();
     }
     std::size_t keyHash = std::hash<Key>{}(key),
@@ -35,6 +36,8 @@ public:
       Systems::Logging::Log("Trying to insert the same key twice! Throwing...",
                             "Hashmap", Systems::Logging::LogLevel::Error,
                             Has(key));
+    } else {
+      storage[keyHashPosition].reserve(Options.reservedBucketSpace);
     }
 
     storage[keyHashPosition].emplace_back(key, std::move(value), keyHash);
@@ -56,7 +59,7 @@ public:
                   });
 
     currentLoadFactor = (--count) / static_cast<float>(bucketCount);
-    if (currentLoadFactor <= minimizeFactor) {
+    if (currentLoadFactor <= Options.minimizeFactor) {
       rehash();
     }
   }
@@ -113,7 +116,7 @@ public:
     }
 
     count = 0;
-    bucketCount = minimumBucketCount;
+    bucketCount = Options.minimumBucketCount;
     std::vector<bucket> newStorage;
     storage.swap(newStorage);
     return result;
@@ -134,16 +137,15 @@ private:
     // Minimum
     goalSize = goalSize == 0 ? count : goalSize;
     float wouldBeLoadFactor = goalSize / static_cast<float>(bucketCount);
-    if (wouldBeLoadFactor < loadFactor && wouldBeLoadFactor > minimizeFactor)
-        [[unlikely]] {
+    if (wouldBeLoadFactor < Options.loadFactor &&
+        wouldBeLoadFactor > Options.minimizeFactor) [[unlikely]] {
       return false; // No rehashing is required
     }
 
     // Putting it closer to minimizeFactor
-    std::size_t goalBucketCount =
-        goalSize / ((loadFactor + minimizeFactor) / 2.5); // Magic number
-    if (goalBucketCount < minimumBucketCount) [[unlikely]] {
-      goalBucketCount = minimumBucketCount;
+    std::size_t goalBucketCount = goalSize / preferredLoadFactor;
+    if (goalBucketCount < Options.minimumBucketCount) [[unlikely]] {
+      goalBucketCount = Options.minimumBucketCount;
     }
 
     // No need to reallocate
@@ -181,8 +183,10 @@ private:
 
   using bucket = std::vector<hashStorage>;
   std::vector<bucket> storage;
-  std::size_t count = 0, bucketCount = minimumBucketCount;
-  float currentLoadFactor = 0;
+  std::size_t count = 0, bucketCount = Options.minimumBucketCount;
+  float currentLoadFactor = 0,
+        preferredLoadFactor = (Options.loadFactor + Options.minimizeFactor) /
+                              Options.leaningFactor;
   bool currentlyRehashing = false; // Lock for Insert in rehash
 };
 } // namespace Tourmaline::Containers

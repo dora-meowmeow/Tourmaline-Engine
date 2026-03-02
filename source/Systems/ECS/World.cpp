@@ -10,7 +10,6 @@
 #include <Systems/ECS.hpp>
 #include <Systems/ECS/BuiltinComponents.hpp>
 #include <Systems/Random.hpp>
-#include <optional>
 
 using namespace Tourmaline::Systems;
 using namespace ECS;
