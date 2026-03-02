@@ -10,6 +10,7 @@
 #define GUARD_TOURMALINE_DUALKEYMAP_H
 #include "../Concepts.hpp"
 #include "../Systems/Logging.hpp"
+#include "Hashmap.hpp"
 
 #include <algorithm>
 #include <array>
@@ -298,8 +299,13 @@ private:
     uint64_t hashToCompare;
     Key *keyToCompare;
     OppositeKey *oppositeKey;
+
+    // TO DO, merge std::vector with Containers::Hashmap!!
     std::vector<MultiQueryResult<OppositeKey, keyCount>> queryResults;
-    queryResults.reserve(512);
+    queryResults.reserve(2048);
+    Containers::Hashmap<OppositeKey, MultiQueryResult<OppositeKey, keyCount> *,
+                        3.0f, 2048, 0.01f> // Aggressive hashmap :o
+        locations;
 
     for (DualkeyHash *hash : hashList) {
       // Tombstone
@@ -322,26 +328,15 @@ private:
       // The code above was done to make this code more uniform
       for (uint64_t index = 0; index < keyCount; index++) {
         if (keyHashes[index] == hashToCompare && keys[index] == *keyToCompare) {
-
-          bool doesExist = false;
-          for (auto &queryRecord : queryResults) {
-            if (*queryRecord.oppositeKey == *oppositeKey) {
-              queryRecord.valueQueryResults[index] = &hash->value;
-              ++queryRecord.howManyFound;
-              doesExist = true;
-              break;
-            }
+          if (locations.Has(*oppositeKey)) {
+            locations.Get(*oppositeKey)->valueQueryResults[index] =
+                &hash->value;
+          } else {
+            queryResults.emplace_back(oppositeKey);
+            auto &newRecord = queryResults.back();
+            newRecord.valueQueryResults[index] = &hash->value;
+            locations.Insert(*oppositeKey, &newRecord);
           }
-
-          if (doesExist) {
-            break;
-          }
-
-          // Since the result record is not present
-          // we have to make it
-          queryResults.emplace_back(oppositeKey);
-          auto &newRecord = queryResults.back();
-          newRecord.valueQueryResults[index] = &hash->value;
         }
       }
     }
