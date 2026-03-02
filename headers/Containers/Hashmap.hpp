@@ -23,11 +23,11 @@ public:
   ~Hashmap() { Clear(); }
 
   Value &Insert(Key key, Value value) {
-    std::size_t keyHash = std::hash<Key>{}(key),
-                keyHashPosition = keyHash % storage.size();
     if (currentLoadFactor >= loadFactor && currentlyRehashing == false) {
       rehash();
     }
+    std::size_t keyHash = std::hash<Key>{}(key),
+                keyHashPosition = keyHash % storage.size();
 
     // Empty bucket
     if (storage[keyHashPosition] == nullptr) {
