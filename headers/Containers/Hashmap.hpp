@@ -30,6 +30,7 @@ public:
     if (storage[keyHashPosition] == nullptr) {
       storage[keyHashPosition] = new std::vector<hashStorage>;
       storage[keyHashPosition]->emplace_back(key, std::move(value), keyHash);
+      ++count;
       return storage[keyHashPosition]->back().value;
     }
 
@@ -39,6 +40,7 @@ public:
                           Has(key));
 
     storage[keyHashPosition]->emplace_back(key, std::move(value), keyHash);
+    ++count;
     return storage[keyHashPosition]->back().value;
   }
 
@@ -54,6 +56,7 @@ public:
                   [keyHash, &key](const hashStorage &hash) {
                     return hash.hash == keyHash && hash.key == key;
                   });
+    --count;
   }
 
   bool Has(const Key &key) {
@@ -102,7 +105,10 @@ public:
       entry->clear();
       delete entry;
     }
+    count = 0;
   }
+
+  std::size_t Count() { return count; }
 
 private:
   struct hashStorage {
@@ -113,6 +119,7 @@ private:
 
   using bucket = std::vector<hashStorage>;
   std::vector<bucket *> storage;
+  std::size_t count = 0;
 };
 } // namespace Tourmaline::Containers
 #endif
