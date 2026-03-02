@@ -32,7 +32,7 @@ public:
     // Empty bucket
     if (!storage[keyHashPosition].empty()) {
       // Throws
-      Systems::Logging::Log("Trying to inserting same key twice! Throwing...",
+      Systems::Logging::Log("Trying to insert the same key twice! Throwing...",
                             "Hashmap", Systems::Logging::LogLevel::Error,
                             Has(key));
     }
