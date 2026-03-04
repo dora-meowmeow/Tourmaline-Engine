@@ -1,5 +1,5 @@
 # Tourmaline Engine
-Tormaline Engine is a game engine created for game development with C++23. 
+Tormaline Engine is a game engine created for C++23. [Source Code](https://git.thenight.club/cat/Tourmaline-Engine/).
 
 ### Currently the project is still trying to incorporate following parts (in no particular order):
 - [ ] ECS (Builtin)
@@ -25,9 +25,7 @@ Tourmaline is by no means currently usable. The project is incredible volatile w
 # Special Thanks
 - [Lars "harmonyisdead"](https://github.com/larsl2005) for hosting the thenight.club services.
 - [Vladimír "Mosra" Vondruš](https://github.com/mosra) for their mentorship of my C++ knowledge/projects, and the people at the [magnum gitter channel](https://matrix.to/#/#mosra_magnum:gitter.im), for their continous support and feedback of this project.
-- [Kae "voxelfoxkae"](https://voxelfox.co.uk/) for getting me into programming seriously and mentorship.
-- The members of The Night Club discord server, for being there for me. 
-
+- [Kae "voxelfoxkae"](https://voxelfox.co.uk/) for mentorship.
 
 # Not-so frequently asked questions
 ### Version Scheming
