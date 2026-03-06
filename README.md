@@ -17,6 +17,9 @@ Tormaline Engine is a game engine created for C++23. [Source Code](https://git.t
 # Usability Status
 Tourmaline is by no means currently usable. The project is incredible volatile with constant changes and improvements. Please wait until a release is made.
 
+However if you cannot just help yourself you can compile a tourmaline demo by running
+g++ program.cpp -std=c++23 -lTourmaline -I/usr/local/include/TourmalineExternal -o program
+
 # 3rd Party Libraries Credits
 - [Corrade/Magnum](https://magnum.graphics/) - graphics middleware by Vladimír "Mosra" Vondruš.
 - [miniaudio](https://miniaud.io/) - audio playback and capture library by David "Mackron" Reid.
