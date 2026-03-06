@@ -7,7 +7,7 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../../headers/Types.hpp"
+#include "Types.hpp"
 
 #include <charconv>
 #include <cstdint>

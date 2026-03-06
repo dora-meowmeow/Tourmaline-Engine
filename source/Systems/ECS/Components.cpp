@@ -7,7 +7,7 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../../../headers/Systems/ECS.hpp"
-#include "../../../headers/Systems/ECS/BuiltinComponents.hpp"
+#include "Systems/ECS.hpp"
+#include "Systems/ECS/BuiltinComponents.hpp"
 
 // Empty until future use
