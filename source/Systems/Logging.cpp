@@ -7,8 +7,10 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "../../headers/Systems/Logging.hpp"
+#include "Systems/Logging.hpp"
+#include "Corrade/Containers/Array.h"
 
+#include <Corrade/Tags.h>
 #include <cerrno>
 #include <chrono>
 #include <cstddef>
@@ -24,16 +26,18 @@
 #include <utility>
 
 using namespace Tourmaline::Systems;
+using namespace Corrade::Containers;
 
 // This is what happens when it takes you 50 years to implement
 // reflections to a language
-std::array<std::pair<const std::string, const std::string>, 6>
-    Logging::LogLevelToString{std::pair{"Critical", "[0;31m"},
-                              {"Error", "[0;91m"},
-                              {"Warning", "[0;33m"},
-                              {"Info", "[0;37m"},
-                              {"Debug", "[0;92m"},
-                              {"Trace", "[0;36m"}};
+Array<std::pair<const std::string, const std::string>>
+    Logging::LogLevelToString{Corrade::InPlaceInit,
+                              {std::pair{"Critical", "[0;31m"},
+                               {"Error", "[0;91m"},
+                               {"Warning", "[0;33m"},
+                               {"Info", "[0;37m"},
+                               {"Debug", "[0;92m"},
+                               {"Trace", "[0;36m"}}};
 std::fstream Logging::File;
 
 void Logging::LogToFile(std::string File) {

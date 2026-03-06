@@ -8,7 +8,9 @@
  */
 #ifndef GUARD_TOURMALINE_LOGGING_H
 #define GUARD_TOURMALINE_LOGGING_H
-#include <array>
+
+#include "Corrade/Containers/Array.h"
+
 #include <fstream>
 #include <string_view>
 
@@ -31,7 +33,8 @@ public:
 
 private:
   static std::fstream File;
-  static std::array<std::pair<const std::string, const std::string>, 6>
+  static Corrade::Containers::Array<
+      std::pair<const std::string, const std::string>>
       LogLevelToString;
 };
 } // namespace Tourmaline::Systems
