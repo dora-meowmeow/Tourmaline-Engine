@@ -1,0 +1,16 @@
+include(FetchContent)
+
+# Building options
+set(CORRADE_BUILD_STATIC ON)
+
+# Feature options
+set(CORRADE_WITH_MAIN ON)
+set(CORRADE_WITH_UTILITY ON)
+set(CORRADE_WITH_PLUGINMANAGER ON)
+set(CORRADE_WITH_INTERCONNECT OFF)
+set(CORRADE_WITH_TESTSUITE OFF)
+if(NOT CMAKE_CROSSCOMPILING)
+  set(CORRADE_WITH_RC ON)
+endif()
+
+FetchContent_MakeAvailable(Corrade)
