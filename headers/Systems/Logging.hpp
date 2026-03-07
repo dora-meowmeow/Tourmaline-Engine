@@ -26,12 +26,12 @@ public:
                   LogLevel severity = LogLevel::Info, bool assertion = true);
 
   template <class... Args>
-  static void LogFormatted(const char *format,
-                           Corrade::Containers::StringView position,
+  static void LogFormatted(const char *format, const char *position,
                            LogLevel severity, const Args &...args) {
-    Corrade::Containers::String formatted =
-        Corrade::Utility::format(format, args...);
-    Log(formatted, position, severity);
+    static Corrade::Containers::String output{Corrade::ValueInit, 4096};
+    std::size_t size = Corrade::Utility::formatInto(output, format, args...);
+    Log(Corrade::Containers::StringView{output.begin(), size}, position,
+        severity);
   }
 
 private:
