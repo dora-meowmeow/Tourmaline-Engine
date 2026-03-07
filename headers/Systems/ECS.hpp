@@ -10,64 +10,60 @@
 #ifndef GUARD_TOURMALINE_ECS_H
 #define GUARD_TOURMALINE_ECS_H
 #include <any>
-#include <format>
 #include <typeindex>
 
 #include "../Containers/DualkeyMap.hpp"
+#include "../Containers/Hashmap.hpp"
 #include "../Types.hpp"
 #include "ECS/BuiltinComponents.hpp"
 #include "Logging.hpp"
 
 namespace Tourmaline::Systems::ECS {
 using Entity = Tourmaline::Type::UUID;
-class World;
+using System = Tourmaline::Type::UUID;
 
 class World {
 public:
+  World() {}
   // ====== World controls ======
   void Step();
 
   // ========  Entities  ========
   [[nodiscard]]
   Entity CreateEntity();
+  [[nodiscard("Pointless call of EntityExists")]]
   bool EntityExists(const Entity &entity) noexcept;
-  [[nodiscard("It is not guaranteed that an entity can always be destroyed, "
-              "please make sure by checking the returned bool")]]
   bool DestroyEntity(Entity entity);
 
   // ======== Components ========
-  template <isAComponent component, typename... Args>
-  component &AddComponent(const Entity &entity,
-                          Args &&...constructionArguments) {
-    auto newComponent = entityComponentMap.Insert(
-        entity, typeid(component), component(constructionArguments...));
+  template <isAComponent Component, typename... ComponentArgs>
+  Component &AddComponent(const Entity &entity, ComponentArgs &&...args) {
+    auto newComponent = entityComponentMap.Insert(entity, typeid(Component),
+                                                  Component(args...));
 
-    return std::any_cast<component &>(std::get<2>(newComponent));
+    return std::any_cast<Component &>(std::get<2>(newComponent));
   }
 
-  template <isAComponent component>
-  [[nodiscard("Discarding an expensive operation's result!")]]
-  component &GetComponent(const Entity &entity) {
-    auto result = entityComponentMap.Query(entity, typeid(component));
+  template <isAComponent Component>
+  [[nodiscard("Pointless call of GetComponent")]]
+  Component &GetComponent(const Entity &entity) {
+    auto result = entityComponentMap.Query(entity, typeid(Component));
     if (result.empty()) {
-      Logging::Log(std::format("Entity {} does not have component {}!",
-                               entity.asString(), typeid(component).name()),
-                   "ECS/GetComponent", Logging::LogLevel::Error);
+      Logging::LogFormatted("Entity {} does not have component {}!",
+                            "ECS/GetComponent", Logging::LogLevel::Error,
+                            entity.asString(), typeid(Component).name());
     }
-    return std::any_cast<component &>(result.begin()->second);
+    return std::any_cast<Component &>(result.begin()->second);
   }
 
-  template <isAComponent component>
-  [[nodiscard("Discarding an expensive operation's result!")]]
+  template <isAComponent Component>
+  [[nodiscard("Pointless call of HasComponent")]]
   bool HasComponent(const Entity &entity) {
-    return entityComponentMap.Query(entity, typeid(component)).size();
+    return entityComponentMap.Query(entity, typeid(Component)).size();
   }
 
-  template <isAComponent component>
-  [[nodiscard("It is not guaranteed that a component can always be removed, "
-              "please make sure by checking the returned bool")]]
-  bool RemoveComponent(const Entity &entity) {
-    return entityComponentMap.Remove(entity, typeid(component));
+  template <isAComponent Component> bool RemoveComponent(const Entity &entity) {
+    return entityComponentMap.Remove(entity, typeid(Component));
   }
 
   // Copying is not allowed since the ECS world is meant to be
@@ -76,8 +72,11 @@ public:
   World &operator=(const World &) = delete;
 
 private:
-  Tourmaline::Containers::DualkeyMap<Entity, std::type_index, std::any>
+  using systemFunction =
+      std::function<void(const Entity &, std::span<std::any *>)>;
+  Containers::DualkeyMap<Entity, std::type_index, std::any>
       entityComponentMap{};
+  Containers::Hashmap<System, systemFunction> registeredSystems{};
 
   // ======== Life-cycle ========
   void preSystems();

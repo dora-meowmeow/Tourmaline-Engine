@@ -24,7 +24,7 @@ concept isAComponent = std::derived_from<T, ECS::Component>;
 namespace Tourmaline::Systems::Components {
 // Builtin
 struct Base : public ECS::Component {
-  Base() {}
+  double x = 0, y = 0, z = 0;
 };
 } // namespace Tourmaline::Systems::Components
 #endif

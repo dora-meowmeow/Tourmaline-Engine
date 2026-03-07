@@ -10,7 +10,9 @@
 #ifndef GUARD_TOURMALINE_TYPES_H
 #define GUARD_TOURMALINE_TYPES_H
 
+#include "Corrade/Containers/String.h"
 #include "TourmalineExternal/random/xoshiro.h"
+
 #include <cstdint>
 #include <functional>
 #include <string>
@@ -19,7 +21,7 @@ namespace Tourmaline::Type {
 class UUID {
 public:
   [[nodiscard]]
-  std::string asString() const;
+  Corrade::Containers::String asString() const;
   bool operator==(const UUID &rhs) const;
 
   UUID(uint64_t firstHalf, uint64_t secondHalf);

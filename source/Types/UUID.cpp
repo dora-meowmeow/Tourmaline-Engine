@@ -7,17 +7,19 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "Corrade/Utility/Format.h"
 #include "Types.hpp"
 
 #include <charconv>
 #include <cstdint>
 #include <cstring>
-#include <format>
 #include <string>
 
 using namespace Tourmaline::Type;
-std::string UUID::asString() const {
-  return std::format("{:016X}{:016X}", firstHalf, secondHalf);
+using namespace Corrade::Containers;
+using namespace Corrade::Utility;
+String UUID::asString() const {
+  return format("{:.16X}{:.16X}", firstHalf, secondHalf);
 }
 
 bool UUID::operator==(const UUID &rhs) const {
