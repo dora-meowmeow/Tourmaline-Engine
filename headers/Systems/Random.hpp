@@ -10,7 +10,7 @@
 #ifndef GUARD_TOURMALINE_RANDOM_H
 #define GUARD_TOURMALINE_RANDOM_H
 #include "../Types.hpp"
-#include <TourmalineExternal/random/xoshiro.h>
+#include "TourmalineExternal/random/xoshiro.h"
 
 #include <type_traits>
 
