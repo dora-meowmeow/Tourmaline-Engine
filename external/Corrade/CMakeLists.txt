@@ -1,7 +1,7 @@
 include(FetchContent)
 
 # Building options
-set(CORRADE_BUILD_STATIC ON)
+set(CORRADE_BUILD_STATIC OFF)
 
 # Feature options
 set(CORRADE_WITH_MAIN ON)

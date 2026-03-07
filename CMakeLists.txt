@@ -52,7 +52,7 @@ foreach(dep
   add_subdirectory(external/${dep})
 endforeach()
 
-# Building SO
+# Building
 add_library(${PROJECT_NAME} SHARED
   "source/Systems/ECS/Components.cpp"
   "source/Systems/ECS/World.cpp"
@@ -63,14 +63,24 @@ add_library(${PROJECT_NAME} SHARED
 
 # Actual linking
 target_link_libraries(${PROJECT_NAME} PUBLIC
-  Corrade::Main
-  Corrade::Containers
-  Corrade::Utility
-  Corrade::PluginManager
+    Corrade::Main
+    Corrade::Containers
+    Corrade::Utility
+    Corrade::PluginManager
 )
 
 # Module stuff
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
+
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headers>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+    $<BUILD_INTERFACE:${corrade_SOURCE_DIR}/src>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}External>
+)
 
 FetchContent_GetProperties(Corrade SOURCE_DIR corrade_SOURCE_DIR)
 FetchContent_GetProperties(Corrade BINARY_DIR corrade_BINARY_DIR)
@@ -85,21 +95,19 @@ install(
     PATTERN "*.hpp"
 )
 
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headers>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
-    $<BUILD_INTERFACE:${corrade_SOURCE_DIR}/src>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}External>
-)
-
 install(
   TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}Targets
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
-  INCLUDES DESTINATION include
+  INCLUDES DESTINATION include/${PROJECT_NAME}
+)
+
+install(
+  TARGETS CorradeMain CorradeUtility CorradeContainers CorradePluginManager
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  INCLUDES DESTINATION include/${PROJECT_NAME}External
 )
 
 install(DIRECTORY headers/ DESTINATION include/${PROJECT_NAME})
