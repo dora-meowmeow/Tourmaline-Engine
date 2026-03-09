@@ -160,8 +160,8 @@ private:
 
     // Repopulate and cleanup
     for (bucket &entry : oldStorage) {
-      for (const hashStorage &hash : entry) {
-        Insert(hash.key, hash.value);
+      for (hashStorage &hash : entry) {
+        Insert(std::move(hash.key), std::move(hash.value));
       }
 
       entry.clear();

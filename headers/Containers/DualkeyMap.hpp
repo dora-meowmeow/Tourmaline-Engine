@@ -13,6 +13,8 @@
 #include "ContainerOptions.hpp"
 #include "Hashmap.hpp"
 
+#include "Corrade/Containers/Array.h"
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -33,14 +35,14 @@ template <Concepts::Hashable AKey, Concepts::Hashable BKey, typename Value,
 class DualkeyMap {
 public:
   // Return Types
-  template <typename OppositeKey, std::size_t keyCount>
+  template <typename OppositeKey>
     requires Concepts::Either<OppositeKey, AKey, BKey>
   struct MultiQueryResult {
     // Having to use pointers here over references was not fun
     // but it was for greater good
     const OppositeKey *oppositeKey;
+    Corrade::Containers::Array<Value *> valueQueryResults;
     std::size_t howManyFound = 1;
-    std::array<Value *, keyCount> valueQueryResults;
   };
 
   using QueryResult =
@@ -209,15 +211,14 @@ public:
             std::size_t keyCount>
     requires Concepts::Either<Key, AKey, BKey>
   [[nodiscard("Discarding a very expensive query!")]]
-  std::vector<MultiQueryResult<OppositeKey, keyCount>>
+  std::vector<MultiQueryResult<OppositeKey>>
   QueryWithAll(const Key (&keys)[keyCount]) {
-    std::vector<MultiQueryResult<OppositeKey, keyCount>> queryResult =
+    std::vector<MultiQueryResult<OppositeKey>> queryResult =
         queryWithMany<Key>(keys);
-    std::erase_if(
-        queryResult,
-        [](const MultiQueryResult<OppositeKey, keyCount> &queryRecord) {
-          return queryRecord.howManyFound != keyCount;
-        });
+    std::erase_if(queryResult,
+                  [](const MultiQueryResult<OppositeKey> &queryRecord) {
+                    return queryRecord.howManyFound != keyCount;
+                  });
     return queryResult;
   }
 
@@ -271,7 +272,7 @@ private:
   template <typename Key,
             typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>,
             std::size_t keyCount>
-  inline std::vector<MultiQueryResult<OppositeKey, keyCount>>
+  inline std::vector<MultiQueryResult<OppositeKey>>
   queryWithMany(const Key (&keys)[keyCount]) {
     constexpr bool searchingInFirstKey = std::is_same_v<Key, AKey>;
 
@@ -301,7 +302,7 @@ private:
     Key *keyToCompare;
     OppositeKey *oppositeKey;
 
-    Containers::Hashmap<OppositeKey, MultiQueryResult<OppositeKey, keyCount>,
+    Containers::Hashmap<OppositeKey, MultiQueryResult<OppositeKey>,
                         {8.0f, 0.01f, 2.5f, 2048, 8}> // Aggressive hashmap :o
         queryResults;
 
@@ -334,8 +335,9 @@ private:
           }
 
           queryResults
-              .Insert(*oppositeKey,
-                      MultiQueryResult<OppositeKey, keyCount>(oppositeKey))
+              .Insert(
+                  *oppositeKey,
+                  {oppositeKey, Corrade::Containers::Array<Value *>{keyCount}})
               .valueQueryResults[index] = &hash->value;
         }
       }
