@@ -101,6 +101,7 @@ public:
 
     Systems::Logging::Log("Trying to access a non-existant key! Throwing...",
                           "Hashmap", Systems::Logging::LogLevel::Error);
+    throw;
   }
 
   [[nodiscard("Discarding an expensive operation!")]]
