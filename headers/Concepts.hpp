@@ -11,6 +11,8 @@
 #define GUARD_TOURMALINE_CONCEPTS_H
 #include <concepts>
 #include <functional>
+#include <tuple>
+#include <type_traits>
 
 namespace Tourmaline::Concepts {
 template <typename T>
@@ -30,5 +32,29 @@ template <typename Base, typename Type1, typename Type2>
   requires Either<Base, Type1, Type2>
 using OppositeOf = _opposite_of<Base, Type1, Type2>::type;
 
+// heavily inspired by
+// https://github.com/aminroosta/sqlite_modern_cpp/blob/master/hdr/sqlite_modern_cpp/utility/function_traits.h
+template <typename> struct FunctionTraits;
+template <typename Function>
+struct FunctionTraits
+    : public FunctionTraits<
+          decltype(&std::remove_reference_t<Function>::operator())> {};
+
+template <typename Return, typename Class, typename... Arguments>
+struct FunctionTraits<Return (Class::*)(Arguments...) const>
+    : FunctionTraits<Return (*)(Arguments...)> {};
+template <typename Return, typename Class, typename... Arguments>
+struct FunctionTraits<Return (Class::*)(Arguments...)>
+    : FunctionTraits<Return (*)(Arguments...)> {};
+
+template <typename Return, typename... Arguments>
+struct FunctionTraits<Return (*)(Arguments...)> {
+  using returnType = Return;
+  using arguments = std::tuple<Arguments...>;
+
+  template <std::size_t index>
+  using argument = std::tuple_element_t<index, arguments>;
+  static constexpr std::size_t argumentCount = sizeof...(Arguments);
+};
 } // namespace Tourmaline::Concepts
 #endif
