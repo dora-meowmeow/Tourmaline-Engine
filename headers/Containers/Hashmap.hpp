@@ -34,8 +34,7 @@ public:
     if (!storage[keyHashPosition].empty()) {
       // Throws
       Systems::Logging::Log("Trying to insert the same key twice! Throwing...",
-                            "Hashmap", Systems::Logging::LogLevel::Error,
-                            Has(key));
+                            "Hashmap", Systems::Logging::Error, Has(key));
     } else {
       storage[keyHashPosition].reserve(Options.reservedBucketSpace);
     }
@@ -51,7 +50,7 @@ public:
 
     // Throws
     Systems::Logging::Log("Trying to remove a non-existant key! Throwing...",
-                          "Hashmap", Systems::Logging::LogLevel::Error,
+                          "Hashmap", Systems::Logging::Error,
                           storage[keyHashPosition].empty());
     std::erase_if(storage[keyHashPosition],
                   [keyHash, &key](const hashStorage &hash) {
@@ -90,8 +89,7 @@ public:
 
     Systems::Logging::Log(
         "Trying to access a non-existant bucket for a key! Throwing...",
-        "Hashmap", Systems::Logging::LogLevel::Error,
-        storage[keyHashPosition].empty());
+        "Hashmap", Systems::Logging::Error, storage[keyHashPosition].empty());
 
     for (hashStorage &hash : storage[keyHashPosition]) {
       if (hash.hash == keyHash && hash.key == key) {
@@ -100,7 +98,7 @@ public:
     }
 
     Systems::Logging::Log("Trying to access a non-existant key! Throwing...",
-                          "Hashmap", Systems::Logging::LogLevel::Error);
+                          "Hashmap", Systems::Logging::Error);
     throw;
   }
 

@@ -36,8 +36,8 @@ public:
 
 private:
   static std::fstream File;
-  static const char *LogLevelToColour[LogLevel::Trace + 1];
-  static const char *LogLevelToString[LogLevel::Trace + 1];
+  static const char *LogLevelToColour[Trace + 1];
+  static const char *LogLevelToString[Trace + 1];
 };
 } // namespace Tourmaline::Systems
 #endif

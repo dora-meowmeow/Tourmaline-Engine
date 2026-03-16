@@ -16,7 +16,6 @@
 #include "Corrade/Containers/Array.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -207,16 +206,17 @@ public:
   }
 
   template <typename Key,
-            typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>,
-            std::size_t keyCount>
+            typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>>
     requires Concepts::Either<Key, AKey, BKey>
   [[nodiscard("Discarding a very expensive query!")]]
   std::vector<MultiQueryResult<OppositeKey>>
-  QueryWithAll(const Key (&keys)[keyCount]) {
+  QueryWithAll(const Corrade::Containers::Array<Key> &keys) {
     std::vector<MultiQueryResult<OppositeKey>> queryResult =
         queryWithMany<Key>(keys);
+
     std::erase_if(queryResult,
-                  [](const MultiQueryResult<OppositeKey> &queryRecord) {
+                  [keyCount = keys.size()](
+                      const MultiQueryResult<OppositeKey> &queryRecord) {
                     return queryRecord.howManyFound != keyCount;
                   });
     return queryResult;
@@ -270,14 +270,14 @@ private:
 
   // Interal querying
   template <typename Key,
-            typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>,
-            std::size_t keyCount>
+            typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>>
   inline std::vector<MultiQueryResult<OppositeKey>>
-  queryWithMany(const Key (&keys)[keyCount]) {
+  queryWithMany(const Corrade::Containers::Array<Key> &keys) {
     constexpr bool searchingInFirstKey = std::is_same_v<Key, AKey>;
+    std::size_t keyCount = keys.size();
 
     // I really can't wait for C++26 contracts
-    if constexpr (keyCount == 0) {
+    if (keyCount == 0) {
       Systems::Logging::Log("Failed to Query! QueryWithAll require at least 2 "
                             "key to be given, zero was given! Terminating",
                             "Dualkey Map",
@@ -285,7 +285,7 @@ private:
     }
 
     // Hoping this never ever gets triggered :sigh:
-    if constexpr (keyCount == 1) {
+    if (keyCount == 1) {
       Systems::Logging::Log("QueryWithAll should not be used for single key "
                             "entry! Please use Query for this instead.",
                             "Dualkey Map", Systems::Logging::LogLevel::Error);
@@ -293,7 +293,7 @@ private:
 
     // While we don't necessary need the hashes,
     // it just helps us tremendously benefit from short circuit checks
-    std::array<std::size_t, keyCount> keyHashes;
+    Corrade::Containers::Array<std::size_t> keyHashes{keyCount};
     for (uint64_t index = 0; index < keyCount; index++) {
       keyHashes[index] = std::hash<Key>{}(keys[index]);
     }

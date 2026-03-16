@@ -31,9 +31,9 @@ using namespace Corrade::Utility;
 
 // This is what happens when it takes you 50 years to implement
 // reflections to a language
-const char *Logging::LogLevelToColour[Logging::LogLevel::Trace + 1]{
+const char *Logging::LogLevelToColour[Logging::Trace + 1]{
     "[0;31m", "[0;91m", "[0;33m", "[0;37m", "[0;92m", "[0;36m"};
-const char *Logging::LogLevelToString[Logging::LogLevel::Trace + 1]{
+const char *Logging::LogLevelToString[Logging::Trace + 1]{
     "Critical", "Error", "Warning", "Info", "Debug", "Trace"};
 std::fstream Logging::File;
 
