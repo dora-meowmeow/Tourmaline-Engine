@@ -95,6 +95,11 @@ install(
     PATTERN "*.hpp"
 )
 
+# A way to live forever
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND printf "Dedicated to my beloved Goma, I love you. - Dora" >> $<TARGET_FILE:${PROJECT_NAME}>
+)
+
 install(
   TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}Targets
