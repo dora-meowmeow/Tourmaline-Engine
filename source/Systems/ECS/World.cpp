@@ -9,14 +9,25 @@
 
 #include "Systems/ECS.hpp"
 #include "Systems/ECS/BuiltinComponents.hpp"
+#include "Systems/Logging.hpp"
 #include "Systems/Random.hpp"
+#include <typeindex>
 
 using namespace Tourmaline::Systems;
 using namespace ECS;
 
 void World::Step() {
   preSystems();
-  // Actual systems will happen here
+
+  for (const System &system : systemList) {
+    systemStorage &storage = registeredSystems.Get(system);
+    if (storage.isEnabled) {
+      for (componentCache &entry : storage.cache) {
+        storage.function(*entry.oppositeKey, entry.valueQueryResults);
+      }
+    }
+  }
+
   postSystems();
 }
 
@@ -26,6 +37,35 @@ void World::preSystems() {
 
 void World::postSystems() {
   // Defined for future use
+}
+
+std::span<System> World::ListAllSystems() { return systemList; }
+bool World::GetSystemEnable(const System &system) noexcept {
+  return registeredSystems.Has(system) &&
+         registeredSystems.Get(system).isEnabled;
+}
+
+void World::SetSystemEnable(const System &system, bool beEnabled) {
+  if (!registeredSystems.Has(system)) {
+    Logging::LogFormatted(
+        "System {} does not exist therefore it cannot be set!",
+        "ECS/SetSystemEnable", Logging::Warning, system.asString());
+    return;
+  }
+
+  registeredSystems.Get(system).isEnabled = beEnabled;
+}
+
+bool World::DestroySystem(const System &system) {
+  if (registeredSystems.Has(system)) {
+    registeredSystems.Remove(system);
+    return true;
+  }
+
+  Logging::LogFormatted("Tried to remove a non existend system with ID {}",
+                        "ECS/DestroySystem", Logging::Warning,
+                        system.asString());
+  return false;
 }
 
 // Entities

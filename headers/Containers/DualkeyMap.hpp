@@ -210,9 +210,10 @@ public:
     requires Concepts::Either<Key, AKey, BKey>
   [[nodiscard("Discarding a very expensive query!")]]
   std::vector<MultiQueryResult<OppositeKey>>
-  QueryWithAll(const Corrade::Containers::Array<Key> &keys) {
+  QueryWithAll(const Corrade::Containers::Array<Key> &keys,
+               bool ignoreChecks = false) {
     std::vector<MultiQueryResult<OppositeKey>> queryResult =
-        queryWithMany<Key>(keys);
+        queryWithMany<Key>(keys, ignoreChecks);
 
     std::erase_if(queryResult,
                   [keyCount = keys.size()](
@@ -272,12 +273,13 @@ private:
   template <typename Key,
             typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>>
   inline std::vector<MultiQueryResult<OppositeKey>>
-  queryWithMany(const Corrade::Containers::Array<Key> &keys) {
+  queryWithMany(const Corrade::Containers::Array<Key> &keys,
+                bool ignoreChecks = false) {
     constexpr bool searchingInFirstKey = std::is_same_v<Key, AKey>;
     std::size_t keyCount = keys.size();
 
     // I really can't wait for C++26 contracts
-    if (keyCount == 0) {
+    if (keyCount == 0 && !ignoreChecks) {
       Systems::Logging::Log("Failed to Query! QueryWithAll require at least 2 "
                             "key to be given, zero was given! Terminating",
                             "Dualkey Map",
@@ -285,7 +287,7 @@ private:
     }
 
     // Hoping this never ever gets triggered :sigh:
-    if (keyCount == 1) {
+    if (keyCount == 1 && !ignoreChecks) {
       Systems::Logging::Log("QueryWithAll should not be used for single key "
                             "entry! Please use Query for this instead.",
                             "Dualkey Map", Systems::Logging::LogLevel::Error);
