@@ -22,7 +22,14 @@ void World::Step() {
   for (const System &system : systemList) {
     systemStorage &storage = registeredSystems.Get(system);
     if (storage.isEnabled) {
-      for (componentCache &entry : storage.cache) {
+      // It is being done here to eliminate repetitive code
+      if (!storage.cache->isStoring) {
+        storage.cache->storage =
+            entityComponentMap.QueryWithAll(storage.cache->arguments, true);
+        storage.cache->isStoring = true;
+      }
+
+      for (componentCache &entry : storage.cache->storage) {
         storage.function(*entry.oppositeKey, entry.valueQueryResults);
       }
     }

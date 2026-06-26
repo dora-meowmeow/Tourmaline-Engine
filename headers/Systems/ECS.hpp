@@ -63,6 +63,16 @@ public:
     static_assert(std::is_same_v<firstArgument, const Entity &>,
                   "First Argument must be the type const Entity&!");
 
+    // Making sure that everything is infact a component
+    [&]<std::size_t... index>(std::index_sequence<index...>) {
+      static_assert(
+          (!std::is_base_of_v<typename Traits::template argument<index + 1>,
+                              ECS::Component> &&
+           ...),
+          "Every argument aside from first argument must be derived from "
+          "ECS::Component");
+    }(std::make_integer_sequence<std::size_t, componentCount>{});
+
     // Type erasure nightmare
     System newSystem = Random::GenerateUUID();
     systemFunction internalFunction = [system](const Entity &entity,
@@ -73,27 +83,32 @@ public:
       }(std::make_integer_sequence<std::size_t, componentCount>{});
     };
 
-    // Making sure arguments are valid and preparing to cache
-    Corrade::Containers::Array<std::type_index> componentList{
-        Corrade::DirectInit, componentCount, typeid(ECS::Component)};
-    [&]<std::size_t... index>(std::index_sequence<index...>) {
-      // Making sure that everything is infact a component
-      static_assert(
-          (!std::is_base_of_v<typename Traits::template argument<index + 1>,
-                              ECS::Component> &&
-           ...),
-          "Every argument aside from first argument must be derived from "
-          "ECS::Component");
-      ((componentList[index] =
-            typeid(typename Traits::template argument<index + 1>)),
-       ...);
-    }(std::make_integer_sequence<std::size_t, componentCount>{});
+    // No need to cache something that already exists
+    systemCache *newSystemCache;
+    if (cacheRegistry.Has(typeid(arguments))) {
+      newSystemCache = &cacheRegistry.Get(typeid(arguments));
+      ++newSystemCache->userCount;
+    } else {
+      newSystemCache = &cacheRegistry.Insert(
+          typeid(arguments),
+          {typeid(arguments),
+           systemArgumentArray{Corrade::DirectInit, componentCount,
+                               typeid(ECS::Component)},
+           {}});
+
+      // I am sure this can be merged with first IIFE but
+      // it makes it hell to work with
+      [&]<std::size_t... index>(std::index_sequence<index...>) {
+        ((newSystemCache->arguments[index] =
+              typeid(typename Traits::template argument<index + 1>)),
+         ...);
+      }(std::make_integer_sequence<std::size_t, componentCount>{});
+    }
 
     // Registering the system
-    registeredSystems.Insert(
-        newSystem,
-        {std::move(internalFunction), typeid(arguments),
-         entityComponentMap.QueryWithAll(componentList, true), enabled});
+    registeredSystems.Insert(newSystem,
+                             {std::move(internalFunction), typeid(arguments),
+                              newSystemCache, enabled});
     systemList.push_back(newSystem);
     return newSystem;
   }
@@ -149,15 +164,27 @@ private:
   using systemFunction = Corrade::Containers::Function<void(
       const Entity &, std::span<std::any *>)>;
   using componentCache = decltype(entityComponentMap)::MultiQueryResult<Entity>;
-  using systemComponentCache = std::vector<componentCache>;
+  using componentCacheList =
+      std::vector<decltype(entityComponentMap)::MultiQueryResult<Entity>>;
+  using systemArgumentArray = Corrade::Containers::Array<std::type_index>;
+  using systemArgumentTupleId = std::type_index;
+  struct systemCache {
+    systemArgumentTupleId Id;
+    systemArgumentArray arguments;
+    componentCacheList storage;
+    uint32_t userCount = 1;
+    bool isStoring = false;
+  };
+
   struct systemStorage {
     systemFunction function;
-    std::type_index functionSignature;
-    systemComponentCache cache;
+    systemArgumentTupleId arguments;
+    systemCache *cache;
     bool isEnabled = true;
   };
 
   std::vector<System> systemList;
+  Containers::Hashmap<systemArgumentTupleId, systemCache> cacheRegistry;
   Containers::Hashmap<System, systemStorage> registeredSystems{};
 
   // ======== Life-cycle ========
