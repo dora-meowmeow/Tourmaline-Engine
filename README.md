@@ -19,7 +19,7 @@ Tourmaline is by no means currently usable. The project is incredible volatile w
 
 However if you cannot just help yourself you can compile a tourmaline demo by running
 ```
-g++ program.cpp -std=c++23 -lTourmaline -lCorradeUtility -lCorradePluginManager -I/usr/local/include/TourmalineExternal -o program
+g++ program.cpp -std=c++23 -lTourmaline -lMagnum -lCorradeUtility -lCorradePluginManager -I/usr/local/include/TourmalineExternal -o program
 ```
 
 # 3rd Party Libraries Credits

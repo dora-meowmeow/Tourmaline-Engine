@@ -15,6 +15,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
+  set(CORRADE_CPU_USE_IFUNC "OFF")
+  message(WARNING "Making a debug build do NOT ship!")
 endif()
 
 include(GNUInstallDirs)
@@ -45,8 +47,14 @@ external_dependency(Corrade
   URL_HASH SHA256=77ed07d373792ce05a64b87c84e7d4687965d6040df4e17b6e9922ca1cbd88c8
 )
 
+external_dependency(Magnum
+  URL https://github.com/mosra/magnum/archive/2d68ac8617cc4bed63951388a9eab89b9e964bb4.zip
+  URL_HASH SHA256=6487435fc658141024ae8847e51a2cdd1c5179fa402c72e3a1bf77a7d75af92f
+)
+
 foreach(dep
   Corrade
+  Magnum
 )
   message(STATUS "Fetching ${dep}...")
   add_subdirectory(external/${dep})
@@ -67,11 +75,15 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     Corrade::Containers
     Corrade::Utility
     Corrade::PluginManager
+
+    Magnum::Magnum
+    Magnum::Sdl2Application
+    Magnum::GL
+    Magnum::Trade
 )
 
 # Module stuff
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-
 
 target_include_directories(${PROJECT_NAME}
   PUBLIC
@@ -84,12 +96,24 @@ target_include_directories(${PROJECT_NAME}
 
 FetchContent_GetProperties(Corrade SOURCE_DIR corrade_SOURCE_DIR)
 FetchContent_GetProperties(Corrade BINARY_DIR corrade_BINARY_DIR)
+FetchContent_GetProperties(Magnum SOURCE_DIR magnum_SOURCE_DIR)
+FetchContent_GetProperties(Magnum BINARY_DIR magnum_BINARY_DIR)
 
 install(
   DIRECTORY
   "${corrade_SOURCE_DIR}/src/Corrade/"
   "${corrade_BINARY_DIR}/src/Corrade/"
   DESTINATION "include/${PROJECT_NAME}External/Corrade"
+  FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+)
+
+install(
+  DIRECTORY
+  "${magnum_SOURCE_DIR}/src/Magnum/"
+  "${magnum_BINARY_DIR}/src/Magnum/"
+  DESTINATION "include/${PROJECT_NAME}External/Magnum"
   FILES_MATCHING
     PATTERN "*.h"
     PATTERN "*.hpp"
@@ -110,6 +134,7 @@ install(
 
 install(
   TARGETS CorradeMain CorradeUtility CorradeContainers CorradePluginManager
+  Magnum MagnumSdl2Application MagnumGL MagnumTrade
   LIBRARY DESTINATION lib
   ARCHIVE DESTINATION lib
   INCLUDES DESTINATION include/${PROJECT_NAME}External
