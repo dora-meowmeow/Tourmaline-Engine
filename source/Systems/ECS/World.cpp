@@ -80,8 +80,8 @@ Entity World::CreateEntity() {
   auto newEntity = Random::GenerateUUID();
 
   // Default components
-  entityComponentMap.Insert(newEntity, typeid(Components::Base),
-                            Components::Base());
+  entityComponentMap.Insert(newEntity, typeid(Components::Translate),
+                            Components::Translate());
 
   return newEntity;
 }

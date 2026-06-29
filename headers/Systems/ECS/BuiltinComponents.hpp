@@ -10,6 +10,7 @@
 #ifndef GUARD_TOURMALINE_BUILTIN_COMPONENTS_H
 #define GUARD_TOURMALINE_BUILTIN_COMPONENTS_H
 
+#include "Magnum/Math/Vector3.h"
 #include <concepts>
 
 namespace Tourmaline::Systems::ECS {
@@ -23,8 +24,10 @@ concept isAComponent = std::derived_from<T, ECS::Component>;
 
 namespace Tourmaline::Systems::Components {
 // Builtin
-struct Base : public ECS::Component {
-  double x = 0, y = 0, z = 0;
+struct Translate : public ECS::Component {
+  Magnum::Math::Vector3<double> Transform{0};
+  Magnum::Math::Vector3<double> Rotate{0};
+  Magnum::Math::Vector3<double> Scale{1};
 };
 } // namespace Tourmaline::Systems::Components
 #endif
