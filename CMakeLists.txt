@@ -85,52 +85,73 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
 # Module stuff
 set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headers>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
-    $<BUILD_INTERFACE:${corrade_SOURCE_DIR}/src>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}External>
-)
-
+# Fetching source and compiled directories
 FetchContent_GetProperties(Corrade SOURCE_DIR corrade_SOURCE_DIR)
 FetchContent_GetProperties(Corrade BINARY_DIR corrade_BINARY_DIR)
 FetchContent_GetProperties(Magnum SOURCE_DIR magnum_SOURCE_DIR)
 FetchContent_GetProperties(Magnum BINARY_DIR magnum_BINARY_DIR)
 
+# For Development
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headers>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+    $<BUILD_INTERFACE:${corrade_SOURCE_DIR}/src>
+    $<BUILD_INTERFACE:${magnum_SOURCE_DIR}/src>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+    $<INSTALL_INTERFACE:include/${PROJECT_NAME}External>
+)
+
+
+## Installing
+# Corrade
 install(
-  DIRECTORY
-  "${corrade_SOURCE_DIR}/src/Corrade/"
-  "${corrade_BINARY_DIR}/src/Corrade/"
+  FILES
+  "${corrade_BINARY_DIR}/src/Corrade/version.h"
+  "${corrade_BINARY_DIR}/src/Corrade/configure.h"
+  "${corrade_SOURCE_DIR}/src/Corrade/Corrade.h"
+  "${corrade_SOURCE_DIR}/src/Corrade/Cpu.h"
+  "${corrade_SOURCE_DIR}/src/Corrade/Tags.h"
   DESTINATION "include/${PROJECT_NAME}External/Corrade"
-  FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp"
 )
 
-install(
+foreach(module
+  PluginManager
+  Utility
+  Containers
+)
+  install(
   DIRECTORY
-  "${magnum_SOURCE_DIR}/src/Magnum/"
-  "${magnum_BINARY_DIR}/src/Magnum/"
-  DESTINATION "include/${PROJECT_NAME}External/Magnum"
+  "${corrade_SOURCE_DIR}/src/Corrade/${module}/"
+  DESTINATION "include/${PROJECT_NAME}External/Corrade/${module}"
   FILES_MATCHING
     PATTERN "*.h"
     PATTERN "*.hpp"
 )
+endforeach()
 
-# A way to live forever
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND printf "Dedicated to my beloved Goma, I love you. - Dora" >> $<TARGET_FILE:${PROJECT_NAME}>
-)
-
+# Magnum
 install(
-  TARGETS ${PROJECT_NAME}
-  EXPORT ${PROJECT_NAME}Targets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  INCLUDES DESTINATION include/${PROJECT_NAME}
+  FILES
+  "${magnum_BINARY_DIR}/src/Magnum/version.h"
+  "${magnum_BINARY_DIR}/src/Magnum/configure.h"
+  DESTINATION "include/${PROJECT_NAME}External/Magnum"
 )
+
+foreach(module
+  Magnum
+  MagnumExternal/OpenGL
+  MagnumPlugins
+)
+  install(
+  DIRECTORY
+  "${magnum_SOURCE_DIR}/src/${module}/"
+  DESTINATION "include/${PROJECT_NAME}External/${module}"
+  FILES_MATCHING
+    PATTERN "*.h"
+    PATTERN "*.hpp"
+  )
+endforeach()
 
 install(
   TARGETS CorradeMain CorradeUtility CorradeContainers CorradePluginManager
@@ -139,7 +160,21 @@ install(
   ARCHIVE DESTINATION lib
   INCLUDES DESTINATION include/${PROJECT_NAME}External
 )
-
-install(DIRECTORY headers/ DESTINATION include/${PROJECT_NAME})
 install(DIRECTORY ${PROJECT_NAME}External/ DESTINATION
         include/${PROJECT_NAME}External)
+
+# A way to live forever
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND printf "Dedicated to my beloved Goma, I love you. - Dora" >> $<TARGET_FILE:${PROJECT_NAME}>
+)
+
+# Tourmaline Internal
+install(
+  TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}Targets
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  INCLUDES DESTINATION include/${PROJECT_NAME}
+)
+
+install(DIRECTORY headers/ DESTINATION include/${PROJECT_NAME})
