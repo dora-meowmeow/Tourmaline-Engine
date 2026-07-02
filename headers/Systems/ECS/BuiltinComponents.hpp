@@ -24,8 +24,8 @@ concept isAComponent = std::derived_from<T, ECS::Component>;
 
 namespace Tourmaline::Systems::Components {
 // Builtin
-struct Translate : public ECS::Component {
-  Magnum::Math::Vector3<double> Transform{0};
+struct Transform : public ECS::Component {
+  Magnum::Math::Vector3<double> Translate{0};
   Magnum::Math::Vector3<double> Rotate{0};
   Magnum::Math::Vector3<double> Scale{1};
 };
