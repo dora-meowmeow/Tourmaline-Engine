@@ -106,9 +106,9 @@ public:
     }
 
     // Registering the system
-    registeredSystems.Insert(newSystem,
-                             {std::move(internalFunction), typeid(arguments),
-                              newSystemCache, enabled});
+    systemRegistry.Insert(newSystem,
+                          {std::move(internalFunction), typeid(arguments),
+                           newSystemCache, enabled});
     systemList.push_back(newSystem);
     return newSystem;
   }
@@ -185,7 +185,7 @@ private:
 
   std::vector<System> systemList;
   Containers::Hashmap<systemArgumentTupleId, systemCache> cacheRegistry;
-  Containers::Hashmap<System, systemStorage> registeredSystems{};
+  Containers::Hashmap<System, systemStorage> systemRegistry{};
 
   // ======== Life-cycle ========
   void preSystems();

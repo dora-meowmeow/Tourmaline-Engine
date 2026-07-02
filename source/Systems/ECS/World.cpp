@@ -20,7 +20,7 @@ void World::Step() {
   preSystems();
 
   for (const System &system : systemList) {
-    systemStorage &storage = registeredSystems.Get(system);
+    systemStorage &storage = systemRegistry.Get(system);
     if (storage.isEnabled) {
       // It is being done here to eliminate repetitive code
       if (!storage.cache->isStoring) {
@@ -48,24 +48,23 @@ void World::postSystems() {
 
 std::span<System> World::ListAllSystems() { return systemList; }
 bool World::GetSystemEnable(const System &system) noexcept {
-  return registeredSystems.Has(system) &&
-         registeredSystems.Get(system).isEnabled;
+  return systemRegistry.Has(system) && systemRegistry.Get(system).isEnabled;
 }
 
 void World::SetSystemEnable(const System &system, bool beEnabled) {
-  if (!registeredSystems.Has(system)) {
+  if (!systemRegistry.Has(system)) {
     Logging::LogFormatted(
         "System {} does not exist therefore it cannot be set!",
         "ECS/SetSystemEnable", Logging::Warning, system.asString());
     return;
   }
 
-  registeredSystems.Get(system).isEnabled = beEnabled;
+  systemRegistry.Get(system).isEnabled = beEnabled;
 }
 
 bool World::DestroySystem(const System &system) {
-  if (registeredSystems.Has(system)) {
-    registeredSystems.Remove(system);
+  if (systemRegistry.Has(system)) {
+    systemRegistry.Remove(system);
     return true;
   }
 
