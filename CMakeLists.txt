@@ -10,24 +10,26 @@ cmake_policy(SET CMP0135 NEW)
 
 project(Tourmaline VERSION 1)
 
+include(GNUInstallDirs)
+include(FetchContent)
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}")
+set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}External")
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fsanitize=address")
   set(CORRADE_CPU_USE_IFUNC "OFF")
   message(WARNING "Making a debug build do NOT ship!")
 endif()
 
-include(GNUInstallDirs)
-include(FetchContent)
-
 # Original - https://github.com/novelrt/NovelRT/blob/c877c1e870d62df98935489e9682d93b009fb2fd/ThirdParty/CMakeLists.txt#L6
 # Modified version by williamjcm
 macro(external_dependency name)
   FetchContent_Declare(${name}
         ${ARGN}
-        EXCLUDE_FROM_ALL
         PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${name}"
         TMP_DIR "${CMAKE_CURRENT_BINARY_DIR}/${name}/tmp"
         STAMP_DIR "${CMAKE_CURRENT_BINARY_DIR}/${name}/stamp"
@@ -43,13 +45,13 @@ endmacro()
 
 # Third Party Libraries
 external_dependency(Corrade
-  URL https://github.com/mosra/corrade/archive/2b7251d8bd8833a12f0d9b8deffca7a290340d3c.zip
-  URL_HASH SHA256=77ed07d373792ce05a64b87c84e7d4687965d6040df4e17b6e9922ca1cbd88c8
+  URL https://github.com/dora-meowmeow/corrade/archive/cfcb4bc03d524adbf5e59a5e0f80643c0df8edd7.zip
+  URL_HASH SHA256=f577a1803de5079da0e10f9bc8576a1bc7fd29b4ffab935afc5b85f428067559
 )
 
 external_dependency(Magnum
-  URL https://github.com/mosra/magnum/archive/2d68ac8617cc4bed63951388a9eab89b9e964bb4.zip
-  URL_HASH SHA256=6487435fc658141024ae8847e51a2cdd1c5179fa402c72e3a1bf77a7d75af92f
+  URL https://github.com/dora-meowmeow/magnum/archive/bd0458bd5605967c2186cade30b7b3f4e3a68b9a.zip
+  URL_HASH SHA256=11be55bb08484ee5bde86ed915c8cee12bd17fdc869f87242c308c30d0af2cb5
 )
 
 foreach(dep
@@ -87,9 +89,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 
 # Fetching source and compiled directories
 FetchContent_GetProperties(Corrade SOURCE_DIR corrade_SOURCE_DIR)
-FetchContent_GetProperties(Corrade BINARY_DIR corrade_BINARY_DIR)
 FetchContent_GetProperties(Magnum SOURCE_DIR magnum_SOURCE_DIR)
-FetchContent_GetProperties(Magnum BINARY_DIR magnum_BINARY_DIR)
 
 # For Development
 target_include_directories(${PROJECT_NAME}
@@ -102,79 +102,19 @@ target_include_directories(${PROJECT_NAME}
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}External>
 )
 
-
-## Installing
-# Corrade
-install(
-  FILES
-  "${corrade_BINARY_DIR}/src/Corrade/version.h"
-  "${corrade_BINARY_DIR}/src/Corrade/configure.h"
-  "${corrade_SOURCE_DIR}/src/Corrade/Corrade.h"
-  "${corrade_SOURCE_DIR}/src/Corrade/Cpu.h"
-  "${corrade_SOURCE_DIR}/src/Corrade/Tags.h"
-  DESTINATION "include/${PROJECT_NAME}External/Corrade"
-)
-
-foreach(module
-  PluginManager
-  Utility
-  Containers
-)
-  install(
-  DIRECTORY
-  "${corrade_SOURCE_DIR}/src/Corrade/${module}/"
-  DESTINATION "include/${PROJECT_NAME}External/Corrade/${module}"
-  FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp"
-)
-endforeach()
-
-# Magnum
-install(
-  FILES
-  "${magnum_BINARY_DIR}/src/Magnum/version.h"
-  "${magnum_BINARY_DIR}/src/Magnum/configure.h"
-  DESTINATION "include/${PROJECT_NAME}External/Magnum"
-)
-
-foreach(module
-  Magnum
-  MagnumExternal/OpenGL
-  MagnumPlugins
-)
-  install(
-  DIRECTORY
-  "${magnum_SOURCE_DIR}/src/${module}/"
-  DESTINATION "include/${PROJECT_NAME}External/${module}"
-  FILES_MATCHING
-    PATTERN "*.h"
-    PATTERN "*.hpp"
-  )
-endforeach()
-
-install(
-  TARGETS CorradeMain CorradeUtility CorradeContainers CorradePluginManager
-  Magnum MagnumSdl2Application MagnumGL MagnumTrade
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
-  INCLUDES DESTINATION include/${PROJECT_NAME}External
-)
-install(DIRECTORY ${PROJECT_NAME}External/ DESTINATION
-        include/${PROJECT_NAME}External)
-
 # A way to live forever
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND printf "Dedicated to my beloved Goma, I love you. - Dora" >> $<TARGET_FILE:${PROJECT_NAME}>
 )
 
-# Tourmaline Internal
+# Tourmaline Install
 install(
   TARGETS ${PROJECT_NAME}
   EXPORT ${PROJECT_NAME}Targets
-  LIBRARY DESTINATION lib
-  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   INCLUDES DESTINATION include/${PROJECT_NAME}
 )
 
 install(DIRECTORY headers/ DESTINATION include/${PROJECT_NAME})
+install(DIRECTORY ${PROJECT_NAME}External/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
