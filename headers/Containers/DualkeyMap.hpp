@@ -11,6 +11,7 @@
 #include "../Concepts.hpp"
 #include "../Systems/Logging.hpp"
 #include "ContainerOptions.hpp"
+#include "Corrade/Tags.h"
 #include "Hashmap.hpp"
 
 #include "Corrade/Containers/Array.h"
@@ -295,7 +296,8 @@ private:
 
     // While we don't necessary need the hashes,
     // it just helps us tremendously benefit from short circuit checks
-    Corrade::Containers::Array<std::size_t> keyHashes{keyCount};
+    Corrade::Containers::Array<std::size_t> keyHashes{Corrade::NoInit,
+                                                      keyCount};
     for (uint64_t index = 0; index < keyCount; index++) {
       keyHashes[index] = std::hash<Key>{}(keys[index]);
     }
@@ -337,9 +339,9 @@ private:
           }
 
           queryResults
-              .Insert(
-                  *oppositeKey,
-                  {oppositeKey, Corrade::Containers::Array<Value *>{keyCount}})
+              .Insert(*oppositeKey, {oppositeKey,
+                                     Corrade::Containers::Array<Value *>{
+                                         Corrade::NoInit, keyCount}})
               .valueQueryResults[index] = &hash->value;
         }
       }
