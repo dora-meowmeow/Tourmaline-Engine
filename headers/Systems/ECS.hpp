@@ -10,6 +10,7 @@
 #ifndef GUARD_TOURMALINE_ECS_H
 #define GUARD_TOURMALINE_ECS_H
 #include <any>
+#include <cstddef>
 #include <cstdlib>
 #include <type_traits>
 #include <typeindex>
@@ -98,9 +99,18 @@ public:
 
       // I am sure this can be merged with first IIFE but
       // it makes it hell to work with
+      auto insertToRegistries = [&](std::type_index typeId, std::size_t index) {
+        newSystemCache->arguments[index] = typeId;
+        if (componentCacheMap.Has(typeId)) {
+          componentCacheMap.Get(typeId).emplace_back(newSystemCache);
+          return;
+        }
+        componentCacheMap.Insert(typeId, {newSystemCache});
+      };
+
       [&]<std::size_t... index>(std::index_sequence<index...>) {
-        ((newSystemCache->arguments[index] =
-              typeid(typename Traits::template argument<index + 1>)),
+        ((insertToRegistries(
+             typeid(typename Traits::template argument<index + 1>), index)),
          ...);
       }(std::make_integer_sequence<std::size_t, componentCount>{});
     }
@@ -125,6 +135,11 @@ public:
   Component &AddComponent(const Entity &entity, ComponentArgs &&...args) {
     auto newComponent = entityComponentMap.Insert(entity, typeid(Component),
                                                   Component(args...));
+    if (componentCacheMap.Has(typeid(Component))) {
+      for (systemCache *cache : componentCacheMap.Get(typeid(Component))) {
+        cache->isStoring = false;
+      }
+    }
 
     return std::any_cast<Component &>(std::get<2>(newComponent));
   }
@@ -168,6 +183,8 @@ private:
       std::vector<decltype(entityComponentMap)::MultiQueryResult<Entity>>;
   using systemArgumentArray = Corrade::Containers::Array<std::type_index>;
   using systemArgumentTupleId = std::type_index;
+  using componentId = std::type_index;
+
   struct systemCache {
     systemArgumentTupleId Id;
     systemArgumentArray arguments;
@@ -186,6 +203,8 @@ private:
   std::vector<System> systemList;
   Containers::Hashmap<systemArgumentTupleId, systemCache> cacheRegistry;
   Containers::Hashmap<System, systemStorage> systemRegistry{};
+  Containers::Hashmap<componentId, std::vector<systemCache *>>
+      componentCacheMap;
 
   // ======== Life-cycle ========
   void preSystems();

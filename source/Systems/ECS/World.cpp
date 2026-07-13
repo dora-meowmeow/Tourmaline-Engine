@@ -82,6 +82,12 @@ Entity World::CreateEntity() {
   entityComponentMap.Insert(newEntity, typeid(Components::Transform),
                             Components::Transform());
 
+  if (componentCacheMap.Has(typeid(Components::Transform))) {
+    for (systemCache *cache :
+         componentCacheMap.Get(typeid(Components::Transform))) {
+      cache->isStoring = false;
+    }
+  }
   return newEntity;
 }
 
