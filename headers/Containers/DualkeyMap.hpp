@@ -211,7 +211,7 @@ public:
     requires Concepts::Either<Key, AKey, BKey>
   [[nodiscard("Discarding a very expensive query!")]]
   std::vector<MultiQueryResult<OppositeKey>>
-  QueryWithAll(const Corrade::Containers::Array<Key> &keys,
+  QueryWithAll(Corrade::Containers::ArrayView<Key> keys,
                bool ignoreChecks = false) {
     std::vector<MultiQueryResult<OppositeKey>> queryResult =
         queryWithMany<Key>(keys, ignoreChecks);
@@ -274,7 +274,7 @@ private:
   template <typename Key,
             typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>>
   inline std::vector<MultiQueryResult<OppositeKey>>
-  queryWithMany(const Corrade::Containers::Array<Key> &keys,
+  queryWithMany(Corrade::Containers::ArrayView<Key> keys,
                 bool ignoreChecks = false) {
     constexpr bool searchingInFirstKey = std::is_same_v<Key, AKey>;
     std::size_t keyCount = keys.size();

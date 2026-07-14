@@ -25,7 +25,8 @@ void World::Step() {
       // It is being done here to eliminate repetitive code
       if (!storage.cache->isStoring) {
         storage.cache->storage =
-            entityComponentMap.QueryWithAll(storage.cache->arguments, true);
+            entityComponentMap.QueryWithAll<std::type_index>(
+                storage.cache->arguments, true);
         storage.cache->isStoring = true;
       }
 
