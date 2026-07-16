@@ -16,6 +16,7 @@
 namespace Tourmaline::Systems::ECS {
 struct Component {
 public:
+  bool isEnabled = true;
   virtual ~Component() = default;
 };
 template <typename T>

@@ -79,8 +79,16 @@ public:
     systemFunction internalFunction = [system](const Entity &entity,
                                                std::span<std::any *> args) {
       [&]<std::size_t... index>(std::index_sequence<index...>) {
-        system(entity, (any_cast<typename Traits::template argument<index + 1>>(
-                           *args[index]))...);
+        // This check could be done in World::Step(), however
+        // it is easier (and cheaper I believe) to implement it here
+        if ((any_cast<typename Traits::template argument<index + 1>>(
+                 *args[index])
+                 .isEnabled &&
+             ...)) [[unlikely]] {
+          system(entity,
+                 (any_cast<typename Traits::template argument<index + 1>>(
+                     *args[index]))...);
+        }
       }(std::make_integer_sequence<std::size_t, componentCount>{});
     };
 
