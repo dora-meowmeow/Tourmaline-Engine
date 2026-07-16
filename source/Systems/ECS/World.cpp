@@ -11,6 +11,7 @@
 #include "Systems/ECS/BuiltinComponents.hpp"
 #include "Systems/Logging.hpp"
 #include "Systems/Random.hpp"
+#include <algorithm>
 #include <typeindex>
 
 using namespace Tourmaline::Systems;
@@ -65,6 +66,7 @@ void World::SetSystemEnable(const System &system, bool beEnabled) {
 
 bool World::DestroySystem(const System &system) {
   if (systemRegistry.Has(system)) {
+    systemList.erase(std::find(systemList.begin(), systemList.end(), system));
     systemRegistry.Remove(system);
     return true;
   }
