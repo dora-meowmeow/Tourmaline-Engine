@@ -24,7 +24,7 @@ public:
   Corrade::Containers::String asString() const;
   bool operator==(const UUID &rhs) const;
 
-  UUID(uint64_t firstHalf, uint64_t secondHalf);
+  UUID(uint64_t firstHalf = 0, uint64_t secondHalf = 0);
   UUID(const std::string &uuid);
 
 private:
