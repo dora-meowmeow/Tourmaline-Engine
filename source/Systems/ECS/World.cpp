@@ -32,7 +32,9 @@ void World::Step() {
       }
 
       for (componentCache &entry : storage.cache->storage) {
-        storage.function(*entry.oppositeKey, entry.valueQueryResults);
+        if (entityEnableList.Get(*entry.oppositeKey)) [[likely]] {
+          storage.function(*entry.oppositeKey, entry.valueQueryResults);
+        }
       }
     }
   }
@@ -78,12 +80,13 @@ bool World::DestroySystem(const System &system) {
 }
 
 // Entities
-Entity World::CreateEntity() {
+Entity World::CreateEntity(bool beEnabled) {
   auto newEntity = Random::GenerateUUID();
 
   // Default components
   entityComponentMap.Insert(newEntity, typeid(Components::Transform),
                             Components::Transform());
+  entityEnableList.Insert(newEntity, beEnabled);
 
   if (componentCacheMap.Has(typeid(Components::Transform))) {
     for (systemCache *cache :
@@ -108,6 +111,29 @@ bool World::EntityExists(const Entity &entity) noexcept {
   return exists;
 }
 
+bool World::GetEntityEnable(const Entity &entity) noexcept {
+  return entityEnableList.Has(entity) && entityEnableList.Get(entity);
+}
+
+void World::SetEntityEnable(const Entity &entity, bool beEnabled) {
+  if (!entityEnableList.Has(entity)) {
+    Logging::LogFormatted(
+        "Entity {} does not exist therefore it cannot be set!",
+        "ECS/SetEntityEnable", Logging::Warning, entity.asString());
+    return;
+  }
+
+  entityEnableList.Get(entity) = beEnabled;
+}
+
 bool World::DestroyEntity(Entity entity) {
-  return entityComponentMap.Remove(entity, std::nullopt);
+  if (!entityComponentMap.Remove(entity, std::nullopt)) [[unlikely]] {
+    Logging::LogFormatted("Trying to delete Entity {} that does not exist!",
+                          "ECS/DestroyEntity", Logging::Warning,
+                          entity.asString());
+    return false;
+  }
+
+  entityEnableList.Remove(entity);
+  return true;
 }
