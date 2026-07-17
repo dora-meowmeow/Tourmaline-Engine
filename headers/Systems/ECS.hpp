@@ -41,11 +41,9 @@ public:
 
   // ========  Entities  ========
   [[nodiscard]]
-  Entity CreateEntity(bool beEnabled = true);
+  Entity CreateEntity();
   [[nodiscard("Pointless call of EntityExists")]]
   bool EntityExists(const Entity &entity) noexcept;
-  bool GetEntityEnable(const Entity &entity) noexcept;
-  void SetEntityEnable(const Entity &entity, bool beEnabled = true);
   bool DestroyEntity(Entity entity);
 
   // ======== Systems ========
@@ -215,7 +213,6 @@ private:
   Containers::Hashmap<System, systemStorage> systemRegistry{};
   Containers::Hashmap<componentId, std::vector<systemCache *>>
       componentCacheMap;
-  Containers::Hashmap<Entity, bool> entityEnableList;
 
   // ======== Life-cycle ========
   void preSystems();
