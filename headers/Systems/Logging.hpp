@@ -12,6 +12,7 @@
 #include "Corrade/Containers/String.h"
 #include "Corrade/Containers/StringView.h"
 #include "Corrade/Utility/Format.h"
+#include "Corrade/Utility/FormatStl.h"
 
 #include <fstream>
 
