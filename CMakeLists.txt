@@ -47,13 +47,13 @@ endmacro()
 
 # Third Party Libraries
 external_dependency(Corrade
-  URL https://github.com/dora-meowmeow/corrade/archive/cfcb4bc03d524adbf5e59a5e0f80643c0df8edd7.zip
-  URL_HASH SHA256=f577a1803de5079da0e10f9bc8576a1bc7fd29b4ffab935afc5b85f428067559
+  URL https://github.com/mosra/corrade/archive/783e4e4807536ec52c352986fc9317db986ace96.zip
+  URL_HASH SHA256=17f3b4a0e523ad34504e99df35c018c1498afd50c72f6ce7087fda9bcb408791
 )
 
 external_dependency(Magnum
-  URL https://github.com/dora-meowmeow/magnum/archive/bd0458bd5605967c2186cade30b7b3f4e3a68b9a.zip
-  URL_HASH SHA256=11be55bb08484ee5bde86ed915c8cee12bd17fdc869f87242c308c30d0af2cb5
+  URL https://github.com/mosra/magnum/archive/145fc82c756ba69afa1f983a914e6b4ad6d76bb3.zip
+  URL_HASH SHA256=a9709905cc4c0841edd8ccbfe86e539929cfa6e010bc377179121762f3343556
 )
 
 foreach(dep
