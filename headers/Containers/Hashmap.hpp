@@ -16,7 +16,8 @@
 #include <vector>
 
 namespace Tourmaline::Containers {
-template <Concepts::Hashable Key, typename Value, HashmapOptions Options = {}>
+template <Concepts::Hashable Key, typename Value,
+          HashContainerOptions Options = {}>
 class Hashmap {
 public:
   Hashmap() { storage.resize(Options.minimumBucketCount); }

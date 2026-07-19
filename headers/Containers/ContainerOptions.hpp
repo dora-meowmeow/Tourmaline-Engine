@@ -13,7 +13,7 @@
 #include <cstdint>
 
 namespace Tourmaline::Containers {
-struct HashmapOptions {
+struct HashContainerOptions {
   float loadFactor = 0.75f;
   float minimizeFactor = 0.20f;
   float leaningFactor = 2.5f;
