@@ -11,6 +11,7 @@
 #include "Systems/ECS/BuiltinComponents.hpp"
 #include "Systems/Logging.hpp"
 #include "Systems/Random.hpp"
+
 #include <algorithm>
 #include <typeindex>
 
@@ -32,7 +33,9 @@ void World::Step() {
       }
 
       for (componentCache &entry : storage.cache->storage) {
-        storage.function(*entry.oppositeKey, entry.valueQueryResults);
+        if (!disabledEntityList.Has(*entry.oppositeKey)) [[likely]] {
+          storage.function(*entry.oppositeKey, entry.valueQueryResults);
+        }
       }
     }
   }
@@ -78,7 +81,7 @@ bool World::DestroySystem(const System &system) {
 }
 
 // Entities
-Entity World::CreateEntity() {
+Entity World::CreateEntity(bool isEnabled) {
   auto newEntity = Random::GenerateUUID();
 
   // Default components
@@ -91,6 +94,11 @@ Entity World::CreateEntity() {
       cache->isStoring = false;
     }
   }
+
+  if (!isEnabled) {
+    SetEntityEnable(newEntity, isEnabled);
+  }
+
   return newEntity;
 }
 
@@ -106,6 +114,29 @@ bool World::EntityExists(const Entity &entity) noexcept {
         return false;
       });
   return exists;
+}
+
+void World::SetEntityEnable(const Entity &entity, bool beEnabled) noexcept {
+  bool isDisabled = disabledEntityList.Has(entity);
+
+  // Disabled - Disable/Enabled - Enable case
+  if (isDisabled ^ beEnabled) {
+    Logging::LogFormatted(
+        "Trying to set entity {} to be {}, when it already is.",
+        "ECS/SetEntityEnable", Logging::Warning, entity.asString(),
+        beEnabled ? "Enabled" : "Disabled");
+    return;
+  }
+
+  if (beEnabled) {
+    disabledEntityList.Remove(entity);
+    return;
+  }
+  disabledEntityList.Insert(entity);
+}
+
+bool World::GetEntityEnable(const Entity &entity) noexcept {
+  return disabledEntityList.Has(entity);
 }
 
 bool World::DestroyEntity(Entity entity) {

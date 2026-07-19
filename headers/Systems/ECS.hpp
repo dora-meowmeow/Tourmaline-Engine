@@ -19,8 +19,10 @@
 
 #include "../Concepts.hpp"
 #include "../Containers/DualkeyMap.hpp"
+#include "../Containers/Hashlist.hpp"
 #include "../Containers/Hashmap.hpp"
 #include "../Types.hpp"
+
 #include "Corrade/Containers/Array.h"
 #include "Corrade/Containers/Containers.h"
 #include "Corrade/Containers/Function.h"
@@ -41,9 +43,12 @@ public:
 
   // ========  Entities  ========
   [[nodiscard]]
-  Entity CreateEntity();
+  Entity CreateEntity(bool isEnabled = true);
   [[nodiscard("Pointless call of EntityExists")]]
   bool EntityExists(const Entity &entity) noexcept;
+  void SetEntityEnable(const Entity &entity, bool beEnabled = true) noexcept;
+  [[nodiscard("Pointless call of GetEntityEnable")]]
+  bool GetEntityEnable(const Entity &entity) noexcept;
   bool DestroyEntity(Entity entity);
 
   // ======== Systems ========
@@ -213,6 +218,7 @@ private:
   Containers::Hashmap<System, systemStorage> systemRegistry{};
   Containers::Hashmap<componentId, std::vector<systemCache *>>
       componentCacheMap;
+  Containers::Hashlist<Entity> disabledEntityList;
 
   // ======== Life-cycle ========
   void preSystems();
