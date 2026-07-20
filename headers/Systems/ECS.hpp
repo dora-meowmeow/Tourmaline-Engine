@@ -44,7 +44,6 @@ public:
   void Step();
 
   // ========  Entities  ========
-  [[nodiscard]]
   Entity CreateEntity(bool isEnabled = true);
   [[nodiscard("Pointless call of EntityExists")]]
   bool EntityExists(const Entity &entity) noexcept;
@@ -55,7 +54,6 @@ public:
 
   // ======== Systems ========
   template <typename SystemFunction>
-  [[nodiscard]]
   System AddSystem(SystemFunction &&system, SystemPriority priority = Default,
                    bool enabled = true) {
     using Traits = Concepts::FunctionTraits<SystemFunction>;
