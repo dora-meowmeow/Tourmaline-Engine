@@ -69,6 +69,7 @@ endforeach()
 # Building
 add_library(${PROJECT_NAME} SHARED
   "source/Systems/ECS/Components.cpp"
+  "source/Systems/ECS/Entities.cpp"
   "source/Systems/ECS/World.cpp"
   "source/Systems/Logging.cpp"
   "source/Systems/Random.cpp"
