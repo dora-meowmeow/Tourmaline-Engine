@@ -24,22 +24,7 @@ void World::Step() {
   for (uint8_t priority = SystemPriority::Start;
        priority < SystemPriority::Final; priority++) {
     for (const System &system : systemList[priority]) {
-      systemStorage &storage = systemRegistry.Get(system);
-      if (storage.isEnabled) {
-        // It is being done here to eliminate repetitive code
-        if (!storage.cache->isStoring) {
-          storage.cache->storage =
-              entityComponentMap.QueryWithAll<std::type_index>(
-                  storage.cache->arguments, true);
-          storage.cache->isStoring = true;
-        }
-
-        for (componentCache &entry : storage.cache->storage) {
-          if (!disabledEntityList.Has(*entry.oppositeKey)) [[likely]] {
-            storage.function(*entry.oppositeKey, entry.valueQueryResults);
-          }
-        }
-      }
+      InvokeSystem(system);
     }
   }
 
@@ -68,6 +53,24 @@ void World::SetSystemEnable(const System &system, bool beEnabled) {
   }
 
   systemRegistry.Get(system).isEnabled = beEnabled;
+}
+
+void World::InvokeSystem(const System &system, bool ignoreEnabled) {
+  systemStorage &storage = systemRegistry.Get(system);
+  if (storage.isEnabled || ignoreEnabled) {
+    // It is being done here to eliminate repetitive code
+    if (!storage.cache->isStoring) {
+      storage.cache->storage = entityComponentMap.QueryWithAll<std::type_index>(
+          storage.cache->arguments, true);
+      storage.cache->isStoring = true;
+    }
+
+    for (componentCache &entry : storage.cache->storage) {
+      if (!disabledEntityList.Has(*entry.oppositeKey)) [[likely]] {
+        storage.function(*entry.oppositeKey, entry.valueQueryResults);
+      }
+    }
+  }
 }
 
 bool World::RemoveSystem(const System &system) {
