@@ -144,7 +144,7 @@ public:
   [[nodiscard("Pointless call of GetSystemEnable")]]
   bool GetSystemEnable(const System &system) noexcept;
   void SetSystemEnable(const System &system, bool beEnabled = true);
-  bool DestroySystem(const System &system);
+  bool RemoveSystem(const System &system);
 
   // ======== Components ========
   template <isAComponent Component, typename... ComponentArgs>

@@ -70,7 +70,7 @@ void World::SetSystemEnable(const System &system, bool beEnabled) {
   systemRegistry.Get(system).isEnabled = beEnabled;
 }
 
-bool World::DestroySystem(const System &system) {
+bool World::RemoveSystem(const System &system) {
   if (systemRegistry.Has(system)) {
     SystemPriority priority = systemRegistry.Get(system).priority;
     systemList[priority].erase(std::find(systemList[priority].begin(),
