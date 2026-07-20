@@ -26,6 +26,7 @@
 #include "Corrade/Containers/Array.h"
 #include "Corrade/Containers/Containers.h"
 #include "Corrade/Containers/Function.h"
+#include "Corrade/Containers/StaticArray.h"
 #include "Corrade/Tags.h"
 #include "ECS/BuiltinComponents.hpp"
 #include "Logging.hpp"
@@ -34,6 +35,7 @@
 namespace Tourmaline::Systems::ECS {
 using Entity = Tourmaline::Type::UUID;
 using System = Tourmaline::Type::UUID;
+enum SystemPriority { Start, Pre, Default, Post, Final };
 
 class World {
 public:
@@ -54,7 +56,8 @@ public:
   // ======== Systems ========
   template <typename SystemFunction>
   [[nodiscard]]
-  System AddSystem(SystemFunction &&system, bool enabled = true) {
+  System AddSystem(SystemFunction &&system, SystemPriority priority = Default,
+                   bool enabled = true) {
     using Traits = Concepts::FunctionTraits<SystemFunction>;
     using returnType = Traits::returnType;
     using arguments = Traits::arguments;
@@ -131,13 +134,13 @@ public:
     // Registering the system
     systemRegistry.Insert(newSystem,
                           {std::move(internalFunction), typeid(arguments),
-                           newSystemCache, enabled});
-    systemList.push_back(newSystem);
+                           newSystemCache, priority, enabled});
+    systemList[priority].push_back(newSystem);
     return newSystem;
   }
 
   [[nodiscard("Pointless call of ListAllSystems")]]
-  std::span<System> ListAllSystems();
+  std::span<std::vector<System>> ListAllSystems();
   [[nodiscard("Pointless call of GetSystemEnable")]]
   bool GetSystemEnable(const System &system) noexcept;
   void SetSystemEnable(const System &system, bool beEnabled = true);
@@ -210,10 +213,13 @@ private:
     systemFunction function;
     systemArgumentTupleId arguments;
     systemCache *cache;
+    SystemPriority priority;
     bool isEnabled = true;
   };
 
-  std::vector<System> systemList;
+  Corrade::Containers::StaticArray<SystemPriority::Final + 1,
+                                   std::vector<System>>
+      systemList;
   Containers::Hashmap<systemArgumentTupleId, systemCache> cacheRegistry;
   Containers::Hashmap<System, systemStorage> systemRegistry{};
   Containers::Hashmap<componentId, std::vector<systemCache *>>

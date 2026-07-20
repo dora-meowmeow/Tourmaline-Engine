@@ -11,7 +11,9 @@
 #include "Systems/Logging.hpp"
 
 #include <algorithm>
+#include <cstdint>
 #include <typeindex>
+#include <vector>
 
 using namespace Tourmaline::Systems;
 using namespace ECS;
@@ -19,20 +21,23 @@ using namespace ECS;
 void World::Step() {
   preSystems();
 
-  for (const System &system : systemList) {
-    systemStorage &storage = systemRegistry.Get(system);
-    if (storage.isEnabled) {
-      // It is being done here to eliminate repetitive code
-      if (!storage.cache->isStoring) {
-        storage.cache->storage =
-            entityComponentMap.QueryWithAll<std::type_index>(
-                storage.cache->arguments, true);
-        storage.cache->isStoring = true;
-      }
+  for (uint8_t priority = SystemPriority::Start;
+       priority < SystemPriority::Final; priority++) {
+    for (const System &system : systemList[priority]) {
+      systemStorage &storage = systemRegistry.Get(system);
+      if (storage.isEnabled) {
+        // It is being done here to eliminate repetitive code
+        if (!storage.cache->isStoring) {
+          storage.cache->storage =
+              entityComponentMap.QueryWithAll<std::type_index>(
+                  storage.cache->arguments, true);
+          storage.cache->isStoring = true;
+        }
 
-      for (componentCache &entry : storage.cache->storage) {
-        if (!disabledEntityList.Has(*entry.oppositeKey)) [[likely]] {
-          storage.function(*entry.oppositeKey, entry.valueQueryResults);
+        for (componentCache &entry : storage.cache->storage) {
+          if (!disabledEntityList.Has(*entry.oppositeKey)) [[likely]] {
+            storage.function(*entry.oppositeKey, entry.valueQueryResults);
+          }
         }
       }
     }
@@ -49,7 +54,7 @@ void World::postSystems() {
   // Defined for future use
 }
 
-std::span<System> World::ListAllSystems() { return systemList; }
+std::span<std::vector<System>> World::ListAllSystems() { return systemList; }
 bool World::GetSystemEnable(const System &system) noexcept {
   return systemRegistry.Has(system) && systemRegistry.Get(system).isEnabled;
 }
@@ -67,7 +72,9 @@ void World::SetSystemEnable(const System &system, bool beEnabled) {
 
 bool World::DestroySystem(const System &system) {
   if (systemRegistry.Has(system)) {
-    systemList.erase(std::find(systemList.begin(), systemList.end(), system));
+    SystemPriority priority = systemRegistry.Get(system).priority;
+    systemList[priority].erase(std::find(systemList[priority].begin(),
+                                         systemList[priority].end(), system));
     systemRegistry.Remove(system);
     return true;
   }
