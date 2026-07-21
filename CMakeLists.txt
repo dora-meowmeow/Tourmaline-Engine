@@ -76,6 +76,10 @@ add_library(${PROJECT_NAME} SHARED
   "source/Types/UUID.cpp"
 )
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_compile_options(${PROJECT_NAME} PRIVATE "-ftime-report")
+endif()
+
 # Actual linking
 target_link_libraries(${PROJECT_NAME} PUBLIC
     Corrade::Main
