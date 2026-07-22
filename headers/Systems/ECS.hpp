@@ -22,6 +22,7 @@
 #include "../Containers/Hashlist.hpp"
 #include "../Containers/Hashmap.hpp"
 #include "../Types.hpp"
+#include "ECS/Prefab.hpp"
 
 #include "Corrade/Containers/Array.h"
 #include "Corrade/Containers/Containers.h"
@@ -45,6 +46,22 @@ public:
 
   // ========  Entities  ========
   Entity CreateEntity(bool isEnabled = true);
+
+  template <isAComponent... Components>
+  Entity CreateFromPrefab(Prefab<Components...> prefab, bool isEnabled = true) {
+    Entity entity = CreateEntity(isEnabled);
+
+    using tupleSignature = decltype(prefab)::tupleSignature;
+    [&]<std::size_t... index>(std::index_sequence<index...>) {
+      // Until I add DKM each component will be added individually
+      (AddComponent<std::tuple_element_t<index, tupleSignature>>(
+           entity, std::get<index>(prefab.GetTuple())),
+       ...);
+    }(std::make_index_sequence<std::tuple_size_v<tupleSignature>>{});
+
+    return entity;
+  }
+
   [[nodiscard("Pointless call of EntityExists")]]
   bool EntityExists(const Entity &entity) noexcept;
   void SetEntityEnable(const Entity &entity, bool beEnabled = true) noexcept;
