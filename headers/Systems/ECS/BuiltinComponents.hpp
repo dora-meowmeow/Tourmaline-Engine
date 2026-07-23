@@ -16,8 +16,8 @@
 namespace Tourmaline::Systems::ECS {
 struct Component {
 public:
-  bool isEnabled = true;
-  virtual ~Component() = default;
+  bool isEnabled;
+  Component(bool enabled = true) : isEnabled(enabled) {};
 };
 template <typename T>
 concept isAComponent = std::derived_from<T, ECS::Component>;
