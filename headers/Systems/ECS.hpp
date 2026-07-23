@@ -49,7 +49,8 @@ public:
   // ========  Entities  ========
   Entity CreateEntity(bool isEnabled = true);
   template <isAComponent... Components>
-  Entity CreateFromPrefab(Prefab<Components...> prefab, bool isEnabled = true) {
+  Entity CreateFromPrefab(const Prefab<Components...> &prefab,
+                          bool isEnabled = true) {
     Entity entity = CreateEntity(isEnabled);
 
     using tupleSignature = decltype(prefab)::tupleSignature;
