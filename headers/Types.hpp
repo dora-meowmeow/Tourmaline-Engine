@@ -27,9 +27,7 @@ public:
   UUID(uint64_t firstHalf = 0, uint64_t secondHalf = 0);
   UUID(const std::string &uuid);
 
-private:
-  uint64_t firstHalf = 0, secondHalf = 0;
-  friend struct std::hash<Tourmaline::Type::UUID>;
+  uint64_t firstHalf, secondHalf;
 };
 } // namespace Tourmaline::Type
 

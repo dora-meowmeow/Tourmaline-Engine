@@ -16,8 +16,9 @@ using namespace Tourmaline::Systems;
 using namespace ECS;
 
 // Entities
-Entity World::CreateEntity(bool isEnabled) {
-  auto newEntity = Random::GenerateUUID();
+Entity World::CreateEntity(bool isEnabled, Type::UUID presetUUID) {
+  bool isUnspecified = presetUUID.firstHalf == 0 && presetUUID.secondHalf == 0;
+  auto newEntity = isUnspecified ? Random::GenerateUUID() : presetUUID;
 
   // Default components
   entityComponentMap.Insert(newEntity, typeid(Components::Transform),

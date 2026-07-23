@@ -47,11 +47,12 @@ public:
   void Step();
 
   // ========  Entities  ========
-  Entity CreateEntity(bool isEnabled = true);
+  Entity CreateEntity(bool isEnabled = true, Type::UUID presetUUID = {0, 0});
   template <isAComponent... Components>
   Entity CreateFromPrefab(const Prefab<Components...> &prefab,
-                          bool isEnabled = true) {
-    Entity entity = CreateEntity(isEnabled);
+                          bool isEnabled = true,
+                          Type::UUID presetUUID = {0, 0}) {
+    Entity entity = CreateEntity(isEnabled, presetUUID);
 
     using tupleSignature = decltype(prefab)::tupleSignature;
     [&]<std::size_t... index>(std::index_sequence<index...>) {
