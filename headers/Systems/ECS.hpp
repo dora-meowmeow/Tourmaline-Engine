@@ -28,6 +28,8 @@
 #include "Corrade/Containers/Containers.h"
 #include "Corrade/Containers/Function.h"
 #include "Corrade/Containers/StaticArray.h"
+#include "Corrade/Containers/String.h"
+#include "Corrade/Containers/StringView.h"
 #include "Corrade/Tags.h"
 #include "ECS/BuiltinComponents.hpp"
 #include "Logging.hpp"
@@ -46,7 +48,6 @@ public:
 
   // ========  Entities  ========
   Entity CreateEntity(bool isEnabled = true);
-
   template <isAComponent... Components>
   Entity CreateFromPrefab(Prefab<Components...> prefab, bool isEnabled = true) {
     Entity entity = CreateEntity(isEnabled);
@@ -64,10 +65,15 @@ public:
 
   [[nodiscard("Pointless call of EntityExists")]]
   bool EntityExists(const Entity &entity) noexcept;
+  bool DestroyEntity(Entity entity);
+
   void SetEntityEnable(const Entity &entity, bool beEnabled = true) noexcept;
   [[nodiscard("Pointless call of GetEntityEnable")]]
   bool GetEntityEnable(const Entity &entity) noexcept;
-  bool DestroyEntity(Entity entity);
+
+  void SetEntityLabel(const Entity &entity, Corrade::Containers::String label);
+  [[nodiscard("Pointless call of GetEntityLabel")]]
+  Corrade::Containers::StringView GetEntityLabel(const Entity &entity) noexcept;
 
   // ======== Systems ========
   template <typename SystemFunction>
@@ -206,6 +212,7 @@ public:
 private:
   Containers::DualkeyMap<Entity, std::type_index, std::any>
       entityComponentMap{};
+  Containers::Hashmap<Entity, Corrade::Containers::String> entityLabelList{};
 
   // Systems
   using systemFunction = Corrade::Containers::Function<void(

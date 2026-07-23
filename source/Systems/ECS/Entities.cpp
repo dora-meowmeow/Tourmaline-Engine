@@ -74,6 +74,25 @@ bool World::GetEntityEnable(const Entity &entity) noexcept {
   return disabledEntityList.Has(entity);
 }
 
+void World::SetEntityLabel(const Entity &entity,
+                           Corrade::Containers::String label) {
+  if (entityLabelList.Has(entity)) {
+    entityLabelList.Get(entity) = label;
+    return;
+  }
+  entityLabelList.Insert(entity, label);
+}
+
+Corrade::Containers::StringView
+World::GetEntityLabel(const Entity &entity) noexcept {
+  if (entityLabelList.Has(entity)) {
+    return entityLabelList.Get(entity);
+  }
+
+  static Corrade::Containers::String unknown = "unknown";
+  return unknown;
+}
+
 bool World::DestroyEntity(Entity entity) {
   return entityComponentMap.Remove(entity, std::nullopt);
 }
