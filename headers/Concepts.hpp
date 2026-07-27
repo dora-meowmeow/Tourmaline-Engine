@@ -16,9 +16,10 @@
 
 namespace Tourmaline::Concepts {
 template <typename T>
-concept Hashable = std::equality_comparable<T> && requires(T x) {
-  { std::hash<T>{}(x) } -> std::convertible_to<std::size_t>;
-};
+concept Hashable = std::equality_comparable<T> &&
+                   std::is_nothrow_move_constructible_v<T> && requires(T x) {
+                     { std::hash<T>{}(x) } -> std::convertible_to<std::size_t>;
+                   };
 
 template <typename Base, typename Type1, typename Type2>
 concept Either = std::same_as<Base, Type1> || std::same_as<Base, Type2>;

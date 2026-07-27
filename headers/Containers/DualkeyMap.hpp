@@ -53,14 +53,7 @@ public:
 
   // Construct/Destruct
   DualkeyMap() { hashList.reserve(Options.baseReservation); }
-  ~DualkeyMap() {
-    // I'm sure there is a better way to do this
-    for (DualkeyHash *hash : hashList) {
-      if (hash != nullptr) [[likely]] {
-        delete hash;
-      }
-    }
-  }
+  ~DualkeyMap() {}
 
   // No copying due to the container expected to be the sole
   // owner of the data
@@ -69,17 +62,24 @@ public:
 
   // Public controls
   Entry Insert(AKey firstKey, BKey secondKey, Value value) {
-    DualkeyHash *hash = new DualkeyHash(std::move(firstKey),
-                                        std::move(secondKey), std::move(value));
 
     if (graveyard.empty()) {
-      hashList.push_back(hash);
-    } else {
-      hashList[graveyard.top()] = hash;
-      graveyard.pop();
+      DualkeyHash &hash =
+          hashList
+              .emplace_back(std::in_place, std::move(firstKey),
+                            std::move(secondKey), std::move(value))
+              .value();
+      return {hash.firstKey, hash.secondKey, hash.value};
     }
 
-    return {hash->firstKey, hash->secondKey, hash->value};
+    std::optional<DualkeyHash> &hashSlot = hashList[graveyard.top()];
+    graveyard.pop();
+
+    hashSlot.emplace(std::move(firstKey), std::move(secondKey),
+                     std::move(value));
+
+    DualkeyHash &hash = hashSlot.value();
+    return {hash.firstKey, hash.secondKey, hash.value};
   }
 
   std::size_t Remove(std::optional<AKey> firstKey,
@@ -100,40 +100,38 @@ public:
         isSecondKeyGiven ? std::hash<BKey>{}(secondKey.value()) : 0;
     std::size_t index = 0, amountDeleted = 0;
     uint8_t stateOfIndexing = isFirstKeyGiven + (isSecondKeyGiven << 1);
-    for (DualkeyHash *hash : hashList) {
+    for (std::optional<DualkeyHash> &hashEntry : hashList) {
       // Tombstone
-      if (hash == nullptr) [[unlikely]] {
+      if (!hashEntry.has_value()) [[unlikely]] {
         continue;
       }
+      DualkeyHash &hash = hashEntry.value();
 
       switch (stateOfIndexing) {
       case 1: // Only first key is given
-        if (firstKeyHash == hash->firstKeyHash &&
-            firstKey.value() == hash->firstKey) {
-          delete hash;
-          hashList[index] = nullptr;
+        if (firstKeyHash == hash.firstKeyHash &&
+            firstKey.value() == hash.firstKey) {
+          hashEntry.reset();
           graveyard.push(index);
           ++amountDeleted;
         }
         break;
 
       case 2: // Only second key is given
-        if (secondKeyHash == hash->secondKeyHash &&
-            secondKey.value() == hash->secondKey) {
-          delete hash;
-          hashList[index] = nullptr;
+        if (secondKeyHash == hash.secondKeyHash &&
+            secondKey.value() == hash.secondKey) {
+          hashEntry.reset();
           graveyard.push(index);
           ++amountDeleted;
         }
         break;
 
       case 3: // Both given
-        if (firstKeyHash == hash->firstKeyHash &&
-            secondKeyHash == hash->secondKeyHash &&
-            firstKey.value() == hash->firstKey &&
-            secondKey.value() == hash->secondKey) {
-          delete hash;
-          hashList[index] = nullptr;
+        if (firstKeyHash == hash.firstKeyHash &&
+            secondKeyHash == hash.secondKeyHash &&
+            firstKey.value() == hash.firstKey &&
+            secondKey.value() == hash.secondKey) {
+          hashEntry.reset();
           graveyard.push(index);
           return 1;
         }
@@ -171,31 +169,32 @@ public:
 
     uint8_t stateOfIndexing = isFirstKeyGiven + (isSecondKeyGiven << 1);
     // Putting hash checks first to benefit from short circuits
-    for (DualkeyHash *hash : hashList) {
+    for (const std::optional<DualkeyHash> &hashEntry : hashList) {
       // Tombstone
-      if (hash == nullptr) [[unlikely]] {
+      if (!hashEntry.has_value()) [[unlikely]] {
         continue;
       }
+      DualkeyHash &hash = hashEntry.value();
 
       switch (stateOfIndexing) {
       case 1: // Only first key is given
-        if (firstKeyHash == hash->firstKeyHash &&
-            firstKey.value() == hash->firstKey) {
-          finishedQuery.emplace_back(std::cref(hash->secondKey), hash->value);
+        if (firstKeyHash == hash.firstKeyHash &&
+            firstKey.value() == hash.firstKey) {
+          finishedQuery.emplace_back(std::cref(hash.secondKey), hash.value);
         }
         continue;
       case 2: // Only second key is given
-        if (secondKeyHash == hash->secondKeyHash &&
-            secondKey.value() == hash->secondKey) {
-          finishedQuery.emplace_back(std::cref(hash->firstKey), hash->value);
+        if (secondKeyHash == hash.secondKeyHash &&
+            secondKey.value() == hash.secondKey) {
+          finishedQuery.emplace_back(std::cref(hash.firstKey), hash.value);
         }
         continue;
       case 3: // Both are given
-        if (firstKeyHash == hash->firstKeyHash &&
-            secondKeyHash == hash->secondKeyHash &&
-            firstKey.value() == hash->firstKey &&
-            secondKey.value() == hash->secondKey) {
-          finishedQuery.emplace_back(std::monostate{}, hash->value);
+        if (firstKeyHash == hash.firstKeyHash &&
+            secondKeyHash == hash.secondKeyHash &&
+            firstKey.value() == hash.firstKey &&
+            secondKey.value() == hash.secondKey) {
+          finishedQuery.emplace_back(std::monostate{}, hash.value);
           break;
         }
         continue;
@@ -227,11 +226,14 @@ public:
   void Scan(std::function<bool(const std::size_t firstKeyHash,
                                const std::size_t secondKeyHash, Value &value)>
                 scanFunction) {
-    for (DualkeyHash *hash : hashList) {
-      if (hash == nullptr) {
+    for (std::optional<DualkeyHash> &hashEntry : hashList) {
+      // Tombstone
+      if (!hashEntry.has_value()) [[unlikely]] {
         continue;
       }
-      if (scanFunction(hash->firstKeyHash, hash->secondKeyHash, hash->value)) {
+      DualkeyHash &hash = hashEntry.value();
+
+      if (scanFunction(hash.firstKeyHash, hash.secondKeyHash, hash.value)) {
         return;
       }
     }
@@ -240,11 +242,14 @@ public:
   void Scan(std::function<bool(const AKey &firstKey, const BKey &secondKey,
                                Value &value)>
                 scanFunction) {
-    for (DualkeyHash *hash : hashList) {
-      if (hash == nullptr) {
+    for (std::optional<DualkeyHash> &hashEntry : hashList) {
+      // Tombstone
+      if (!hashEntry.has_value()) [[unlikely]] {
         continue;
       }
-      if (scanFunction(hash->firstKey, hash->secondKey, hash->value)) {
+      DualkeyHash &hash = hashEntry.value();
+
+      if (scanFunction(hash.firstKey, hash.secondKey, hash.value)) {
         return;
       }
     }
@@ -259,15 +264,22 @@ private:
           secondKeyHash(std::hash<BKey>{}(this->secondKey)),
           value(std::move(value)) {}
 
-    const AKey firstKey;
-    const BKey secondKey;
+    DualkeyHash(DualkeyHash &&other) noexcept
+        : firstKey(std::move(other.firstKey)),
+          secondKey(std::move(other.secondKey)),
+          firstKeyHash(std::hash<AKey>{}(this->firstKey)),
+          secondKeyHash(std::hash<BKey>{}(this->secondKey)),
+          value(std::move(other.value)) {}
+
+    mutable AKey firstKey;
+    mutable BKey secondKey;
     const std::size_t firstKeyHash;
     const std::size_t secondKeyHash;
     mutable Value value;
   };
 
   // Actual data
-  std::vector<DualkeyHash *> hashList;
+  std::vector<std::optional<DualkeyHash>> hashList;
   std::stack<std::size_t> graveyard;
 
   // Interal querying
@@ -310,22 +322,24 @@ private:
                         {8.0f, 0.01f, 2.5f, 2048, 8}> // Aggressive hashmap :o
         queryResults;
 
-    for (DualkeyHash *hash : hashList) {
+    for (std::optional<DualkeyHash> &hashEntry : hashList) {
       // Tombstone
-      if (hash == nullptr) {
+      if (!hashEntry.has_value()) [[unlikely]] {
         continue;
       }
+
+      DualkeyHash &hash = hashEntry.value();
 
       // The hell of doing 2 conditions with similar logics in
       // the same logical block
       if constexpr (searchingInFirstKey) {
-        hashToCompare = hash->firstKeyHash;
-        keyToCompare = const_cast<AKey *>(&hash->firstKey);
-        oppositeKey = const_cast<BKey *>(&hash->secondKey);
+        hashToCompare = hash.firstKeyHash;
+        keyToCompare = const_cast<AKey *>(&hash.firstKey);
+        oppositeKey = const_cast<BKey *>(&hash.secondKey);
       } else {
-        hashToCompare = hash->secondKeyHash;
-        keyToCompare = const_cast<BKey *>(&hash->secondKey);
-        oppositeKey = const_cast<AKey *>(&hash->firstKey);
+        hashToCompare = hash.secondKeyHash;
+        keyToCompare = const_cast<BKey *>(&hash.secondKey);
+        oppositeKey = const_cast<AKey *>(&hash.firstKey);
       }
 
       // The code above was done to make this code more uniform
@@ -333,7 +347,7 @@ private:
         if (keyHashes[index] == hashToCompare && keys[index] == *keyToCompare) {
           if (queryResults.Has(*oppositeKey)) [[likely]] {
             auto &entry = queryResults.Get(*oppositeKey);
-            entry.valueQueryResults[index] = &hash->value;
+            entry.valueQueryResults[index] = &hash.value;
             ++entry.howManyFound;
             break;
           }
@@ -342,7 +356,7 @@ private:
               .Insert(*oppositeKey, {oppositeKey,
                                      Corrade::Containers::Array<Value *>{
                                          Corrade::NoInit, keyCount}})
-              .valueQueryResults[index] = &hash->value;
+              .valueQueryResults[index] = &hash.value;
         }
       }
     }

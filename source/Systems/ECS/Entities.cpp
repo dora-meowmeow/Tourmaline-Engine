@@ -22,7 +22,7 @@ Entity World::CreateEntity(bool isEnabled, Type::UUID presetUUID) {
 
   // Default components
   entityComponentMap.Insert(newEntity, typeid(Components::Transform),
-                            Components::Transform());
+                            Components::Transform{});
 
   if (componentCacheMap.Has(typeid(Components::Transform))) {
     for (systemCache *cache :
