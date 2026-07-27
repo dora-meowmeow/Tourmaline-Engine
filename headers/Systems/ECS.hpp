@@ -115,7 +115,7 @@ public:
         if ((any_cast<typename Traits::template argument<index + 1>>(
                  *args[index])
                  .isEnabled &&
-             ...)) [[unlikely]] {
+             ...)) [[likely]] {
           system(entity,
                  (any_cast<typename Traits::template argument<index + 1>>(
                      *args[index]))...);
