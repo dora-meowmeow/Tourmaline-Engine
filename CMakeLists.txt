@@ -74,6 +74,7 @@ add_library(${PROJECT_NAME} SHARED
   "source/Systems/Logging.cpp"
   "source/Systems/Random.cpp"
   "source/Types/UUID.cpp"
+  "source/Game/Game.cpp"
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -88,7 +89,7 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     Corrade::PluginManager
 
     Magnum::Magnum
-    Magnum::Sdl2Application
+    Magnum::GlfwApplication
     Magnum::GL
     Magnum::Trade
 )
