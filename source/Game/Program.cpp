@@ -7,7 +7,7 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "Game/GameProgram.hpp"
+#include "Game/Program.hpp"
 
 #include "Magnum/GL/AbstractFramebuffer.h"
 #include "Magnum/GL/DefaultFramebuffer.h"
@@ -15,25 +15,25 @@
 
 using namespace Magnum;
 
-void Tourmaline::GameProgram::OnStart() {}
-void Tourmaline::GameProgram::OnStep() {}
-void Tourmaline::GameProgram::OnExit() {}
+void Tourmaline::Game::Program::OnStart() {}
+void Tourmaline::Game::Program::OnStep() {}
+void Tourmaline::Game::Program::OnExit() {}
 
-void Tourmaline::GameProgram::initialize() {
+void Tourmaline::Game::Program::initialize() {
   create(
       Configuration{}.setTitle(config.windowTitle).setSize(config.windowSize));
   setMinimalLoopPeriod(static_cast<Magnum::Nanoseconds>(1.0_sec) /
                        config.desiredFrameRate);
 }
 
-int Tourmaline::GameProgram::Run(const Config &conf) {
+int Tourmaline::Game::Program::Run(const Config &conf) {
   config = conf;
   initialize();
   OnStart();
   return exec();
 }
 
-void Tourmaline::GameProgram::drawEvent() {
+void Tourmaline::Game::Program::drawEvent() {
   GL::defaultFramebuffer.clear(GL::FramebufferClear::Color |
                                GL::FramebufferClear::Depth);
   OnStep();

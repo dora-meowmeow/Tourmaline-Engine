@@ -74,7 +74,7 @@ add_library(${PROJECT_NAME} SHARED
   "source/Systems/Logging.cpp"
   "source/Systems/Random.cpp"
   "source/Types/UUID.cpp"
-  "source/Game/GameProgram.cpp"
+  "source/Game/Program.cpp"
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

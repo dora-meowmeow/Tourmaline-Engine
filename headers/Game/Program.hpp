@@ -16,10 +16,10 @@
 #include "Magnum/Platform/GlfwApplication.h"
 #include "Magnum/Tags.h"
 
-namespace Tourmaline {
+namespace Tourmaline::Game {
 using namespace Magnum::Math::Literals;
 
-class GameProgram : private Magnum::Platform::GlfwApplication {
+class Program : private Magnum::Platform::GlfwApplication {
 public:
   struct Config {
     Corrade::Containers::String windowTitle{"Game Window"};
@@ -27,11 +27,11 @@ public:
     uint64_t desiredFrameRate = 60;
   };
 
-  explicit GameProgram()
+  explicit Program()
       : Magnum::Platform::Application{Arguments{argc, _argv},
                                       Magnum::NoCreate} {};
-  GameProgram(GameProgram &&) = delete;
-  GameProgram(const GameProgram &) = delete;
+  Program(Program &&) = delete;
+  Program(const Program &) = delete;
   int Run(const Config &conf);
 
   virtual void OnStart();
@@ -49,5 +49,5 @@ private:
   inline static char _argv0[] = "empty";
   inline static char *_argv[] = {_argv0};
 };
-} // namespace Tourmaline
+} // namespace Tourmaline::Game
 #endif
