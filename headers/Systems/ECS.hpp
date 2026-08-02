@@ -78,14 +78,16 @@ public:
   Corrade::Containers::StringView GetEntityLabel(const Entity &entity) noexcept;
 
   // ======== Systems ========
-  template <typename SystemFunction>
+  template <typename SystemFunction, typename Instance = int>
   System AddSystem(SystemFunction &&system, SystemPriority priority = Default,
-                   bool enabled = true) {
+                   bool enabled = true, Instance *instance = nullptr) {
     using Traits = Concepts::FunctionTraits<SystemFunction>;
     using returnType = Traits::returnType;
     using arguments = Traits::arguments;
     using firstArgument = Traits::template argument<0>;
     constexpr std::size_t componentCount = Traits::argumentCount - 1;
+    constexpr bool requiresInstance =
+        std::is_member_function_pointer_v<SystemFunction>;
 
     // Welcome to defensive programming hell
     static_assert(std::is_void_v<returnType>, "Return type must be void!");
@@ -94,6 +96,11 @@ public:
                   "argument aside from const Entity&!");
     static_assert(std::is_same_v<firstArgument, const Entity &>,
                   "First Argument must be the type const Entity&!");
+    if constexpr (requiresInstance) {
+      static_assert(std::is_class_v<Instance>,
+                    "Non-static pointer-to-member functions must supply which "
+                    "instance to run the function on!");
+    }
 
     // Making sure that everything is infact a component
     [&]<std::size_t... index>(std::index_sequence<index...>) {
@@ -107,21 +114,31 @@ public:
 
     // Type erasure nightmare
     System newSystem = Random::GenerateUUID();
-    systemFunction internalFunction = [system](const Entity &entity,
-                                               std::span<std::any *> args) {
-      [&]<std::size_t... index>(std::index_sequence<index...>) {
-        // This check could be done in World::Step(), however
-        // it is easier (and cheaper I believe) to implement it here
-        if ((any_cast<typename Traits::template argument<index + 1>>(
-                 *args[index])
-                 .isEnabled &&
-             ...)) [[likely]] {
-          system(entity,
-                 (any_cast<typename Traits::template argument<index + 1>>(
-                     *args[index]))...);
-        }
-      }(std::make_integer_sequence<std::size_t, componentCount>{});
-    };
+    systemFunction internalFunction =
+        [system, instance, requiresInstance](const Entity &entity,
+                                             std::span<std::any *> args) {
+          [&]<std::size_t... index>(std::index_sequence<index...>) {
+            // This check could be done in World::Step(), however
+            // it is easier (and cheaper I believe) to implement it here
+            if ((any_cast<typename Traits::template argument<index + 1>>(
+                     *args[index])
+                     .isEnabled &&
+                 ...)) [[likely]] {
+
+              // Pointer to Member functions
+              if constexpr (requiresInstance) {
+                (instance->*system)(
+                    entity,
+                    (any_cast<typename Traits::template argument<index + 1>>(
+                        *args[index]))...);
+              } else {
+                system(entity,
+                       (any_cast<typename Traits::template argument<index + 1>>(
+                           *args[index]))...);
+              }
+            }
+          }(std::make_integer_sequence<std::size_t, componentCount>{});
+        };
 
     // No need to cache something that already exists
     systemCache *newSystemCache;
