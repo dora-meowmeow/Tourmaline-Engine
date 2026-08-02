@@ -20,7 +20,7 @@ Program::Args Program::arguments{Program::_argc, &Program::_argv};
 
 void Program::OnStart() {}
 void Program::OnStep() {}
-void Program::OnExit() {}
+bool Program::OnExit() { return true; }
 
 void Program::initialize() {
   create(
@@ -44,3 +44,5 @@ void Program::drawEvent() {
   swapBuffers();
   redraw();
 }
+
+void Program::exitEvent(ExitEvent &event) { event.setAccepted(OnExit()); }

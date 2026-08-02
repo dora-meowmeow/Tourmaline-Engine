@@ -35,7 +35,9 @@ public:
 
   virtual void OnStart();
   virtual void OnStep();
-  virtual void OnExit();
+  // This is set to bool to allow the program to flag
+  // if it is safe to exit or not.
+  virtual bool OnExit();
 
   Systems::ECS::World ECS;
   static struct Args {
@@ -46,6 +48,7 @@ public:
 private:
   void initialize();
   void drawEvent() override;
+  void exitEvent(ExitEvent &event) override;
 
   Config config;
   // Empty data incase the dev doesn't want to pass arguments
