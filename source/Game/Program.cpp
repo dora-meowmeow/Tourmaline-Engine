@@ -14,26 +14,29 @@
 #include "Magnum/Math/Time.h"
 
 using namespace Magnum;
+using namespace Tourmaline::Game;
 
-void Tourmaline::Game::Program::OnStart() {}
-void Tourmaline::Game::Program::OnStep() {}
-void Tourmaline::Game::Program::OnExit() {}
+Program::Args Program::arguments{Program::_argc, &Program::_argv};
 
-void Tourmaline::Game::Program::initialize() {
+void Program::OnStart() {}
+void Program::OnStep() {}
+void Program::OnExit() {}
+
+void Program::initialize() {
   create(
       Configuration{}.setTitle(config.windowTitle).setSize(config.windowSize));
   setMinimalLoopPeriod(static_cast<Magnum::Nanoseconds>(1.0_sec) /
                        config.desiredFrameRate);
 }
 
-int Tourmaline::Game::Program::Run(const Config &conf) {
+int Program::Run(const Config &conf) {
   config = conf;
   initialize();
   OnStart();
   return exec();
 }
 
-void Tourmaline::Game::Program::drawEvent() {
+void Program::drawEvent() {
   GL::defaultFramebuffer.clear(GL::FramebufferClear::Color |
                                GL::FramebufferClear::Depth);
   OnStep();

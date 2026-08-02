@@ -28,26 +28,29 @@ public:
   };
 
   explicit Program()
-      : Magnum::Platform::Application{Arguments{argc, _argv},
+      : Magnum::Platform::Application{Arguments{arguments.argc, arguments.argv},
                                       Magnum::NoCreate} {};
-  Program(Program &&) = delete;
-  Program(const Program &) = delete;
+
   int Run(const Config &conf);
 
   virtual void OnStart();
   virtual void OnStep();
   virtual void OnExit();
+
   Systems::ECS::World ECS;
+  static struct Args {
+    int argc;
+    char **argv;
+  } arguments;
 
 private:
   void initialize();
   void drawEvent() override;
-  Config config;
 
-  // Magnum forcing me to use Arguments -_-
-  inline static int argc = 1;
-  inline static char _argv0[] = "empty";
-  inline static char *_argv[] = {_argv0};
+  Config config;
+  // Empty data incase the dev doesn't want to pass arguments
+  inline static char *_argv = (char *)"empty";
+  inline static int _argc = 1;
 };
 } // namespace Tourmaline::Game
 #endif
