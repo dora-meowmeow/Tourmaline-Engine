@@ -29,6 +29,9 @@ public:
 
   uint64_t firstHalf, secondHalf;
 };
+
+// standard library might have something that does this
+struct UnspecifiedType;
 } // namespace Tourmaline::Type
 
 namespace std {
