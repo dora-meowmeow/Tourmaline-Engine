@@ -78,6 +78,12 @@ public:
   Corrade::Containers::StringView GetEntityLabel(const Entity &entity) noexcept;
 
   // ======== Systems ========
+  template <typename SystemFunction, typename Instance>
+  System AddSystem(SystemFunction &&system, Instance *instance,
+                   SystemPriority priority = Default, bool enabled = true) {
+    return AddSystem(system, priority, enabled, instance);
+  }
+
   template <typename SystemFunction, typename Instance = Type::UnspecifiedType>
   System AddSystem(SystemFunction &&system, SystemPriority priority = Default,
                    bool enabled = true, Instance *instance = nullptr) {
