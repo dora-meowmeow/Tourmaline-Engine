@@ -170,3 +170,5 @@ build*/
 # clangd
 .cache/
 
+# doxygen
+docs/
