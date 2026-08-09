@@ -26,10 +26,10 @@ public:
   /**
    * @brief Log severity
    *
-   * @note when Log::Level::Error is given as severity. The logging function
+   * @note when LogLevel::Error is given as severity. The logging function
    * will throw an std::runtime_error.
    *
-   * @note when Log::Level::Critical is given as severity. The logging function
+   * @warning when LogLevel::Critical is given as severity. The logging function
    * will trigger std::terminate and shutdown the software.
    */
   enum LogLevel { Critical, Error, Warning, Info, Debug, Trace };
@@ -48,8 +48,8 @@ public:
    * @param message The body of the message.
    * @param position Where this log originates from. Specifying this while
    * optional is heavily suggested.
-   * @param severity How severe is this log message, see @ref
-   * Tourmaline::Systems::Logging::LogLevel .
+   * @param severity How severe is this log message, see
+   * Tourmaline::Systems::Logging::LogLevel.
    * @param assertion when set to `true` the log message will actually be sent,
    * otherwise it will be ignored.
    */
