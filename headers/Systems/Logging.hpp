@@ -16,9 +16,13 @@
 
 #include <fstream>
 
-namespace Tourmaline::Systems {
 /**
  * @file
+ * @brief Built-in logging capacities.
+ */
+
+namespace Tourmaline::Systems {
+/**
  * @brief Static class used for logging
  */
 class Logging {
