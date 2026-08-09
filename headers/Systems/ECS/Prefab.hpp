@@ -14,7 +14,19 @@
 
 #include <tuple>
 
+/**
+ * @file
+ * @brief Basic Prefab capacity.
+ */
+
 namespace Tourmaline::Systems::ECS {
+
+/**
+ * @brief The prefab class. Prefabs are used to quicky mass produce
+ * entities with multiple pre-determined components.
+ * @tparam Components Any classes that satisfies
+ * Tourmaline::Systems::Ecs::isAcomponent concept.
+ */
 template <isAComponent... Components> class Prefab {
 private:
   std::tuple<Components...> components;
@@ -22,11 +34,27 @@ private:
 public:
   using tupleSignature = decltype(components);
 
+  /**
+   * @brief Constructs a prefab with given arguments.
+   * @param arguments These arguments are forwarded to construct each component
+   * inside the prefab.
+   */
   Prefab(Components... arguments)
       : components(std::forward_as_tuple(arguments...)) {}
 
+  /**
+   * @brief Interal tuple storage of each component.
+   * @return A reference to the interal tuple.
+   */
   std::tuple<Components...> &GetTuple() { return components; }
 
+  /**
+   * @brief Interal tuple storage of each component.
+   * @tparam Component any classes that satisfies
+   * Tourmaline::Systems::Ecs::isAcomponent concept.
+   * Must be a component type that is already inside this prefab.
+   * @return A reference to the requested component.
+   */
   template <isAComponent Component> Component &GetComponent() {
     return std::get<Component>(components);
   };
