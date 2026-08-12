@@ -35,19 +35,63 @@
 #include "Logging.hpp"
 #include "Random.hpp"
 
+/**
+ * @file
+ * @brief Built-in Entity Component System.
+ */
+
 namespace Tourmaline::Systems::ECS {
+/// @brief Alias for Tourmaline::Type::UUID. Entity UUIDs and System UUIDs are
+/// stored seperately.
 using Entity = Tourmaline::Type::UUID;
+/// @brief Alias for Tourmaline::Type::UUID. Entity UUIDs and System UUIDs are
+/// stored seperately.
 using System = Tourmaline::Type::UUID;
+
+/// @brief The priority in which a system will run. Start will run first and
+/// Final will run last. The default is Default.
 enum SystemPriority { Start, Pre, Default, Post, Final };
 
+/**
+ * @brief The fundamental class that owns the entire ECS system.
+ */
 class World {
 public:
   World() {}
   // ====== World controls ======
+  /**
+   * @brief Runs each system for one time. Could be interpeted as a
+   * "World Tick".
+   */
   void Step();
 
   // ========  Entities  ========
+  /**
+   * @brief Creates an entity with
+   * Tourmaline::Systems::Components::Transform component.
+   *
+   * @param isEnabled Whether or not the entity should be enabled by creation.
+   * @param presetUUID Useful if you need an entity to have a specific UUID.
+   *
+   * @return The created entity's UUID
+   */
   Entity CreateEntity(bool isEnabled = true, Type::UUID presetUUID = {0, 0});
+
+  /**
+   * @brief Creates an entity with
+   * Tourmaline::Systems::Components::Transform component and also
+   * components inside Tourmaline::Systems::ECS::Prefab with specific
+   * values set per component.
+   *
+   * @tparam Components This field should be automatically filled by
+   * prefab itself.
+   *
+   * @param prefab Prefab to use for creation of the entity.
+   * @param isEnabled Whether or not the entity should be enabled by creation.
+   * @param presetUUID Useful if you need an entity to have a specific UUID.
+   *
+   * @return The created entity's UUID
+   */
   template <isAComponent... Components>
   Entity CreateFromPrefab(const Prefab<Components...> &prefab,
                           bool isEnabled = true,
@@ -65,25 +109,102 @@ public:
     return entity;
   }
 
+  /**
+   * @brief Checks if an entity UUID is valid.
+   *
+   * @param entity Entity UUID to check.
+   *
+   * @return True if entity exists, false otherwise.
+   */
   [[nodiscard("Pointless call of EntityExists")]]
   bool EntityExists(const Entity &entity) noexcept;
+
+  /**
+   * @brief Destroys an entity if exists.
+   *
+   * @param entity Entity UUID to attempt to destroy.
+   *
+   * @return True if entity did exist and got destroyed, otherwise false.
+   */
   bool DestroyEntity(Entity entity);
 
+  /**
+   * @brief Sets if an entity is enabled to be used by a system.
+   *
+   * @param entity Entity UUID to enable/disable.
+   * @param beEnabled True to enable, false to disable.
+   */
   void SetEntityEnable(const Entity &entity, bool beEnabled = true) noexcept;
+
+  /**
+   * @brief Fetches if an entity is enabled or disabled.
+   *
+   * @param entity Entity UUID to check.
+   *
+   * @return True to enable, false to disable.
+   */
   [[nodiscard("Pointless call of GetEntityEnable")]]
   bool GetEntityEnable(const Entity &entity) noexcept;
 
+  /**
+   * @brief Sets an entity a label/name.
+   *
+   * @param entity Entity UUID to set a label/name.
+   * @param label The label/name to use.
+   *
+   */
   void SetEntityLabel(const Entity &entity, Corrade::Containers::String label);
+
+  /**
+   * @brief Fetches entity's label/name, if available.
+   *
+   * @param entity Entity UUID to fetch the label.
+   *
+   * @return If labeled, returns the labeled name. Otherwise returns "unknown".
+   */
   [[nodiscard("Pointless call of GetEntityLabel")]]
   Corrade::Containers::StringView GetEntityLabel(const Entity &entity) noexcept;
 
   // ======== Systems ========
+  /**
+   * @brief Overload of AddSystem for convenience.
+   *
+   * This is an overload for sake of convenience when specifying
+   * a class instance. It doesn't do anything different except
+   * change the order of arguments.
+   */
   template <typename SystemFunction, typename Instance>
   System AddSystem(SystemFunction &&system, Instance *instance,
                    SystemPriority priority = Default, bool enabled = true) {
     return AddSystem(system, priority, enabled, instance);
   }
 
+  /**
+   * @brief Adds any function that follows the rules specified as a system.
+   *
+   * @tparam SystemFunction A function (could be a member function of a class)
+   * that follows the rules specified below.
+   * @tparam Instance If the function is a member function of a class, set it as
+   * the class type. Otherwise leave it as is.
+   *
+   * @param system The function to add as a system.
+   * @param priority Refer to Tourmaline::System::ECS::SystemPriority.
+   * @param enabled Should the system be enabled from creation.
+   * @param instance A pointer to a class instance. Needed for memeber functions
+   * of a class that AREN'T static (a.k.a. context to run the function on).
+   *
+   * @return System UUID of the created system.
+   *
+   * ## A function must follow the following rules to be a system.
+   * - Must have return type of void.
+   * - Must have at least 2 arguments.
+   *   - First argument must be const Entity& (or const
+   * Tourmaline::Systems::ECS::Entity&).
+   *   - Every argument except first must be a type that publically
+   * inherit Tourmaline::Systems::ECS::Component.
+   * - If a pointer-to-member function (a.k.a. member function of a class),
+   * there must be an instance of a class specified.
+   */
   template <typename SystemFunction, typename Instance = Type::UnspecifiedType>
   System AddSystem(SystemFunction &&system, SystemPriority priority = Default,
                    bool enabled = true, Instance *instance = nullptr) {
@@ -185,15 +306,67 @@ public:
     return newSystem;
   }
 
+  /**
+   * @brief Gives a list of all systems added.
+   *
+   * @return A view of a list of vectors. There is in total 5 entries.
+   * first entry is systems that have priority highest and 5 is last.
+   *
+   * @note Refer to Tourmaline::System::ECS::SystemPriority for
+   * more information.
+   */
   [[nodiscard("Pointless call of ListAllSystems")]]
   std::span<std::vector<System>> ListAllSystems();
+
+  /**
+   * @brief Checks if a system is enabled/disabled.
+   *
+   * @param system System UUID to check if enabled or disabled.
+   *
+   * @return True if enabled, false otherwise.
+   */
   [[nodiscard("Pointless call of GetSystemEnable")]]
   bool GetSystemEnable(const System &system) noexcept;
+
+  /**
+   * @brief Set a system to be enabled/disabled.
+   *
+   * @param system System UUID to set to be enabled or disabled.
+   * @param beEnabled True to enable, false to disable.
+   */
   void SetSystemEnable(const System &system, bool beEnabled = true);
+
+  /**
+   * @brief Force run a system at any point of the execution.
+   *
+   * @param system System UUID to force run.
+   * @param ignoreEnabled if set to true, this function
+   * won't care if it is enabled or not. Otherwise it will
+   * follow the enable/disable rule.
+   */
   void InvokeSystem(const System &system, bool ignoreEnabled = true);
+
+  /**
+   * @brief Removes a system if exists.
+   *
+   * @param system System UUID to attempt to remove.
+   *
+   * @return True if system did exist and got destroyed, otherwise false.
+   */
   bool RemoveSystem(const System &system);
 
   // ======== Components ========
+  /**
+   * @brief Adds a component to an entity.
+   *
+   * @tparam Component Any type that publically inherits
+   * Tourmaline::Systems::ECS::Component.
+   * @tparam ComponentArgs Arguments to be used for construction
+   * of the component.
+   *
+   * @param entity Entity UUID to add the component.
+   * @param args Arguments to construct the component.
+   */
   template <isAComponent Component, typename... ComponentArgs>
   Component &AddComponent(const Entity &entity, ComponentArgs &&...args) {
     auto newComponent = entityComponentMap.Insert(entity, typeid(Component),
@@ -207,6 +380,21 @@ public:
     return std::any_cast<Component &>(std::get<2>(newComponent));
   }
 
+  /**
+   * @brief Fetches specified component of an entity, if available.
+   *
+   * @tparam Component Any type that publically inherits
+   * Tourmaline::Systems::ECS::Component.
+   *
+   * @param entity Entity UUID to fetch the component.
+   *
+   * @return A reference to the component requested.
+   *
+   * @warning If the component requested is not available the program will
+   * crash! Unless you are absolutely sure, please use
+   * Tourmaine::Systems::ECS::World::HasComponent to check
+   * if the component exists.
+   */
   template <isAComponent Component>
   [[nodiscard("Pointless call of GetComponent")]]
   Component &GetComponent(const Entity &entity) {
@@ -219,19 +407,42 @@ public:
     return std::any_cast<Component &>(result.begin()->second);
   }
 
+  /**
+   * @brief Checks if an entity has a component.
+   *
+   * @tparam Component Any type that publically inherits
+   * Tourmaline::Systems::ECS::Component.
+   *
+   * @param entity Entity UUID to check for the component.
+   *
+   * @return True if the component is available, false otherwise.
+   */
   template <isAComponent Component>
   [[nodiscard("Pointless call of HasComponent")]]
   bool HasComponent(const Entity &entity) {
     return entityComponentMap.Query(entity, typeid(Component)).size();
   }
 
+  /**
+   * @brief Removes a component from an entity.
+   *
+   * @tparam Component Any type that publically inherits
+   * Tourmaline::Systems::ECS::Component.
+   *
+   * @param entity Entity UUID to remove the component.
+   *
+   * @return True if the component was available and removed, false otherwise.
+   */
   template <isAComponent Component> bool RemoveComponent(const Entity &entity) {
     return entityComponentMap.Remove(entity, typeid(Component));
   }
 
-  // Copying is not allowed since the ECS world is meant to be
-  // a session with its own private session sensitive variables
+  /// @warning Copying is not allowed since the ECS world is meant to be
+  /// a session with its own private session sensitive variables
   World(const World &) = delete;
+
+  /// @warning Copying is not allowed since the ECS world is meant to be
+  /// a session with its own private session sensitive variables
   World &operator=(const World &) = delete;
 
 private:
