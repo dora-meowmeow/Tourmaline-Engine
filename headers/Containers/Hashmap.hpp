@@ -15,7 +15,19 @@
 #include <cstddef>
 #include <vector>
 
+/**
+ * @file
+ * @brief Built-in hashmap container.
+ */
+
 namespace Tourmaline::Containers {
+/**
+ * @brief A key-value hashmap.
+ *
+ * @tparam Key Any type that satisfies Tourmaline::Concepts::Hashable.
+ * @tparam Value Any type is allowed.
+ * @tparam Options See Tourmaline::Containers::HashContainerOptions.
+ */
 template <Concepts::Hashable Key, typename Value,
           HashContainerOptions Options = {}>
 class Hashmap {
@@ -23,6 +35,17 @@ public:
   Hashmap() { storage.resize(Options.minimumBucketCount); }
   ~Hashmap() { Clear(); }
 
+  /**
+   * @brief Inserts a value with a key to access the value.
+   *
+   * @param key This will be used to access value.
+   * @param value This will be copied into the hashmap to be stored.
+   *
+   * @return A reference to the inserted value.
+   *
+   * @warning If you try to insert same key-value pair twice, this will throw
+   * a runtime exception (Tourmaline::Systems::Logging::Error).
+   */
   Value &Insert(Key key, Value value) {
     if (currentLoadFactor >= Options.loadFactor &&
         currentlyRehashing == false) {
@@ -45,6 +68,18 @@ public:
     return storage[keyHashPosition].back().value;
   }
 
+  /**
+   * @brief Removes a value from the map.
+   *
+   * @param key Key of the key-value pair to remove.
+   *
+   * @note This function will not deconstruct or erase any data inside pointers.
+   * If you are storing pointers with this map, you must manually clear them.
+   *
+   * @warning If you try to remove a key-value pair that does not exist,
+   * this will throw a runtime exception (Tourmaline::Systems::Logging::Error).
+   * Please check the availability of a key with Has function first.
+   */
   void Remove(const Key &key) {
     std::size_t keyHash = std::hash<Key>{}(key),
                 keyHashPosition = keyHash % storage.size();
@@ -64,6 +99,13 @@ public:
     }
   }
 
+  /**
+   * @brief Checks if a key-value is a member of this map.
+   *
+   * @param key The key of the key-value pair to check.
+   *
+   * @return True if the map has the pair, false otherwise.
+   */
   [[nodiscard("Unnecessary call of Has function")]]
   bool Has(const Key &key) noexcept {
     std::size_t keyHash = std::hash<Key>{}(key),
@@ -83,6 +125,17 @@ public:
     return false;
   }
 
+  /**
+   * @brief Fetches the value of the specified key-value pair.
+   *
+   * @param key The key of the key-value pair to fetch.
+   *
+   * @return A reference to the fetched value.
+   *
+   * @warning If you try to get a key-value pair that does not exist,
+   * this will throw a runtime exception (Tourmaline::Systems::Logging::Error).
+   * Please check the availability of a key with Has function first.
+   */
   [[nodiscard("Unnecessary call of Get function")]]
   Value &Get(const Key &key) {
     std::size_t keyHash = std::hash<Key>{}(key),
@@ -103,6 +156,15 @@ public:
     throw;
   }
 
+  /**
+   * @brief Releases all of the values stored.
+   *
+   * @return Every value stored inside a std::vector.
+   *
+   * @warning When this function is ran, it will transfer the ownership of the
+   * stored data to where it is ran. Therefore this map will own nothing after
+   * being ran.
+   */
   [[nodiscard("Discarding an expensive operation!")]]
   std::vector<Value> ExtractValuesToArray() {
     std::vector<Value> result;
@@ -122,11 +184,22 @@ public:
     return result;
   }
 
+  /**
+   * @brief Erases all the key-value pairs stored.
+   *
+   * @note This function will not deconstruct or erase any data inside pointers.
+   * If you are storing pointers with this map, you must manually clear them.
+   */
   void Clear() noexcept {
     storage.clear();
     count = 0;
   }
 
+  /**
+   * @brief Returns the amount of key-value pairs in this map.
+   *
+   * @return Total amount of active key-value pairs.
+   */
   [[nodiscard("Unnecessary call of Count function")]]
   std::size_t Count() noexcept {
     return count;
