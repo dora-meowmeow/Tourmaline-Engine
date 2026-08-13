@@ -30,10 +30,10 @@ concept Hashable = std::equality_comparable<T> && requires(T x) {
 };
 
 /**
- * @brief A type that is constraint to be either same as Type1 or Type2.
+ * @brief A type that is constrained to be either the same as Type1 or Type2.
  * @tparam Base Type to check.
- * @tparam Type1 First type to check with.
- * @tparam Type2 Second type to check with.
+ * @tparam Type1 First type to check against.
+ * @tparam Type2 Second type to check against.
  */
 template <typename Base, typename Type1, typename Type2>
 concept Either = std::same_as<Base, Type1> || std::same_as<Base, Type2>;
@@ -46,7 +46,7 @@ template <typename Base, typename Type1, typename Type2> struct _opposite_of {
 /// @endcond
 
 /**
- * @brief Returns the opposite type between Type1 and Type2.
+ * @brief Returns whichever type Base does not equal, between Type1 and Type2. 
  * @tparam Base Type to check.
  * @tparam Type1 First type. If Base is same as Type1, then Type2 will be
  * returned.
@@ -81,7 +81,7 @@ template <typename Return, typename... Arguments>
 struct FunctionTraits<Return (*)(Arguments...)> {
   /// @brief The return type of the function.
   using returnType = Return;
-  /// @brief Arguments the function has stored in a tuple.
+  /// @brief Arguments the function has, stored in a tuple.
   using arguments = std::tuple<Arguments...>;
 
   /// @brief Fetches an argument by using its index.

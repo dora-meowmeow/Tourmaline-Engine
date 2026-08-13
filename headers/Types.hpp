@@ -39,20 +39,20 @@ public:
   /// @endcond
 
   /**
-   * @brief Creates an UUID with 2 specified 64-bit unsigned integers.
+   * @brief Creates a UUID with 2 specified 64-bit unsigned integers.
    * @see https://www.rfc-editor.org/rfc/rfc9562.html#name-uuid-version-4
-   * @param firstHalf a 64-bit unsigned integer. This is 0 to 63rd bit of the
+   * @param firstHalf a 64-bit unsigned integer. This becomes the 0th to 63rd bits of the
    * UUID.
-   * @param secondHalf a 64-bit unsigned integer. This is 64th to 127th bit of
+   * @param secondHalf a 64-bit unsigned integer. This becomes the 64th to 127th bits of
    * the UUID.
    * @note It is suggested to use Tourmaline::Systems::Random::GenerateUUID() to
    * generate new UUIDs.
    */
   UUID(uint64_t firstHalf = 0, uint64_t secondHalf = 0);
   /**
-   * @brief Create an UUID with a string.
+   * @brief Creates a UUID with a string.
    * @param uuid Must be a hex representation with no dividers.
-   * Example: "6B62E1F98D234BE92E6D93A3C7B0FDCA" is a valid UUID
+   * Example: "6B62E1F98D234BE92E6D93A3C7B0FDCA" is a valid UUID.
    * @note It is suggested to use Tourmaline::Systems::Random::GenerateUUID() to
    * generate new UUIDs.
    * @warning This function does not check if the given UUID string is valid!
