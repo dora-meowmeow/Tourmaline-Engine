@@ -15,15 +15,35 @@
 #include <cstddef>
 #include <vector>
 
+/**
+ * @file
+ * @brief A key-only variant of a hashmap.
+ */
+
 namespace Tourmaline::Containers {
 
-// Variant of Hashmap that only has key entry, used usually to mark stuff.
+/**
+ * @brief Key-only variant of Tourmaline::Containers::Hashmap.
+ *
+ * @tparam Entry Any type that satisfies Tourmaline::Concepts::Hashable.
+ * @tparam Options See Tourmaline::Containers::HashContainerOptions.
+ *
+ * This variant is especially useful, if all you want is a group/set.
+ */
 template <Concepts::Hashable Entry, HashContainerOptions Options = {}>
 class Hashlist {
 public:
   Hashlist() { storage.resize(Options.minimumBucketCount); }
   ~Hashlist() { Clear(); }
 
+  /**
+   * @brief Inserts an entry to the list.
+   *
+   * @param entry Entry to be copied to the list.
+   *
+   * @warning If you try to insert same entry twice, this will throw
+   * a runtime exception (Tourmaline::Systems::Logging::Error).
+   */
   void Insert(Entry entry) {
     if (currentLoadFactor >= Options.loadFactor &&
         currentlyRehashing == false) {
@@ -46,6 +66,18 @@ public:
     currentLoadFactor = (++count) / static_cast<float>(bucketCount);
   }
 
+  /**
+   * @brief Removes an entry to the list.
+   *
+   * @param entry Entry to be removed to the list.
+   *
+   * @note This function will not deconstruct or erase any data inside pointers.
+   * If you are storing pointers with this list, you must manually clear them.
+   *
+   * @warning If you try to remove an entry that does not exist,
+   * this will throw a runtime exception (Tourmaline::Systems::Logging::Error).
+   * Please check availability of entry with Has function first.
+   */
   void Remove(const Entry &entry) {
     std::size_t entryHash = std::hash<Entry>{}(entry),
                 entryHashPosition = entryHash % storage.size();
@@ -65,6 +97,13 @@ public:
     }
   }
 
+  /**
+   * @brief Checks if an entry is a member of this list.
+   *
+   * @param entry Entry to check.
+   *
+   * @return True if the list has it, false otherwise.
+   */
   [[nodiscard("Unnecessary call of Has function")]]
   bool Has(const Entry &entry) noexcept {
     std::size_t entryHash = std::hash<Entry>{}(entry),
@@ -84,11 +123,22 @@ public:
     return false;
   }
 
+  /**
+   * @brief Erases all the elements.
+   *
+   * @note This function will not deconstruct or erase any data inside pointers.
+   * If you are storing pointers with this list, you must manually clear them.
+   */
   void Clear() noexcept {
     storage.clear();
     count = 0;
   }
 
+  /**
+   * @brief Returns the amount of entries in this list.
+   *
+   * @return Total amount of active entries.
+   */
   [[nodiscard("Unnecessary call of Count function")]]
   std::size_t Count() noexcept {
     return count;
