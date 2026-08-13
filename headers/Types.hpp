@@ -33,7 +33,10 @@ public:
    * @return returns a Corrade::Containers::String of the UUID.
    */
   Corrade::Containers::String asString() const;
+
+  /// @cond
   bool operator==(const UUID &rhs) const;
+  /// @endcond
 
   /**
    * @brief Creates an UUID with 2 specified 64-bit unsigned integers.
@@ -56,7 +59,11 @@ public:
    */
   UUID(const std::string &uuid);
 
-  uint64_t firstHalf, secondHalf;
+  /// @brief The first half of the UUID as 64 bit unsigned integer.
+  uint64_t firstHalf;
+
+  /// @brief The first half of the UUID as 64 bit unsigned integer.
+  uint64_t secondHalf;
 };
 
 /**

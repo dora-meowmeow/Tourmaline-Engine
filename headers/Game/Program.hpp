@@ -97,7 +97,10 @@ public:
 
     /// @brief Argument storage.
     char **argv;
-  } static arguments;
+  };
+
+  /// @brief See Tourmaline::Game::Program::Args.
+  static Args arguments;
 
 private:
   void initialize();

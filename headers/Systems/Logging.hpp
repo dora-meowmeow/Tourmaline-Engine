@@ -64,12 +64,14 @@ public:
   /**
    * @brief Formating logging function.
    *
+   * @tparam Args args arguments to format the log with.
+   *
    * @param format The body of the message, when `{}` is found it will be used
    * to substitute with an argument.
    * @param position Where this log originates from.
    * @param severity How severe is this log message, see @ref
-   * Tourmaline::Systems::Logging::LogLevel .
-   * @tparam Args args arguments to format the log with.
+   * Tourmaline::Systems::Logging::LogLevel.
+   * @param args Arguments to use with format.
    */
   template <class... Args>
   static void LogFormatted(const char *format, const char *position,

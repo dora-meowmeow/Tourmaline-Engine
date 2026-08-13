@@ -19,15 +19,16 @@
  */
 
 namespace Tourmaline::Systems::ECS {
-/**
- * @brief Base component that every component must publically inherit from.
- */
+
+/// @brief Base component that every component must publically inherit from.
 struct Component {
 public:
   /**
    * @brief Whether or not if the component is enabled.
    */
   bool isEnabled;
+
+  /// @brief Default constructor for components.
   Component(bool enabled = true) : isEnabled(enabled) {};
 };
 

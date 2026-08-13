@@ -24,6 +24,7 @@ namespace Tourmaline::Systems::ECS {
 /**
  * @brief The prefab class. Prefabs are used to quicky mass produce
  * entities with multiple pre-determined components.
+ *
  * @tparam Components Any classes that satisfies
  * Tourmaline::Systems::Ecs::isAcomponent concept.
  */
@@ -32,6 +33,7 @@ private:
   std::tuple<Components...> components;
 
 public:
+  /// @brief the signature of the tuple inside.
   using tupleSignature = decltype(components);
 
   /**
