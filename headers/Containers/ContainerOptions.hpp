@@ -12,16 +12,77 @@
 #include <cstddef>
 #include <cstdint>
 
+/**
+ * @file
+ * @brief Configuration options for containers.
+ */
+
 namespace Tourmaline::Containers {
+
+/**
+ * @brief Configuration for Hashlist and Hashmap.
+ *
+ * This is used by Tourmaline::Containers::Hashlist and
+ * Tourmaline::Containers::Hashmap to determine how to allocate
+ * and grow the containers.
+ */
 struct HashContainerOptions {
+  /**
+   * @brief Maximum load factor before calling a rehash.
+   *
+   * When the load factor hits at least this percentage,
+   * a rehash will happen to expand the container.
+   */
   float loadFactor = 0.75f;
+
+  /**
+   * @brief Minimum load factor percentage to rehash.
+   * this will be used for shrinking the container.
+   */
   float minimizeFactor = 0.20f;
+
+  /**
+   * @brief Higher values means leaning more to minimizeFactor when rehashing a
+   * load factor.
+   *
+   * When reallocating; new reallocated container will calculate
+   * desired load factor with the following formula.
+   *
+   * @f(newLoadFactor = (loadFactor + minimizeFactor) / leaningFactor@f)
+   *
+   * This value should generally be set to make newLoadFactor be between
+   * loadFactor and minimizeFactor. If your container needs to grow gradually,
+   * set it to a lower value. Otherwise set it to a higher value.
+   */
   float leaningFactor = 2.5f;
+
+  /**
+   * @brief Minimum ammount of buckets.
+   *
+   * Minimum ammount of buckets to hold hashes, bigger value
+   * hypothetically means less hash collisions. So the insertion and
+   * fetching speed is faster. However more buckets means more memory used.
+   */
   std::size_t minimumBucketCount = 256;
+
+  /**
+   * @brief Per bucket reserved space.
+   *
+   * Each bucket is a vector under the hood, so to not needlessy reallocate the
+   * data, the bucket will reserve this much space for entries.
+   */
   std::size_t reservedBucketSpace = 4;
 };
 
+/**
+ * @brief Configuration for Hashlist and Hashmap.
+ *
+ * This is used by Tourmaline::Containers::Hashlist and
+ * Tourmaline::Containers::Hashmap to determine how to allocate
+ * and grow the containers.
+ */
 struct DualKeyMapOptions {
+  /// @brief Base amount of entries to reserve.
   std::uint64_t baseReservation = 2048;
 };
 } // namespace Tourmaline::Containers
