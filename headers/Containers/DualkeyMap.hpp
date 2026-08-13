@@ -29,26 +29,77 @@
 #include <variant>
 #include <vector>
 
+/**
+ * @file
+ * @brief A hashmap that uses two keys to store a value.
+ */
+
 namespace Tourmaline::Containers {
+
+/**
+ * @brief A hashmap with two keys instead of one.
+ *
+ * @tparam AKey Any type that satisfies Tourmaline::Concepts::Hashable.
+ * @tparam BKey Any type that satisfies Tourmaline::Concepts::Hashable.
+ * @tparam Value Any type is allowed.
+ * @tparam Options See Tourmaline::Containers::HashContainerOptions.
+ *
+ * Two or more entries can share the same AKey or the same BKey, however no two
+ * entries can share the same AKey + BKey combo. This allows you to fetch for
+ * only AKey/BKey with specific value.
+ *
+ * For example: If your AKey is userID and BKey is OrderID, you can query for
+ * userID 10. Which will return every entry with userID of 10.
+ */
 template <Concepts::Hashable AKey, Concepts::Hashable BKey, typename Value,
           DualKeyMapOptions Options = {}>
 class DualkeyMap {
 public:
   // Return Types
+  /**
+   * @brief Similar to Tourmaline::Containers::DualKeyMap::QueryResult for multi
+   * queries.
+   *
+   * @tparam OppositeKey must be either AKey or BKey. Opposite Key to the
+   * queried key.
+   *
+   * Tourmaline::Containers::DualKeyMap::QueryWithAll returns this type.
+   */
   template <typename OppositeKey>
     requires Concepts::Either<OppositeKey, AKey, BKey>
   struct MultiQueryResult {
     // Having to use pointers here over references was not fun
     // but it was for greater good
+
+    /// @brief The opposite key to the key used to query.
     const OppositeKey *oppositeKey;
+
+    /// @brief The results of the query stored as pointers to the value.
     Corrade::Containers::Array<Value *> valueQueryResults;
+
+    /// @brief The count of found values.
     std::size_t howManyFound = 1;
   };
 
+  /**
+   * @brief Results from Tourmaline::Containers::DualKeyMap::Query.
+   *
+   * This is an std::pair with 3 possible values for the first.
+   * - If you queried with AKey, then first is the associated BKey.
+   * - If you queried with BKey, then first is the associated AKey.
+   * - If you queried with both AKey and BKey, then first is set to
+   * std::monostate (a.k.a. empty).
+   *
+   * Second is always a reference to the value.
+   */
   using QueryResult =
       std::pair<std::variant<std::monostate, std::reference_wrapper<const AKey>,
                              std::reference_wrapper<const BKey>>,
                 Value &>;
+  /**
+   * @brief Returned by Tourmaline::Containers::DualKeyMap::Insert.
+   * Allows you to edit the value inserted.
+   */
   using Entry = std::tuple<const AKey &, const BKey &, Value &>;
 
   // Construct/Destruct
@@ -62,12 +113,26 @@ public:
     }
   }
 
-  // No copying due to the container expected to be the sole
-  // owner of the data
+  /// @warning No copying due to the container expected to be the sole
+  /// owner of the data
   DualkeyMap(const DualkeyMap &) = delete;
+
+  /// @warning No copying due to the container expected to be the sole
+  /// owner of the data
   DualkeyMap &operator=(const DualkeyMap &) = delete;
 
   // Public controls
+
+  /**
+   * @brief Inserts the AKey-BKey-value entry into the DualKeyMap.
+   *
+   * @param firstKey This is expected to be a value of AKey.
+   * @param secondKey This is expected to be a value of BKey.
+   * @param value Value to be stored.
+   *
+   * @return The entry itself as a reference so it is not needed to be fetched
+   * after insertion.
+   */
   Entry Insert(AKey firstKey, BKey secondKey, Value value) {
     DualkeyHash *hash = new DualkeyHash(std::move(firstKey),
                                         std::move(secondKey), std::move(value));
@@ -82,6 +147,18 @@ public:
     return {hash->firstKey, hash->secondKey, hash->value};
   }
 
+  /**
+   * @brief Removes a single or entire group of entries.
+   *
+   * @param firstKey Can either be std::nullopt_t or an actual AKey value.
+   * @param secondKey Can either be std::nullopt_t or an actual BKey value.
+   *
+   * @return Amount of elements removed.
+   *
+   * @note Both arguments can be filled, if you want to remove a specific entry.
+   * @warning If both arguments are std::nullopt_t, then the software will
+   * terminate(Tourmaline::Systems::Logging::Critical).
+   */
   std::size_t Remove(std::optional<AKey> firstKey,
                      std::optional<BKey> secondKey) {
     bool isFirstKeyGiven = firstKey.has_value();
@@ -144,12 +221,32 @@ public:
     return amountDeleted;
   }
 
+  /**
+   * @brief Returns the amount of entries in this DualkeyMap.
+   *
+   * @return Total amount of active entries.
+   */
   [[nodiscard]]
   std::size_t Count() {
     return hashList.size() - graveyard.size();
   }
 
   // Queries
+  /**
+   * @brief Queries for a single or entire group of entries.
+   *
+   * @param firstKey Can either be std::nullopt_t or an actual AKey value.
+   * @param secondKey Can either be std::nullopt_t or an actual BKey value.
+   *
+   * @return Result of the query.
+   *
+   * @note Both arguments can be filled, in that case std::vector will either
+   * have 0 elements or 1 element depending on if the query could find the
+   * entry.
+   *
+   * @warning If both arguments are std::nullopt_t, then the software will
+   * terminate(Tourmaline::Systems::Logging::Critical).
+   */
   [[nodiscard("Discarding an expensive query!")]]
   std::vector<QueryResult> Query(std::optional<AKey> firstKey,
                                  std::optional<BKey> secondKey) {
@@ -206,6 +303,27 @@ public:
     return finishedQuery;
   }
 
+  /**
+   * @brief Queries for a single or entire group of entries.
+   *
+   * @tparam Key Must be either AKey or BKey.
+   * @tparam OppositeKey This should be automatically filled. However if not,
+   * this is meant to be the opposite of Key.
+   *
+   * @param keys List of values of Key to be used to query.
+   * @param ignoreChecks Highly unadvised to set to true. This will disable
+   * internal checks for querying for a single entry or with single value of
+   * Key.
+   *
+   * @return Result of the query.
+   *
+   * This will query for several values of Key and if an entry with opposite key
+   * satisfies **every** Key entry it will be returned.
+   *
+   * So for example if Key was AKey and values 2 and 11 were queried. Every BKey
+   * that has a relationship to AKey with values of 2 and 11 will be returned.
+   * Otherwise they will be omitted.
+   */
   template <typename Key,
             typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>>
     requires Concepts::Either<Key, AKey, BKey>
@@ -224,6 +342,14 @@ public:
     return queryResult;
   }
 
+  /**
+   * @brief Walk through every entries with a function (Hash variant).
+   *
+   * @param scanFunction This function should have the signature bool(const
+   * std::size_t firstKeyHash, const std::size_t secondKeyHash, Value &value).
+   *
+   * @note When scanFunction returns true then the function will terminate.
+   */
   void Scan(std::function<bool(const std::size_t firstKeyHash,
                                const std::size_t secondKeyHash, Value &value)>
                 scanFunction) {
@@ -237,6 +363,14 @@ public:
     }
   }
 
+  /**
+   * @brief Walk through every entries with a function (Value variant).
+   *
+   * @param scanFunction This function should have the signature bool(const AKey
+   * &firstKey, const BKey &secondKey, Value &value)
+   *
+   * @note When scanFunction returns true then the function will terminate.
+   */
   void Scan(std::function<bool(const AKey &firstKey, const BKey &secondKey,
                                Value &value)>
                 scanFunction) {
