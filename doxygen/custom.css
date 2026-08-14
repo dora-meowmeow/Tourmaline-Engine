@@ -1,6 +1,7 @@
 html {
   --primary-color: #FF9A86;
   --on-primary-color: #FAFAFA;
+  --primary-dark-color: #F9B788;
   --page-background-color: #FAFAFA;
   --font-family: "Anka/Coder";
   --font-family-monospace: "Anka/Coder";
@@ -9,6 +10,7 @@ html {
 @media (prefers-color-scheme: dark) {
   html:not(.light-mode) {
     --primary-color: #EEE689;
+    --primary-dark-color: #F9B788;
     --on-primary-color: #1b1a1a;
     --page-background-color: #1b1a1a;
     --font-family: "Anka/Coder";
