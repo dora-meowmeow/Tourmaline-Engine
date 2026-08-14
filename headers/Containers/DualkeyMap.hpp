@@ -46,10 +46,10 @@ namespace Tourmaline::Containers {
  *
  * Two or more entries can share the same AKey or the same BKey, however no two
  * entries can share the same AKey + BKey combo. This allows you to fetch for
- * only AKey/BKey with specific value.
+ * only AKey/BKey with a specific value.
  *
  * For example: If your AKey is userID and BKey is OrderID, you can query for
- * userID 10. Which will return every entry with userID of 10.
+ * userID 10. Which will return every entry with a userID of 10.
  */
 template <Concepts::Hashable AKey, Concepts::Hashable BKey, typename Value,
           DualKeyMapOptions Options = {}>
@@ -84,13 +84,13 @@ public:
   /**
    * @brief Results from Tourmaline::Containers::DualKeyMap::Query.
    *
-   * This is an std::pair with 3 possible values for the first.
-   * - If you queried with AKey, then first is the associated BKey.
-   * - If you queried with BKey, then first is the associated AKey.
-   * - If you queried with both AKey and BKey, then first is set to
-   * std::monostate (a.k.a. empty).
+   * This is an std::pair with 3 possible values for the first element.
+   * - If you queried with AKey, then the first element is the associated BKey.
+   * - If you queried with BKey, then the first element is the associated AKey.
+   * - If you queried with both AKey and BKey, then the first element is set to
+   * std::monostate (i.e. empty).
    *
-   * Second is always a reference to the value.
+   * The second element is always a reference to the value.
    */
   using QueryResult =
       std::pair<std::variant<std::monostate, std::reference_wrapper<const AKey>,
@@ -98,7 +98,7 @@ public:
                 Value &>;
   /**
    * @brief Returned by Tourmaline::Containers::DualKeyMap::Insert.
-   * Allows you to edit the value inserted.
+   * Allows you to edit the inserted value.
    */
   using Entry = std::tuple<const AKey &, const BKey &, Value &>;
 
@@ -113,12 +113,12 @@ public:
     }
   }
 
-  /// @warning No copying due to the container expected to be the sole
-  /// owner of the data
+  /// @warning No copying as the container is expected to be the sole
+  /// owner of the data.
   DualkeyMap(const DualkeyMap &) = delete;
 
-  /// @warning No copying due to the container expected to be the sole
-  /// owner of the data
+  /// @warning No copying as the container is expected to be the sole
+  /// owner of the data.
   DualkeyMap &operator=(const DualkeyMap &) = delete;
 
   // Public controls
@@ -130,7 +130,7 @@ public:
    * @param secondKey This is expected to be a value of BKey.
    * @param value Value to be stored.
    *
-   * @return The entry itself as a reference so it is not needed to be fetched
+   * @return The entry itself as a reference, so as not to require fetching
    * after insertion.
    */
   Entry Insert(AKey firstKey, BKey secondKey, Value value) {
@@ -148,14 +148,14 @@ public:
   }
 
   /**
-   * @brief Removes a single or entire group of entries.
+   * @brief Removes a single entry, or entire group of entries.
    *
    * @param firstKey Can either be std::nullopt_t or an actual AKey value.
    * @param secondKey Can either be std::nullopt_t or an actual BKey value.
    *
    * @return Amount of elements removed.
    *
-   * @note Both arguments can be filled, if you want to remove a specific entry.
+   * @note Both arguments can be specified, if you want to remove a specific entry.
    * @warning If both arguments are std::nullopt_t, then the software will
    * terminate(Tourmaline::Systems::Logging::Critical).
    */
@@ -233,15 +233,15 @@ public:
 
   // Queries
   /**
-   * @brief Queries for a single or entire group of entries.
+   * @brief Queries for a single entry, or entire group of entries.
    *
    * @param firstKey Can either be std::nullopt_t or an actual AKey value.
    * @param secondKey Can either be std::nullopt_t or an actual BKey value.
    *
    * @return Result of the query.
    *
-   * @note Both arguments can be filled, in that case std::vector will either
-   * have 0 elements or 1 element depending on if the query could find the
+   * @note Both arguments can be specified, in which case std::vector will either
+   * have 0 elements or 1 element, depending on whether the query could find the
    * entry.
    *
    * @warning If both arguments are std::nullopt_t, then the software will
@@ -304,24 +304,25 @@ public:
   }
 
   /**
-   * @brief Queries for a single or entire group of entries.
+   * @brief Queries for a single entry, or entire group of entries.
    *
    * @tparam Key Must be either AKey or BKey.
-   * @tparam OppositeKey This should be automatically filled. However if not,
-   * this is meant to be the opposite of Key.
+   * @tparam OppositeKey This should be automatically filled. However, if it is not,
+   * it should be the opposite key to Key.
    *
    * @param keys List of values of Key to be used to query.
    * @param ignoreChecks Highly unadvised to set to true. This will disable
-   * internal checks for querying for a single entry or with single value of
+   * internal checks for querying for a single entry, or with a single value of
    * Key.
    *
    * @return Result of the query.
    *
-   * This will query for several values of Key and if an entry with opposite key
-   * satisfies **every** Key entry it will be returned.
+   * This will query for several specified values of Key. It will return all entries
+   * for which the queried Key matches these values, if and only if the respective
+   * OppositeKey has entries matching **every** value specified for Key. 
    *
-   * So for example if Key was AKey and values 2 and 11 were queried. Every BKey
-   * that has a relationship to AKey with values of 2 and 11 will be returned.
+   * For example: if the queried Key is AKey and values 2 and 11 are queried:
+   * Every entry with a BKey that has entries with AKey values 2 and 11 will be returned.
    * Otherwise they will be omitted.
    */
   template <typename Key,
@@ -343,7 +344,7 @@ public:
   }
 
   /**
-   * @brief Walk through every entries with a function (Hash variant).
+   * @brief Walk through every entry with a function (Hash variant).
    *
    * @param scanFunction This function should have the signature bool(const
    * std::size_t firstKeyHash, const std::size_t secondKeyHash, Value &value).
@@ -364,7 +365,7 @@ public:
   }
 
   /**
-   * @brief Walk through every entries with a function (Value variant).
+   * @brief Walk through every entry with a function (Value variant).
    *
    * @param scanFunction This function should have the signature bool(const AKey
    * &firstKey, const BKey &secondKey, Value &value)
