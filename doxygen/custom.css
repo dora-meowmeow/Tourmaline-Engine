@@ -1,0 +1,45 @@
+html {
+  --primary-color: #FF9A86;
+  --on-primary-color: #FAFAFA;
+  --page-background-color: #FAFAFA;
+  --font-family: "Anka/Coder";
+  --font-family-monospace: "Anka/Coder";
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light-mode) {
+    --primary-color: #EEE689;
+    --on-primary-color: #1b1a1a;
+    --page-background-color: #1b1a1a;
+    --font-family: "Anka/Coder";
+    --font-family-monospace: "Anka/Coder";
+  }
+}
+
+@font-face {
+  font-family: "Anka/Coder";
+  src: url(AnkaCoderNerdFont-Regular.ttf);
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Anka/Coder";
+  src: url(AnkaCoderNerdFont-Bold.ttf);
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Anka/Coder";
+  src: url(AnkaCoderNerdFont-Italic.ttf);
+  font-weight: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: "Anka/Coder";
+  src: url(AnkaCoderNerdFont-BoldItalic.ttf);
+  font-weight: bold;
+  font-style: italic;
+}
