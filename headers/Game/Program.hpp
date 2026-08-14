@@ -26,7 +26,7 @@ using namespace Magnum::Math::Literals;
 
 /**
  * @brief The class that contains all of the game logic.
- * Inherit this class publically, it will come with most things pre-set.
+ * Inherit this class publicly, it will come with most things pre-set.
  * You will just need to override any virtual functions you need.
  */
 class Program : private Magnum::Platform::GlfwApplication {

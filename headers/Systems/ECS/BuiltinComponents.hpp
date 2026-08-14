@@ -20,7 +20,7 @@
 
 namespace Tourmaline::Systems::ECS {
 
-/// @brief Base component that every component must publically inherit from.
+/// @brief Base component that every component must publicly inherit from.
 struct Component {
 public:
   /**
@@ -47,17 +47,17 @@ namespace Tourmaline::Systems::Components {
  */
 struct Transform : public ECS::Component {
   /**
-   * @brief A 3 dimentional vector using doubles. Used to set position of the
+   * @brief A 3 dimensional vector using doubles. Used to set position of the
    * entity.
    */
   Magnum::Math::Vector3<double> Translate{0};
   /**
-   * @brief A 3 dimentional vector using doubles. Used to set rotation of the
+   * @brief A 3 dimensional vector using doubles. Used to set rotation of the
    * entity.
    */
   Magnum::Math::Vector3<double> Rotate{0};
   /**
-   * @brief A 3 dimentional vector using doubles. Used to set scale of the
+   * @brief A 3 dimensional vector using doubles. Used to set scale of the
    * entity.
    */
   Magnum::Math::Vector3<double> Scale{1};

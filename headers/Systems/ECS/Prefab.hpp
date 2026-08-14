@@ -22,7 +22,7 @@
 namespace Tourmaline::Systems::ECS {
 
 /**
- * @brief The prefab class. Prefabs are used to quicky mass produce
+ * @brief The prefab class. Prefabs are used to quickly mass produce
  * entities with multiple pre-determined components.
  *
  * @tparam Components Any classes that satisfy the

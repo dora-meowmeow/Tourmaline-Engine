@@ -47,7 +47,7 @@ public:
   static void LogToFile(Corrade::Containers::String File = "");
 
   /**
-   * @brief Non-formating logging function.
+   * @brief Non-formatting logging function.
    *
    * @param message The body of the message.
    * @param position Where this log originates from. Specifying this, while
@@ -62,7 +62,7 @@ public:
                   LogLevel severity = LogLevel::Info, bool assertion = true);
 
   /**
-   * @brief Formating logging function.
+   * @brief Formatting logging function.
    *
    * @tparam Args args arguments to format the log with.
    *

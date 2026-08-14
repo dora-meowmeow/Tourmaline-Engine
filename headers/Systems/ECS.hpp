@@ -60,7 +60,7 @@ public:
   World() {}
   // ====== World controls ======
   /**
-   * @brief Runs each system for one time. Could be interpeted as a
+   * @brief Runs each system for one time. Could be interpreted as a
    * "World Tick".
    */
   void Step();
@@ -201,7 +201,7 @@ public:
    * - Must have at least 2 arguments.
    *   - First argument must be of type const Entity& (or const
    * Tourmaline::Systems::ECS::Entity&).
-   *   - Every argument except the first must be of a type that publically
+   *   - Every argument except the first must be of a type that publicly
    * inherits Tourmaline::Systems::ECS::Component.
    * - If it is a pointer-to-member function (i.e. member function of a class),
    * there must be an instance of a class specified for the function to run in.
@@ -363,7 +363,7 @@ public:
   /**
    * @brief Adds a component to an entity.
    *
-   * @tparam Component Any type that publically inherits
+   * @tparam Component Any type that publicly inherits
    * Tourmaline::Systems::ECS::Component.
    * @tparam ComponentArgs Types of the arguments to be used for the construction
    * of the component.
@@ -387,7 +387,7 @@ public:
   /**
    * @brief Fetches a specified component of an entity, if available (i.e. present).
    *
-   * @tparam Component Any type that publically inherits
+   * @tparam Component Any type that publicly inherits
    * Tourmaline::Systems::ECS::Component.
    *
    * @param entity Entity UUID of the entity from which to fetch the component.
@@ -414,7 +414,7 @@ public:
   /**
    * @brief Checks if an entity has a component.
    *
-   * @tparam Component Any type that publically inherits
+   * @tparam Component Any type that publicly inherits
    * Tourmaline::Systems::ECS::Component.
    *
    * @param entity Entity UUID of the entity in which to check for the component.
@@ -430,7 +430,7 @@ public:
   /**
    * @brief Removes a component from an entity.
    *
-   * @tparam Component Any type that publically inherits
+   * @tparam Component Any type that publicly inherits
    * Tourmaline::Systems::ECS::Component.
    *
    * @param entity Entity UUID of the entity from which to remove the component.
