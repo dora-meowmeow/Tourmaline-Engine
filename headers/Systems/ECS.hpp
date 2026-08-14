@@ -197,7 +197,7 @@ public:
    * @return The System UUID of the created system.
    *
    * ## A function must follow the following rules to be a system.
-   * - Must have a return type of void.
+   * - The return type of the function must be void.
    * - Must have at least 2 arguments.
    *   - First argument must be of type const Entity& (or const
    * Tourmaline::Systems::ECS::Entity&).
@@ -334,7 +334,7 @@ public:
   /**
    * @brief Enables/disables a system.
    *
-   * @param system System UUID of thesystem to enable/disable.
+   * @param system System UUID of the system to enable/disable.
    * @param beEnabled True to enable, false to disable.
    */
   void SetSystemEnable(const System &system, bool beEnabled = true);
@@ -454,7 +454,7 @@ private:
       entityComponentMap{};
   Containers::Hashmap<Entity, Corrade::Containers::String> entityLabelList{};
 
-  // System successfullys
+  // Systems
   using systemFunction = Corrade::Containers::Function<void(
       const Entity &, std::span<std::any *>)>;
   using componentCache = decltype(entityComponentMap)::MultiQueryResult<Entity>;

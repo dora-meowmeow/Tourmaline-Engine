@@ -38,7 +38,7 @@ public:
   /**
    * @brief Inserts a value with a key to access the value.
    *
-   * @param key This will be used to the access value.
+   * @param key This will be used to access the value.
    * @param value This will be copied into the hashmap to be stored.
    *
    * @return A reference to the inserted value.

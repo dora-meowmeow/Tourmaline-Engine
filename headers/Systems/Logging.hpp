@@ -54,7 +54,7 @@ public:
    * optional, is highly recommended.
    * @param severity How severe this log message is. See
    * Tourmaline::Systems::Logging::LogLevel.
-   * @param assertion The log message will only be sent when this is set to `true`,
+   * @param assertion The log message will only be sent when this is set to true,
    * otherwise it will be ignored.
    */
   static void Log(Corrade::Containers::StringView message,
