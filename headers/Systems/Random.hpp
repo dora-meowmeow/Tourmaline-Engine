@@ -26,10 +26,10 @@ class Random {
 public:
   /**
    * @brief Generates a random value.
-   * @tparam T any type that satisfies std::is_integral_v
-   * @param max maximum inclusive value to generate.
-   * @param min minimum inclusive value to generate.
-   * @return a random value same type as max and min.
+   * @tparam T Any type that satisfies std::is_integral_v.
+   * @param max Maximum inclusive value to generate.
+   * @param min Minimum inclusive value to generate.
+   * @return A random value of the same type as max and min.
    */
   template <typename T>
     requires std::is_integral_v<T>
@@ -39,7 +39,7 @@ public:
 
   /**
    * @brief Generates a random Tourmaline::Type::UUID.
-   * @return a random Tourmaline::Type::UUID.
+   * @return A random Tourmaline::Type::UUID.
    */
   static Tourmaline::Type::UUID GenerateUUID();
 

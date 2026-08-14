@@ -30,18 +30,18 @@ public:
   /**
    * @brief Log severity
    *
-   * @note when LogLevel::Error is given as severity. The logging function
+   * @note when LogLevel::Error is given as severity to a logging function. The function
    * will throw an std::runtime_error.
    *
-   * @warning when LogLevel::Critical is given as severity. The logging function
+   * @warning when LogLevel::Critical is given as severity to a logging function. The function
    * will trigger std::terminate and shutdown the software.
    */
   enum LogLevel { Critical, Error, Warning, Info, Debug, Trace };
 
   /**
-   * @brief When executed, the logged messages will also be written to
+   * @brief When executed, logged messages will also be written to
    * a file.
-   * @param File optional path for the log file. If not specified the file name
+   * @param File Optional path for the log file. If not specified, the file name
    * will be `./Tourmaline-yy-mm-dd.txt`
    */
   static void LogToFile(Corrade::Containers::String File = "");
@@ -50,11 +50,11 @@ public:
    * @brief Non-formating logging function.
    *
    * @param message The body of the message.
-   * @param position Where this log originates from. Specifying this while
-   * optional is heavily suggested.
-   * @param severity How severe is this log message, see
+   * @param position Where this log originates from. Specifying this, while
+   * optional, is highly recommended.
+   * @param severity How severe this log message is. See
    * Tourmaline::Systems::Logging::LogLevel.
-   * @param assertion when set to `true` the log message will actually be sent,
+   * @param assertion The log message will only be sent when this is set to `true`,
    * otherwise it will be ignored.
    */
   static void Log(Corrade::Containers::StringView message,
@@ -66,10 +66,10 @@ public:
    *
    * @tparam Args args arguments to format the log with.
    *
-   * @param format The body of the message, when `{}` is found it will be used
-   * to substitute with an argument.
+   * @param format The body of the message, `{}` can be used
+   * to substitute for arguments.
    * @param position Where this log originates from.
-   * @param severity How severe is this log message, see @ref
+   * @param severity How severe this log message is. See @ref
    * Tourmaline::Systems::Logging::LogLevel.
    * @param args Arguments to use with format.
    */
