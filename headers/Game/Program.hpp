@@ -33,7 +33,7 @@ class Program : private Magnum::Platform::GlfwApplication {
 public:
   /// @brief Program configuration.
   struct Config {
-    /// @brief Title of the window created.
+    /// @brief Title of the window to be created.
     Corrade::Containers::String windowTitle{"Game Window"};
     /// @brief Dimensions of the window.
     Magnum::Vector2i windowSize{800, 600};
@@ -74,7 +74,7 @@ public:
   /**
    * @brief Destruction/Last step of the program.
    *
-   * @return if returns true the program will safely exit, otherwise execution
+   * @return If this function returns true, the program will safely exit, otherwise execution
    * will continue.
    */
   virtual bool OnExit();
@@ -87,9 +87,9 @@ public:
    * @brief Allows access to the command line arguments.
    * If you desire to use command line arguments, you must set these.
    *
-   * @note If unset argc will be set to 1, and argv will have "empty".
-   * @warning It is heavily advised these are set BEFORE construction
-   * the game program.
+   * @note If unset, argc will be set to 1, and argv will contain the string "empty".
+   * @warning It is highly advised to set these BEFORE the construction
+   * of the game program.
    */
   struct Args {
     /// @brief Argument count.
