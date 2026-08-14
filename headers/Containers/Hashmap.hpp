@@ -38,12 +38,12 @@ public:
   /**
    * @brief Inserts a value with a key to access the value.
    *
-   * @param key This will be used to access value.
+   * @param key This will be used to the access value.
    * @param value This will be copied into the hashmap to be stored.
    *
    * @return A reference to the inserted value.
    *
-   * @warning If you try to insert same key-value pair twice, this will throw
+   * @warning If you try to insert the same key-value pair twice, this will throw
    * a runtime exception (Tourmaline::Systems::Logging::Error).
    */
   Value &Insert(Key key, Value value) {
@@ -78,7 +78,7 @@ public:
    *
    * @warning If you try to remove a key-value pair that does not exist,
    * this will throw a runtime exception (Tourmaline::Systems::Logging::Error).
-   * Please check the availability of a key with Has function first.
+   * Please check the presence of the key in the map with Has function first.
    */
   void Remove(const Key &key) {
     std::size_t keyHash = std::hash<Key>{}(key),
@@ -100,7 +100,7 @@ public:
   }
 
   /**
-   * @brief Checks if a key-value is a member of this map.
+   * @brief Checks if a key-value pair is present in this map.
    *
    * @param key The key of the key-value pair to check.
    *
@@ -126,7 +126,7 @@ public:
   }
 
   /**
-   * @brief Fetches the value of the specified key-value pair.
+   * @brief Fetches the value of the key-value pair matching the specified key.
    *
    * @param key The key of the key-value pair to fetch.
    *
@@ -134,7 +134,7 @@ public:
    *
    * @warning If you try to get a key-value pair that does not exist,
    * this will throw a runtime exception (Tourmaline::Systems::Logging::Error).
-   * Please check the availability of a key with Has function first.
+   * Please check the presence of the key in the map with the Has function first.
    */
   [[nodiscard("Unnecessary call of Get function")]]
   Value &Get(const Key &key) {
@@ -161,9 +161,9 @@ public:
    *
    * @return Every value stored inside a std::vector.
    *
-   * @warning When this function is ran, it will transfer the ownership of the
-   * stored data to where it is ran. Therefore this map will own nothing after
-   * being ran.
+   * @warning When this function is run, it will transfer ownership of the
+   * stored data to where it is run. Therefore this map will own nothing after
+   * the function runs.
    */
   [[nodiscard("Discarding an expensive operation!")]]
   std::vector<Value> ExtractValuesToArray() {

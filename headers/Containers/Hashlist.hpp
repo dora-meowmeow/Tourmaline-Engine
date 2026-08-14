@@ -37,9 +37,9 @@ public:
   ~Hashlist() { Clear(); }
 
   /**
-   * @brief Inserts an entry to the list.
+   * @brief Inserts an entry into the list.
    *
-   * @param entry Entry to be copied to the list.
+   * @param entry Entry to be copied into the list.
    *
    * @warning If you try to insert same entry twice, this will throw
    * a runtime exception (Tourmaline::Systems::Logging::Error).
@@ -67,16 +67,16 @@ public:
   }
 
   /**
-   * @brief Removes an entry to the list.
+   * @brief Removes an entry from the list.
    *
-   * @param entry Entry to be removed to the list.
+   * @param entry Entry to be removed from the list.
    *
    * @note This function will not deconstruct or erase any data inside pointers.
    * If you are storing pointers with this list, you must manually clear them.
    *
    * @warning If you try to remove an entry that does not exist,
    * this will throw a runtime exception (Tourmaline::Systems::Logging::Error).
-   * Please check availability of entry with Has function first.
+   * Please check the existence of the entry with the Has function first.
    */
   void Remove(const Entry &entry) {
     std::size_t entryHash = std::hash<Entry>{}(entry),

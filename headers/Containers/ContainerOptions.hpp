@@ -37,16 +37,16 @@ struct HashContainerOptions {
 
   /**
    * @brief Minimum load factor percentage to rehash.
-   * this will be used for shrinking the container.
+   * This will be used for shrinking the container.
    */
   float minimizeFactor = 0.20f;
 
   /**
-   * @brief Higher values means leaning more to minimizeFactor when rehashing a
+   * @brief Higher values mean leaning more towards minimizeFactor when recalculating a
    * load factor.
    *
-   * When reallocating; new reallocated container will calculate
-   * desired load factor with the following formula.
+   * When reallocating, the newly reallocated container will calculate
+   * the desired load factor with the following formula:
    *
    * @f(newLoadFactor = (loadFactor + minimizeFactor) / leaningFactor@f)
    *
@@ -57,19 +57,19 @@ struct HashContainerOptions {
   float leaningFactor = 2.5f;
 
   /**
-   * @brief Minimum ammount of buckets.
+   * @brief Minimum amount of buckets.
    *
-   * Minimum ammount of buckets to hold hashes, bigger value
-   * hypothetically means less hash collisions. So the insertion and
-   * fetching speed is faster. However more buckets means more memory used.
+   * Minimum amount of buckets to hold hashes. A bigger value
+   * hypothetically means less hash collisions, so the insertion and
+   * fetching speed is faster. However, more buckets means more memory is used.
    */
   std::size_t minimumBucketCount = 256;
 
   /**
    * @brief Per bucket reserved space.
    *
-   * Each bucket is a vector under the hood, so to not needlessy reallocate the
-   * data, the bucket will reserve this much space for entries.
+   * Each bucket is a vector under the hood. In order to avoid unnecessary reallocations,
+   * the bucket will reserve this much space for entries.
    */
   std::size_t reservedBucketSpace = 4;
 };
