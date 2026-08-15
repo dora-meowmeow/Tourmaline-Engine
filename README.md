@@ -1,10 +1,13 @@
 # Tourmaline Engine
 
-Tormaline Engine is a game engine created for C++23. [Source Code](https://git.thenight.club/cat/Tourmaline-Engine/).
+Tormaline Engine is a game engine created for C++23.
+
+- [Source Code](https://git.thenight.club/cat/Tourmaline-Engine/).
+- [Visit the documentation website](https://docs.tourmalineengine.dev/).
 
 ### Currently the project is still trying to incorporate following parts (in no particular order)
 
-- [ ] ECS (Builtin)
+- [X] ECS (Builtin)
 - [X] Logging (Builtin)
 - [X] Random Generation (Builtin)
 - [ ] Graphics (Magnum Graphics)
@@ -20,11 +23,9 @@ Tormaline Engine is a game engine created for C++23. [Source Code](https://git.t
 
 Tourmaline is by no means currently usable. The project is incredible volatile with constant changes and improvements. Please wait until a release is made.
 
-However if you cannot just help yourself you can compile a tourmaline demo by running
+However if you cannot just help yourself, there is currently a temparory compile script [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compile.sh) (there is also a debug variant [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compileWithCoverage.sh)).
 
-```
-g++ -std=c++23 -L/usr/local/lib64/Tourmaline -Wl,--disable-new-dtags -Wl,-rpath,/usr/local/lib64/Tourmaline -lTourmaline -lMagnum -lCorradeUtility -lCorradePluginManager -I/usr/local/include/TourmalineExternal -O2 -o program test_ECS.cpp
-```
+### !! These scripts are used to test Tourmaline, they are not meant to be the final way to compile Tourmaline.
 
 # 3rd Party Libraries Credits
 
@@ -34,7 +35,7 @@ g++ -std=c++23 -L/usr/local/lib64/Tourmaline -Wl,--disable-new-dtags -Wl,-rpath,
 
 # Special Thanks
 
-- [Lars "harmonyisdead"](https://github.com/larsl2005) for hosting the thenight.club services.
+- [Lars "harmonyisdead"](https://github.com/larsl2005) for hosting the thenight.club services and renting the tourmalineengine.dev and tourmalineengine.com.
 - [Vladimír "Mosra" Vondruš](https://github.com/mosra) for their mentorship of my C++ knowledge/projects, and the people at the [magnum gitter channel](https://matrix.to/#/#mosra_magnum:gitter.im), for their continous support and feedback of this project.
 - [Kae "voxelfoxkae"](https://voxelfox.co.uk/) for their mentorship.
 
@@ -42,7 +43,7 @@ g++ -std=c++23 -L/usr/local/lib64/Tourmaline -Wl,--disable-new-dtags -Wl,-rpath,
 
 ### Version Scheming
 
-Tourmaline uses a single digit that ticks up by 1 for each version. There are no major or minor updates or versions. The project can be seen as a rolling release project.
+Tourmaline uses a single digit that ticks up by 1 for each version. There are no major or minor updates or versions. The project can be seen as a rolling release project. There is yet to be a release.
 
 ### What is Tourmaline and Why is that the name?
 
