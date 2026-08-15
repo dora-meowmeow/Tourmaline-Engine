@@ -9,7 +9,7 @@ Tourmaline Engine is a C++23 game engine. It is a pet project of [cat@thenight.c
 
 # Roadmap
 
-Currently the project is still trying to incorporate following parts (in no particular order)
+Currently the project is still trying to incorporate the following parts (in no particular order):
 
 - [X] ECS (Builtin)
 - [X] Logging (Builtin)
@@ -25,9 +25,9 @@ Currently the project is still trying to incorporate following parts (in no part
 
 # Usability Status
 
-Tourmaline is by no means currently usable. The project is incredible volatile with constant changes and improvements. Please wait until a release is made.
+Tourmaline is by no means currently usable. The project is incredibly volatile with constant changes and improvements. Please wait until a release is made.
 
-However if you cannot just help yourself, there is currently a temparory compile script [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compile.sh) (there is also a debug variant [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compileWithCoverage.sh)).
+However, if you just cannot help yourself, there is currently a temporary compile script [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compile.sh) (there is also a debug variant [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compileWithCoverage.sh)).
 
 \warning These scripts are used to test Tourmaline, they are not meant to be the final way to compile Tourmaline.
 
@@ -39,30 +39,30 @@ However if you cannot just help yourself, there is currently a temparory compile
 
 # Special Thanks
 
-- [Lars "harmonyisdead"](https://github.com/larsl2005) for hosting the thenight.club services and renting the tourmalineengine.dev and tourmalineengine.com.
-- [Goma "Buren"](https://git.thenight.club/buren) for proof reading, generally helping with the upkeep of the project, and being my other half.
-- [Vladimír "Mosra" Vondruš](https://github.com/mosra) for their mentorship of my C++ knowledge/projects, and the people at the [magnum gitter channel](https://matrix.to/#/#mosra_magnum:gitter.im), for their continous support and feedback of this project.
+- [Lars "harmonyisdead"](https://github.com/larsl2005) for hosting the thenight.club services and renting the tourmalineengine.dev and tourmalineengine.com domains.
+- [Goma "Buren"](https://git.thenight.club/buren) for proofreading, generally helping with the upkeep of the project, and being my other half.
+- [Vladimír "Mosra" Vondruš](https://github.com/mosra) for their mentorship on my C++ knowledge/projects, and the people at the [magnum gitter channel](https://matrix.to/#/#mosra_magnum:gitter.im), for their continuous support and feedback on this project.
 - [Kae "voxelfoxkae"](https://voxelfox.co.uk/) for their mentorship.
 
-# Not-so frequently asked questions
+# Not-so-frequently asked questions
 
 ## When will Tourmaline release?
 
 Currently (2026-08-15), it is too early to say. The project is still rapidly evolving and changing. You can see what I am working on [here](https://git.thenight.club/cat/TourmalineEngine/projects/5).
 
-## Version Scheming
+## Versioning Scheme
 
-Tourmaline uses a single digit that ticks up by 1 for each version. There are no major or minor updates or versions. The project can be seen as a rolling release project. There is yet to be a release.
+Tourmaline uses a single digit versioning scheme that ticks up by 1 for each version. There are no major or minor updates or versions. The project can be seen as a rolling release project. There is yet to be a release.
 
-## What is Tourmaline and Why is that the name?
+## What is "Tourmaline" and Why is that the name?
 
-From [Wikipedia](https://en.wikipedia.org/wiki/Tourmaline)
+From [Wikipedia](https://en.wikipedia.org/wiki/Tourmaline):
 > Tourmaline is a crystalline silicate mineral group in which boron is compounded with elements such as aluminium, iron, magnesium, sodium, lithium, or potassium.
 
-From [Find Gemstone](https://www.findgemstone.com/blog/what-is-tourmaline-used-for-in-industry/)
+From [Find Gemstone](https://www.findgemstone.com/blog/what-is-tourmaline-used-for-in-industry/):
 > Tourmaline has unique electric properties, including the ability to generate an electric charge as well as maintain electromagnetic radiation. These characteristics make tourmaline useful in the production of a range of electronics.
 
-In short Tourmaline is a very versatile "Gem". This name is given to the third iteration of a project that once only concern itself with Video playback on Magnum graphics.
+In short, Tourmaline is a very versatile "Gem". This is the name given to the third iteration of a project that once only concerned itself with Video playback on Magnum graphics.
 
 # License
 
