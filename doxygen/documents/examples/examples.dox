@@ -1,7 +1,7 @@
 /**
  * @page examples Examples
  *
- * Here are some examples to get you accustomed to basics of Tourmaline Engine.
+ * Here are some examples to get you accustomed to the basics of Tourmaline Engine.
  * 
  * - @subpage 01-Hello-Tourmaline (Last Updated: 2026-08-15)
  * - @subpage 02-ECS-Basics (Last Updated: 2026-08-15)
