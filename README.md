@@ -25,7 +25,7 @@ Tourmaline is by no means currently usable. The project is incredibly volatile w
 
 However, if you just cannot help yourself, there is currently a temporary compile script [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compile.sh) (there is also a debug variant [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compileWithCoverage.sh)).
 
-### !! These scripts are used to test Tourmaline, they are not meant to be the final way to compile Tourmaline.
+### !! These scripts are used to test Tourmaline, they are not meant to be the final way to compile Tourmaline
 
 # 3rd Party Libraries Credits
 
@@ -37,6 +37,7 @@ However, if you just cannot help yourself, there is currently a temporary compil
 
 - [Lars "harmonyisdead"](https://github.com/larsl2005) for hosting the thenight.club services and renting the tourmalineengine.dev and tourmalineengine.com domains.
 - [Vladimír "Mosra" Vondruš](https://github.com/mosra) for their mentorship on my C++ knowledge/projects, and the people at the [magnum gitter channel](https://matrix.to/#/#mosra_magnum:gitter.im), for their continuous support and feedback on this project.
+- [Goma "Buren"](https://git.thenight.club/buren) for proofreading, generally helping with the upkeep of the project, and being my other half.
 - [Kae "voxelfoxkae"](https://voxelfox.co.uk/) for their mentorship.
 
 # Not-so-frequently asked questions
