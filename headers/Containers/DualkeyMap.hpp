@@ -155,7 +155,8 @@ public:
    *
    * @return Amount of elements removed.
    *
-   * @note Both arguments can be specified, if you want to remove a specific entry.
+   * @note Both arguments can be specified, if you want to remove a specific
+   * entry.
    * @warning If both arguments are std::nullopt_t, then the software will
    * terminate(Tourmaline::Systems::Logging::Critical).
    */
@@ -240,9 +241,9 @@ public:
    *
    * @return Result of the query.
    *
-   * @note Both arguments can be specified, in which case std::vector will either
-   * have 0 elements or 1 element, depending on whether the query could find the
-   * entry.
+   * @note Both arguments can be specified, in which case std::vector will
+   * either have 0 elements or 1 element, depending on whether the query could
+   * find the entry.
    *
    * @warning If both arguments are std::nullopt_t, then the software will
    * terminate(Tourmaline::Systems::Logging::Critical).
@@ -307,8 +308,8 @@ public:
    * @brief Queries for a single entry, or entire group of entries.
    *
    * @tparam Key Must be either AKey or BKey.
-   * @tparam OppositeKey This should be automatically filled. However, if it is not,
-   * it should be the opposite key to Key.
+   * @tparam OppositeKey This should be automatically filled. However, if it is
+   * not, it should be the opposite key to Key.
    *
    * @param keys List of values of Key to be used to query.
    * @param ignoreChecks Highly unadvised to set to true. This will disable
@@ -317,13 +318,14 @@ public:
    *
    * @return Result of the query.
    *
-   * This will query for several specified values of Key. It will return all entries
-   * for which the queried Key matches these values, if and only if the respective
-   * OppositeKey has entries matching **every** value specified for Key. 
+   * This will query for several specified values of Key. It will return all
+   * entries for which the queried Key matches these values, if and only if the
+   * respective OppositeKey has entries matching **every** value specified for
+   * Key.
    *
    * For example: if the queried Key is AKey and values 2 and 11 are queried:
-   * Every entry with a BKey that has entries with AKey values 2 and 11 will be returned.
-   * Otherwise they will be omitted.
+   * Every entry with a BKey that has entries with AKey values 2 and 11 will be
+   * returned. Otherwise they will be omitted.
    */
   template <typename Key,
             typename OppositeKey = Concepts::OppositeOf<Key, AKey, BKey>>
@@ -482,7 +484,7 @@ private:
       }
     }
 
-    return queryResults.ExtractValuesToArray();
+    return queryResults.ExtractAllValues();
   }
 };
 } // namespace Tourmaline::Containers
