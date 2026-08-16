@@ -122,6 +122,52 @@ public:
 
     return false;
   }
+  /**
+   * @brief Releases all of the entries stored.
+   *
+   * @return Every entru stored moved inside a std::vector.
+   *
+   * @warning When this function is run, it will transfer ownership of the
+   * stored data to where it is run. Therefore this map will own nothing after
+   * the function runs.
+   */
+  [[nodiscard("Unnecessary call of ExtractAllEntries function")]]
+  std::vector<Entry> ExtractAllEntries() {
+    std::vector<Entry> result;
+    result.reserve(count);
+
+    for (bucket &entry : storage) {
+      for (hashStorage &hash : entry) {
+        result.emplace_back(std::move(hash.entry));
+      }
+      entry.clear();
+    }
+
+    count = 0;
+    bucketCount = Options.minimumBucketCount;
+    std::vector<bucket> newStorage;
+    storage.swap(newStorage);
+    return result;
+  }
+
+  /**
+   * @breif Outputs all of the entries in a list as a std::vector.
+   *
+   * @return Copies of entries inside a vector.
+   */
+  [[nodiscard("Unnecessary call of ListAllEntries function")]]
+  std::vector<Entry> ListAllEntries() {
+    std::vector<Entry> result;
+    result.reserve(count);
+
+    for (bucket &entry : storage) {
+      for (hashStorage &hash : entry) {
+        result.push_back(hash.entry);
+      }
+    }
+
+    return result;
+  }
 
   /**
    * @brief Erases all the elements.
