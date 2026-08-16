@@ -161,7 +161,8 @@ public:
    *
    * @param entity Entity UUID of the entity from which to fetch the label.
    *
-   * @return If labeled, returns the labeled name. Otherwise, returns the string "unknown".
+   * @return If labeled, returns the labeled name. Otherwise, returns the string
+   * "unknown".
    */
   [[nodiscard("Pointless call of GetEntityLabel")]]
   Corrade::Containers::StringView GetEntityLabel(const Entity &entity) noexcept;
@@ -181,18 +182,20 @@ public:
   }
 
   /**
-   * @brief Adds any function, provided it follows the rules specified below, as a system.
+   * @brief Adds any function, provided it follows the rules specified below, as
+   * a system.
    *
    * @tparam SystemFunction A function (could be a member function of a class)
    * which follows the rules specified below.
-   * @tparam Instance If the function is a member function of a class, set this as
-   * the class type. Otherwise leave it as is.
+   * @tparam Instance If the function is a member function of a class, set this
+   * as the class type. Otherwise leave it as is.
    *
    * @param system The function to add as a system.
    * @param priority Refer to Tourmaline::System::ECS::SystemPriority.
    * @param enabled Whether the system should be enabled from creation.
-   * @param instance A pointer to a class instance. Required for member functions
-   * of a class that AREN'T static (as context to run the function in).
+   * @param instance A pointer to a class instance. Required for member
+   * functions of a class that AREN'T static (as context to run the function
+   * in).
    *
    * @return The System UUID of the created system.
    *
@@ -365,10 +368,11 @@ public:
    *
    * @tparam Component Any type that publicly inherits
    * Tourmaline::Systems::ECS::Component.
-   * @tparam ComponentArgs Types of the arguments to be used for the construction
-   * of the component.
+   * @tparam ComponentArgs Types of the arguments to be used for the
+   * construction of the component.
    *
-   * @param entity Entity UUID of the entity to which the component will be added.
+   * @param entity Entity UUID of the entity to which the component will be
+   * added.
    * @param args Arguments to construct the component.
    */
   template <isAComponent Component, typename... ComponentArgs>
@@ -385,7 +389,8 @@ public:
   }
 
   /**
-   * @brief Fetches a specified component of an entity, if available (i.e. present).
+   * @brief Fetches a specified component of an entity, if available (i.e.
+   * present).
    *
    * @tparam Component Any type that publicly inherits
    * Tourmaline::Systems::ECS::Component.
@@ -417,7 +422,8 @@ public:
    * @tparam Component Any type that publicly inherits
    * Tourmaline::Systems::ECS::Component.
    *
-   * @param entity Entity UUID of the entity in which to check for the component.
+   * @param entity Entity UUID of the entity in which to check for the
+   * component.
    *
    * @return True if the component is present, false otherwise.
    */
@@ -435,9 +441,16 @@ public:
    *
    * @param entity Entity UUID of the entity from which to remove the component.
    *
-   * @return True if the component was present and successfully removed, false otherwise.
+   * @return True if the component was present and successfully removed, false
+   * otherwise.
+   *
+   * @warning You cannot remove Tourmaline::Systems::Components::Transform using
+   * this function.
    */
   template <isAComponent Component> bool RemoveComponent(const Entity &entity) {
+    static_assert(!std::is_same_v<Component, Components::Transform>,
+                  "Tried to remove Tourmaline::Systems::Components::Transform "
+                  "from an entity. This is not allowed!");
     return entityComponentMap.Remove(entity, typeid(Component));
   }
 
