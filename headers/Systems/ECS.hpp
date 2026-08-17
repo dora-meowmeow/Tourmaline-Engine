@@ -223,10 +223,10 @@ public:
     // Welcome to defensive programming hell
     static_assert(std::is_void_v<returnType>, "Return type must be void!");
     static_assert(componentCount > 0,
-                  "A System at minimum needs to have at least 1 "
+                  "A System is required to take at least 1 more "
                   "argument aside from const Entity&!");
     static_assert(std::is_same_v<firstArgument, const Entity &>,
-                  "First Argument must be the type const Entity&!");
+                  "First Argument must be of the type const Entity&!");
     if constexpr (requiresInstance) {
       static_assert(std::is_class_v<Instance>,
                     "Non-static pointer-to-member functions must supply which "
@@ -239,7 +239,7 @@ public:
           (!std::is_base_of_v<typename Traits::template argument<index + 1>,
                               ECS::Component> &&
            ...),
-          "Every argument aside from first argument must be derived from "
+          "Every argument aside from the first argument must be derived from "
           "ECS::Component");
     }(std::make_integer_sequence<std::size_t, componentCount>{});
 
