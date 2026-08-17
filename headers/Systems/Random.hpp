@@ -26,15 +26,21 @@ class Random {
 public:
   /**
    * @brief Generates a random value.
-   * @tparam T Any type that satisfies std::is_integral_v.
+   * @tparam T Any type that satisfies std::is_integral or
+   * std::is_floating_point.
    * @param max Maximum inclusive value to generate.
    * @param min Minimum inclusive value to generate.
    * @return A random value of the same type as max and min.
    */
   template <typename T>
-    requires std::is_integral_v<T>
+    requires std::is_integral_v<T> || std::is_floating_point_v<T>
   static T Generate(T max, T min = 0) {
-    return (generator() % (max - min + 1)) + min;
+    if constexpr (std::is_floating_point_v<T>) {
+      T range = static_cast<T>(generator() % 100000) / 100000;
+      return (max - min) * range + min;
+    } else {
+      return (generator() % (max - min + 1)) + min;
+    }
   }
 
   /**
