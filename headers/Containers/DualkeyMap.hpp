@@ -181,6 +181,7 @@ public:
     for (DualkeyHash *hash : hashList) {
       // Tombstone
       if (hash == nullptr) [[unlikely]] {
+        ++index;
         continue;
       }
 
@@ -230,6 +231,25 @@ public:
   [[nodiscard]]
   std::size_t Count() {
     return hashList.size() - graveyard.size();
+  }
+
+  /**
+   * @brief Erases all the elements.
+   *
+   * @note This function will not deconstruct or erase any data inside pointers.
+   * If you are storing pointers with this list, you must manually clear them.
+   */
+  void Clear() noexcept {
+    // I'm sure there is a better way to do this
+    for (DualkeyHash *hash : hashList) {
+      if (hash != nullptr) [[likely]] {
+        delete hash;
+      }
+    }
+    hashList.clear();
+
+    // wth this is a thing???
+    std::ignore = graveyard.empty();
   }
 
   // Queries
