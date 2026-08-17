@@ -151,7 +151,7 @@ public:
   }
 
   /**
-   * @breif Outputs all of the entries in a list as a std::vector.
+   * @brief Outputs all of the entries in a list as a std::vector.
    *
    * @return Copies of entries inside a vector.
    */

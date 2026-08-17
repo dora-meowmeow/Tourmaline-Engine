@@ -186,7 +186,7 @@ public:
   }
 
   /**
-   * @breif Outputs all of the values in a list as a std::vector.
+   * @brief Outputs all of the values in a list as a std::vector.
    *
    * @return Copies of values inside a vector.
    */
@@ -205,7 +205,7 @@ public:
   }
 
   /**
-   * @breif Outputs all of the keys in a list as a std::vector.
+   * @brief Outputs all of the keys in a list as a std::vector.
    *
    * @return Copies of keys inside a vector.
    */

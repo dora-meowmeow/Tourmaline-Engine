@@ -1,4 +1,4 @@
-\page 01-Hello-Tourmaline 01. Getting Started - Installing and Preparing Tourmaline.
+\page 01-Hello-Tourmaline 01. Getting Started - Installing and Preparing Tourmaline
 
 This example is meant to guide you on how to set up Tourmaline. This guide will assume that you already have the following:
 
