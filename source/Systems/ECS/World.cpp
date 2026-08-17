@@ -82,7 +82,7 @@ bool World::RemoveSystem(const System &system) {
     return true;
   }
 
-  Logging::LogFormatted("Tried to remove a non existend system with ID {}",
+  Logging::LogFormatted("Tried to remove a non-existent system with ID {}",
                         "ECS/DestroySystem", Logging::Warning,
                         system.asString());
   return false;

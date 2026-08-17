@@ -88,13 +88,13 @@ public:
    * @brief Function to run before termination due to
    * Logging::LogLevel::Critical.
    *
-   * The function will be called right before std::terminate is called due to
+   * The function will be called right before std::terminate is called due to a
    * Logging::LogLevel::Critical level log.
    *
-   * @note It is heavily suggested that you set this function as a way to save
-   * program state before critical error termination.
+   * @note It is heavily suggested that you set this function as a way to save the
+   * program state before a critical error termination.
    *
-   * @note This can be useful for example taking a save of the game right
+   * @note This can be useful for, for example, taking a save of the game right
    * before a crash.
    */
   static Corrade::Containers::Function<void()> TerminationFunction;
