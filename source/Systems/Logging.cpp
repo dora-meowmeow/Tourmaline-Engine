@@ -37,6 +37,8 @@ const char *Logging::LogLevelToString[Logging::Trace + 1]{
     "Critical", "Error", "Warning", "Info", "Debug", "Trace"};
 std::fstream Logging::File;
 
+Corrade::Containers::Function<void()> Logging::TerminationFunction = [] {};
+
 void Logging::LogToFile(String File) {
   if (File == "") {
     const auto now = std::chrono::system_clock::now();
@@ -77,6 +79,14 @@ void Logging::Log(StringView message, StringView position,
     }
 
     if (severity == Logging::LogLevel::Critical) {
+      // Copying output incase TerminationFunction
+      // also uses Logging (this overrides output).
+      String hold = output;
+      TerminationFunction();
+
+      // We are calling it here again so TerminationFunction
+      // can run before throw.
+      throw std::runtime_error(hold.data());
       std::terminate();
     }
   }

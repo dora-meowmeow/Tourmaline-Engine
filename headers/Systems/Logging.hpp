@@ -9,6 +9,7 @@
 #ifndef GUARD_TOURMALINE_LOGGING_H
 #define GUARD_TOURMALINE_LOGGING_H
 
+#include "Corrade/Containers/Function.h"
 #include "Corrade/Containers/String.h"
 #include "Corrade/Containers/StringView.h"
 #include "Corrade/Utility/Format.h"
@@ -30,11 +31,12 @@ public:
   /**
    * @brief Log severity
    *
-   * @note when LogLevel::Error is given as severity to a logging function. The function
-   * will throw an std::runtime_error.
+   * @note when LogLevel::Error is given as severity to a logging function. The
+   * function will throw an std::runtime_error.
    *
-   * @warning when LogLevel::Critical is given as severity to a logging function. The function
-   * will trigger std::terminate and shutdown the software.
+   * @warning when LogLevel::Critical is given as severity to a logging
+   * function. The function will trigger std::terminate and shutdown the
+   * software.
    */
   enum LogLevel { Critical, Error, Warning, Info, Debug, Trace };
 
@@ -54,8 +56,8 @@ public:
    * optional, is highly recommended.
    * @param severity How severe this log message is. See
    * Tourmaline::Systems::Logging::LogLevel.
-   * @param assertion The log message will only be sent when this is set to true,
-   * otherwise it will be ignored.
+   * @param assertion The log message will only be sent when this is set to
+   * true, otherwise it will be ignored.
    */
   static void Log(Corrade::Containers::StringView message,
                   Corrade::Containers::StringView position = "Unknown",
@@ -81,6 +83,21 @@ public:
     Log(Corrade::Containers::StringView{output.begin(), size}, position,
         severity);
   }
+
+  /**
+   * @brief Function to run before termination due to
+   * Logging::LogLevel::Critical.
+   *
+   * The function will be called right before std::terminate is called due to
+   * Logging::LogLevel::Critical level log.
+   *
+   * @note It is heavily suggested that you set this function as a way to save
+   * program state before critical error termination.
+   *
+   * @note This can be useful for example taking a save of the game right
+   * before a crash.
+   */
+  static Corrade::Containers::Function<void()> TerminationFunction;
 
 private:
   static std::fstream File;
