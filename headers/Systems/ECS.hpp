@@ -9,9 +9,9 @@
 
 #ifndef GUARD_TOURMALINE_ECS_H
 #define GUARD_TOURMALINE_ECS_H
-#include <any>
 #include <cstddef>
 #include <cstdlib>
+#include <memory>
 #include <type_traits>
 #include <typeindex>
 #include <typeinfo>
@@ -246,26 +246,25 @@ public:
     // Type erasure nightmare
     System newSystem = Random::GenerateUUID();
     systemFunction internalFunction =
-        [system, instance, requiresInstance](const Entity &entity,
-                                             std::span<std::any *> args) {
+        [system, instance,
+         requiresInstance](const Entity &entity,
+                           std::span<std::unique_ptr<ECS::Component> *> args) {
           [&]<std::size_t... index>(std::index_sequence<index...>) {
             // This check could be done in World::Step(), however
             // it is easier (and cheaper I believe) to implement it here
-            if ((any_cast<typename Traits::template argument<index + 1>>(
-                     *args[index])
-                     .isEnabled &&
-                 ...)) [[likely]] {
+            if ((args[index]->get()->isEnabled && ...)) [[likely]] {
 
               // Pointer to Member functions
               if constexpr (requiresInstance) {
                 (instance->*system)(
                     entity,
-                    (any_cast<typename Traits::template argument<index + 1>>(
-                        *args[index]))...);
+                    (static_cast<typename Traits::template argument<index + 1>>(
+                        *args[index]->get()))...);
               } else {
-                system(entity,
-                       (any_cast<typename Traits::template argument<index + 1>>(
-                           *args[index]))...);
+                system(
+                    entity,
+                    (static_cast<typename Traits::template argument<index + 1>>(
+                        *args[index]->get()))...);
               }
             }
           }(std::make_integer_sequence<std::size_t, componentCount>{});
@@ -377,15 +376,15 @@ public:
    */
   template <isAComponent Component, typename... ComponentArgs>
   Component &AddComponent(const Entity &entity, ComponentArgs &&...args) {
-    auto newComponent = entityComponentMap.Insert(entity, typeid(Component),
-                                                  Component(args...));
+    auto newComponent = entityComponentMap.Insert(
+        entity, typeid(Component), std::make_unique<Component>(args...));
     if (componentCacheMap.Has(typeid(Component))) {
       for (systemCache *cache : componentCacheMap.Get(typeid(Component))) {
         cache->isStoring = false;
       }
     }
 
-    return std::any_cast<Component &>(std::get<2>(newComponent));
+    return static_cast<Component &>(*std::get<2>(newComponent).get());
   }
 
   /**
@@ -413,7 +412,7 @@ public:
                             "ECS/GetComponent", Logging::Error,
                             entity.asString(), typeid(Component).name());
     }
-    return std::any_cast<Component &>(result.begin()->second);
+    return static_cast<Component &>(*result.begin()->second.get());
   }
 
   /**
@@ -463,13 +462,14 @@ public:
   World &operator=(const World &) = delete;
 
 private:
-  Containers::DualkeyMap<Entity, std::type_index, std::any>
+  Containers::DualkeyMap<Entity, std::type_index,
+                         std::unique_ptr<ECS::Component>>
       entityComponentMap{};
   Containers::Hashmap<Entity, Corrade::Containers::String> entityLabelList{};
 
   // Systems
   using systemFunction = Corrade::Containers::Function<void(
-      const Entity &, std::span<std::any *>)>;
+      const Entity &, std::span<std::unique_ptr<ECS::Component> *>)>;
   using componentCache = decltype(entityComponentMap)::MultiQueryResult<Entity>;
   using componentCacheList =
       std::vector<decltype(entityComponentMap)::MultiQueryResult<Entity>>;

@@ -11,6 +11,7 @@
 #include "Systems/ECS/BuiltinComponents.hpp"
 #include "Systems/Logging.hpp"
 #include "Systems/Random.hpp"
+#include <memory>
 
 using namespace Tourmaline::Systems;
 using namespace ECS;
@@ -22,7 +23,7 @@ Entity World::CreateEntity(bool isEnabled, Type::UUID presetUUID) {
 
   // Default components
   entityComponentMap.Insert(newEntity, typeid(Components::Transform),
-                            Components::Transform());
+                            std::make_unique<Components::Transform>());
 
   if (componentCacheMap.Has(typeid(Components::Transform))) {
     for (systemCache *cache :
@@ -42,7 +43,8 @@ bool World::EntityExists(const Entity &entity) noexcept {
   bool exists = false;
   entityComponentMap.Scan(
       [&exists, entity](const Tourmaline::Type::UUID &currentEntity,
-                        const std::type_index &, std::any &) -> bool {
+                        const std::type_index &,
+                        std::unique_ptr<ECS::Component> &) -> bool {
         if (currentEntity == entity) {
           exists = true;
           return true;
