@@ -11,11 +11,13 @@
 #define GUARD_TOURMALINE_ECS_H
 #include <cstddef>
 #include <cstdlib>
+#include <functional>
 #include <memory>
 #include <type_traits>
 #include <typeindex>
 #include <typeinfo>
 #include <utility>
+#include <vector>
 
 #include "../Concepts.hpp"
 #include "../Containers/DualkeyMap.hpp"
@@ -413,6 +415,38 @@ public:
                             entity.asString(), typeid(Component).name());
     }
     return static_cast<Component &>(*result.begin()->second.get());
+  }
+
+  /**
+   * @brief Fetches every instance of a component, if available (i.e.
+   * present).
+   *
+   * @tparam Component Any type that publicly inherits
+   * Tourmaline::Systems::ECS::Component.
+   *
+   * @return A vector of every instance of specified the component and the
+   * entity associated with it. Returns an empty vector if none exists.
+   *
+   * @warning This is a somewhat costly operation. It is suggested that you
+   * cache the result.
+   */
+  template <isAComponent Component>
+  [[nodiscard("Pointless call of GetAllComponentOfType")]]
+  std::vector<std::pair<const Entity &, Component &>> GetAllOfComponents() {
+    auto queryResult =
+        entityComponentMap.Query(std::nullopt, typeid(Component));
+    if (queryResult.empty()) {
+      return {};
+    }
+
+    std::vector<std::pair<const Entity &, Component &>> result;
+    for (const auto &pair : queryResult) {
+      result.emplace_back(
+          std::get<std::reference_wrapper<const Entity>>(pair.first).get(),
+          static_cast<Component &>(*pair.second));
+    }
+
+    return result;
   }
 
   /**
