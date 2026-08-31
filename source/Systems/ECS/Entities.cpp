@@ -24,13 +24,7 @@ Entity World::CreateEntity(bool isEnabled, Type::UUID presetUUID) {
   // Default components
   entityComponentMap.Insert(newEntity, typeid(Components::Transform),
                             std::make_unique<Components::Transform>());
-
-  if (componentCacheMap.Has(typeid(Components::Transform))) {
-    for (systemCache *cache :
-         componentCacheMap.Get(typeid(Components::Transform))) {
-      cache->isStoring = false;
-    }
-  }
+  refreshAndInvalidateCaches<Components::Transform>();
 
   if (!isEnabled) {
     SetEntityEnable(newEntity, isEnabled);
@@ -97,5 +91,8 @@ World::GetEntityLabel(const Entity &entity) noexcept {
 }
 
 bool World::DestroyEntity(Entity entity) {
-  return entityComponentMap.Remove(entity, std::nullopt);
+  size_t result = entityComponentMap.Remove(entity, std::nullopt);
+  refreshAndInvalidateCaches<Components::Transform>();
+
+  return result;
 }

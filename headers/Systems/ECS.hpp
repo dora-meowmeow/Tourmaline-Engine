@@ -13,6 +13,7 @@
 #include <cstdlib>
 #include <functional>
 #include <memory>
+#include <tuple>
 #include <type_traits>
 #include <typeindex>
 #include <typeinfo>
@@ -380,11 +381,8 @@ public:
   Component &AddComponent(const Entity &entity, ComponentArgs &&...args) {
     auto newComponent = entityComponentMap.Insert(
         entity, typeid(Component), std::make_unique<Component>(args...));
-    if (componentCacheMap.Has(typeid(Component))) {
-      for (systemCache *cache : componentCacheMap.Get(typeid(Component))) {
-        cache->isStoring = false;
-      }
-    }
+
+    refreshAndInvalidateCaches<Component>();
 
     return static_cast<Component &>(*std::get<2>(newComponent).get());
   }
@@ -424,22 +422,27 @@ public:
    * @tparam Component Any type that publicly inherits
    * Tourmaline::Systems::ECS::Component.
    *
-   * @return A vector of every instance of specified the component and the
-   * entity associated with it. Returns an empty vector if none exists.
+   * @return A vector of every instance of the specified component and the
+   * entity associated with it. Returns an empty vector if none exist.
    *
-   * @warning This is a somewhat costly operation. It is suggested that you
-   * cache the result.
+   * @note This function gives you a reference that will automatically
+   * update itself as more instances of this component get created.
+   * Please cache **the reference** after your first call.
+   *
+   * @warning Each call of this function will rerun the querying.
+   * It is HEAVILY advised that you cache the given reference after first usage.
    */
   template <isAComponent Component>
   [[nodiscard("Pointless call of GetAllComponentOfType")]]
-  std::vector<std::pair<const Entity &, Component &>> GetAllOfComponents() {
-    auto queryResult =
-        entityComponentMap.Query(std::nullopt, typeid(Component));
-    if (queryResult.empty()) {
-      return {};
+  std::vector<std::pair<const Entity &, Component &>> &GetAllOfComponents() {
+    static std::vector<std::pair<const Entity &, Component &>> result;
+    if (!calledAllComponents.Has(typeid(Component))) {
+      calledAllComponents.Insert(typeid(Component));
     }
 
-    std::vector<std::pair<const Entity &, Component &>> result;
+    auto queryResult =
+        entityComponentMap.Query(std::nullopt, typeid(Component));
+    result.clear();
     for (const auto &pair : queryResult) {
       result.emplace_back(
           std::get<std::reference_wrapper<const Entity>>(pair.first).get(),
@@ -484,7 +487,10 @@ public:
     static_assert(!std::is_same_v<Component, Components::Transform>,
                   "Tried to remove Tourmaline::Systems::Components::Transform "
                   "from an entity. This is not allowed!");
-    return entityComponentMap.Remove(entity, typeid(Component));
+    size_t result = entityComponentMap.Remove(entity, typeid(Component));
+    refreshAndInvalidateCaches<Component>();
+
+    return result;
   }
 
   /// @warning Copying is not allowed, since the ECS world is meant to be
@@ -496,10 +502,25 @@ public:
   World &operator=(const World &) = delete;
 
 private:
-  Containers::DualkeyMap<Entity, std::type_index,
-                         std::unique_ptr<ECS::Component>>
+  template <isAComponent Component> void refreshAndInvalidateCaches() {
+    // Function Caches
+    if (componentCacheMap.Has(typeid(Component))) {
+      for (systemCache *cache : componentCacheMap.Get(typeid(Component))) {
+        cache->isStoring = false;
+      }
+    }
+
+    // GetAllComponent cache
+    if (calledAllComponents.Has(typeid(Component))) {
+      std::ignore = GetAllOfComponents<Component>();
+    }
+  }
+
+  using componentId = std::type_index;
+  Containers::DualkeyMap<Entity, componentId, std::unique_ptr<ECS::Component>>
       entityComponentMap{};
   Containers::Hashmap<Entity, Corrade::Containers::String> entityLabelList{};
+  Containers::Hashlist<componentId> calledAllComponents;
 
   // Systems
   using systemFunction = Corrade::Containers::Function<void(
@@ -509,7 +530,6 @@ private:
       std::vector<decltype(entityComponentMap)::MultiQueryResult<Entity>>;
   using systemArgumentArray = Corrade::Containers::Array<std::type_index>;
   using systemArgumentTupleId = std::type_index;
-  using componentId = std::type_index;
 
   struct systemCache {
     systemArgumentTupleId Id;
