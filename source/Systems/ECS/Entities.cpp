@@ -21,6 +21,19 @@ Entity World::CreateEntity(bool isEnabled, Type::UUID presetUUID) {
   bool isUnspecified = presetUUID.firstHalf == 0 && presetUUID.secondHalf == 0;
   auto newEntity = isUnspecified ? Random::GenerateUUID() : presetUUID;
 
+  // In case someone is astronomically unlucky
+  bool warned = false;
+  while (EntityExists(newEntity)) {
+    if (!isUnspecified && !warned) {
+      Logging::LogFormatted(
+          "Specified UUID {} already exists, generating a new UUID...",
+          "ECS/CreateEntity", Logging::Warning, newEntity.asString());
+      warned = true;
+    }
+
+    newEntity = Random::GenerateUUID();
+  }
+
   // Default components
   entityComponentMap.Insert(newEntity, typeid(Components::Transform),
                             std::make_unique<Components::Transform>());
