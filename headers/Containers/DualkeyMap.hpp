@@ -51,8 +51,7 @@ namespace Tourmaline::Containers {
  * For example: If your AKey is userID and BKey is OrderID, you can query for
  * userID 10. Which will return every entry with a userID of 10.
  */
-template <Concepts::Hashable AKey, Concepts::Hashable BKey, typename Value,
-          DualKeyMapOptions Options = {}>
+template <Concepts::Hashable AKey, Concepts::Hashable BKey, typename Value>
 class DualkeyMap {
 public:
   // Return Types
@@ -103,7 +102,9 @@ public:
   using Entry = std::tuple<const AKey &, const BKey &, Value &>;
 
   // Construct/Destruct
-  DualkeyMap() { hashList.reserve(Options.baseReservation); }
+  DualkeyMap(DualKeyMapOptions options = {}) : Options(options) {
+    hashList.reserve(Options.baseReservation);
+  }
   ~DualkeyMap() {
     // I'm sure there is a better way to do this
     for (DualkeyHash *hash : hashList) {
@@ -424,6 +425,7 @@ private:
   };
 
   // Actual data
+  DualKeyMapOptions Options;
   std::vector<DualkeyHash *> hashList;
   std::stack<std::size_t> graveyard;
 
@@ -463,9 +465,8 @@ private:
     Key *keyToCompare;
     OppositeKey *oppositeKey;
 
-    Containers::Hashmap<OppositeKey, MultiQueryResult<OppositeKey>,
-                        {8.0f, 0.01f, 2.5f, 2048, 8}> // Aggressive hashmap :o
-        queryResults;
+    Containers::Hashmap<OppositeKey, MultiQueryResult<OppositeKey>>
+        queryResults({8.0f, 0.01f, 2.5f, 2048, 8});
 
     for (DualkeyHash *hash : hashList) {
       // Tombstone

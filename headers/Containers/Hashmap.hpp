@@ -26,14 +26,15 @@ namespace Tourmaline::Containers {
  *
  * @tparam Key Any type that satisfies Tourmaline::Concepts::Hashable.
  * @tparam Value Any type is allowed.
- * @tparam Options See Tourmaline::Containers::HashContainerOptions.
  */
-template <Concepts::Hashable Key, typename Value,
-          HashContainerOptions Options = {}>
-class Hashmap {
+template <Concepts::Hashable Key, typename Value> class Hashmap {
 public:
-  Hashmap() { storage.resize(Options.minimumBucketCount); }
-  ~Hashmap() { Clear(); }
+  /**
+   * @param options See Tourmaline::Containers::HashContainerOptions.
+   */
+  Hashmap(HashContainerOptions options = {}) : Options(options) {
+    storage.resize(Options.minimumBucketCount);
+  }
 
   /**
    * @brief Inserts a value with a key to access the value.
@@ -295,6 +296,7 @@ private:
 
   using bucket = std::vector<hashStorage>;
   std::vector<bucket> storage;
+  HashContainerOptions Options;
   std::size_t count = 0, bucketCount = Options.minimumBucketCount;
   float currentLoadFactor = 0,
         preferredLoadFactor = (Options.loadFactor + Options.minimizeFactor) /

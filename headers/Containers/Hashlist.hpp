@@ -26,14 +26,17 @@ namespace Tourmaline::Containers {
  * @brief Key-only variant of Tourmaline::Containers::Hashmap.
  *
  * @tparam Entry Any type that satisfies Tourmaline::Concepts::Hashable.
- * @tparam Options See Tourmaline::Containers::HashContainerOptions.
  *
  * This variant is especially useful, if all you want is a group/set.
  */
-template <Concepts::Hashable Entry, HashContainerOptions Options = {}>
-class Hashlist {
+template <Concepts::Hashable Entry> class Hashlist {
 public:
-  Hashlist() { storage.resize(Options.minimumBucketCount); }
+  /**
+   * @param options See Tourmaline::Containers::HashContainerOptions.
+   */
+  Hashlist(HashContainerOptions options = {}) : Options(options) {
+    storage.resize(Options.minimumBucketCount);
+  }
   ~Hashlist() { Clear(); }
 
   /**
@@ -240,6 +243,7 @@ private:
 
   using bucket = std::vector<hashStorage>;
   std::vector<bucket> storage;
+  HashContainerOptions Options;
   std::size_t count = 0, bucketCount = Options.minimumBucketCount;
   float currentLoadFactor = 0,
         preferredLoadFactor = (Options.loadFactor + Options.minimizeFactor) /
