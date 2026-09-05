@@ -16,6 +16,7 @@
 #include "Magnum/Platform/GlfwApplication.h"
 #include "Magnum/Tags.h"
 #include "Magnum/Timeline.h"
+#include <cstdint>
 
 namespace Tourmaline::Game {
 using namespace Magnum::Math::Literals;
@@ -36,11 +37,19 @@ public:
   struct Config {
     /// @brief Title of the window to be created.
     Corrade::Containers::String windowTitle{"Game Window"};
+
     /// @brief Dimensions of the window.
     Magnum::Vector2i windowSize{800, 600};
-    /// @brief Maximum/Desired frame rate per second. When set to 0, framerate
-    /// will not be capped.
-    uint64_t desiredFrameRate = 60;
+
+    /**
+     *-@brief Maximum/Desired frame rate per second. When set to 0 WITH VSYNC
+     * DISABLED (See Tourmaline::Game::Program::Config::vsyncEnabled),
+     * framerate will not be capped.
+     */
+    uint64_t desiredFrameRate = 0;
+
+    /// @brief Set to false to disable Vsync, set to true to enable Vsync.
+    bool vsyncEnabled = 1;
   };
 
   /// @cond

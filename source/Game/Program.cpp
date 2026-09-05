@@ -27,9 +27,8 @@ void Program::initialize() {
       Configuration{}.setTitle(config.windowTitle).setSize(config.windowSize));
   if (config.desiredFrameRate != 0) {
     setMinimalLoopPeriod(1.0_sec / config.desiredFrameRate);
-  } else {
-    setSwapInterval(0);
   }
+  setSwapInterval(config.vsyncEnabled);
 }
 
 int Program::Run(const Config &conf) {
