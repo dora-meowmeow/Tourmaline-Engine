@@ -25,8 +25,11 @@ bool Program::OnExit() { return true; }
 void Program::initialize() {
   create(
       Configuration{}.setTitle(config.windowTitle).setSize(config.windowSize));
-  setMinimalLoopPeriod(static_cast<Magnum::Nanoseconds>(1.0_sec) /
-                       config.desiredFrameRate);
+  if (config.desiredFrameRate != 0) {
+    setMinimalLoopPeriod(1.0_sec / config.desiredFrameRate);
+  } else {
+    setSwapInterval(0);
+  }
 }
 
 int Program::Run(const Config &conf) {

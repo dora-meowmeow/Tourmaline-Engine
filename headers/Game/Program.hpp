@@ -38,7 +38,8 @@ public:
     Corrade::Containers::String windowTitle{"Game Window"};
     /// @brief Dimensions of the window.
     Magnum::Vector2i windowSize{800, 600};
-    /// @brief Maximum/Desired frame rate per second.
+    /// @brief Maximum/Desired frame rate per second. When set to 0, framerate
+    /// will not be capped.
     uint64_t desiredFrameRate = 60;
   };
 
