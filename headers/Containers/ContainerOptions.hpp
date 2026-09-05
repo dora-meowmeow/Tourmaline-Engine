@@ -42,8 +42,8 @@ struct HashContainerOptions {
   float minimizeFactor = 0.20f;
 
   /**
-   * @brief Higher values mean leaning more towards minimizeFactor when recalculating a
-   * load factor.
+   * @brief Higher values mean leaning more towards minimizeFactor when
+   * recalculating a load factor.
    *
    * When reallocating, the newly reallocated container will calculate
    * the desired load factor with the following formula:
@@ -63,15 +63,15 @@ struct HashContainerOptions {
    * hypothetically means less hash collisions, so the insertion and
    * fetching speed is faster. However, more buckets means more memory is used.
    */
-  std::size_t minimumBucketCount = 256;
+  size_t minimumBucketCount = 256;
 
   /**
    * @brief Per bucket reserved space.
    *
-   * Each bucket is a vector under the hood. In order to avoid unnecessary reallocations,
-   * the bucket will reserve this much space for entries.
+   * Each bucket is a vector under the hood. In order to avoid unnecessary
+   * reallocations, the bucket will reserve this much space for entries.
    */
-  std::size_t reservedBucketSpace = 4;
+  size_t reservedBucketSpace = 4;
 };
 
 /**
@@ -83,7 +83,12 @@ struct HashContainerOptions {
  */
 struct DualKeyMapOptions {
   /// @brief Base amount of entries to reserve.
-  std::uint64_t baseReservation = 2048;
+  uint64_t baseReservation = 2048;
+};
+
+struct BloomFilterOptions {
+  uint64_t bloomCount = 8;
+  uint64_t bytesPerBloom = 256;
 };
 } // namespace Tourmaline::Containers
 #endif
