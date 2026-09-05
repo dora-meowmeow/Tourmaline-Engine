@@ -15,6 +15,7 @@
 #include "Magnum/Magnum.h"
 #include "Magnum/Platform/GlfwApplication.h"
 #include "Magnum/Tags.h"
+#include "Magnum/Timeline.h"
 
 namespace Tourmaline::Game {
 using namespace Magnum::Math::Literals;
@@ -74,8 +75,8 @@ public:
   /**
    * @brief Destruction/Last step of the program.
    *
-   * @return If this function returns true, the program will safely exit, otherwise execution
-   * will continue.
+   * @return If this function returns true, the program will safely exit,
+   * otherwise execution will continue.
    */
   virtual bool OnExit();
 
@@ -87,7 +88,8 @@ public:
    * @brief Allows access to the command line arguments.
    * If you desire to use command line arguments, you must set these.
    *
-   * @note If unset, argc will be set to 1, and argv will contain the string "empty".
+   * @note If unset, argc will be set to 1, and argv will contain the string
+   * "empty".
    * @warning It is highly advised to set these BEFORE the construction
    * of the game program.
    */
@@ -102,10 +104,14 @@ public:
   /// @brief See Tourmaline::Game::Program::Args.
   static Args arguments;
 
+  /// @brief Time it took to draw the last frame in seconds.
+  float deltaTime = 0;
+
 private:
   void initialize();
   void drawEvent() override;
   void exitEvent(ExitEvent &event) override;
+  Magnum::Timeline timeline;
 
   Config config;
   // Empty data incase the dev doesn't want to pass arguments

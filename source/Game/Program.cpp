@@ -33,6 +33,7 @@ int Program::Run(const Config &conf) {
   config = conf;
   initialize();
   OnStart();
+  timeline.start();
   return exec();
 }
 
@@ -41,8 +42,12 @@ void Program::drawEvent() {
                                GL::FramebufferClear::Depth);
   OnStep();
   ECS.Step();
+
   swapBuffers();
   redraw();
+
+  timeline.nextFrame();
+  deltaTime = timeline.previousFrameDuration();
 }
 
 void Program::exitEvent(ExitEvent &event) { event.setAccepted(OnExit()); }
