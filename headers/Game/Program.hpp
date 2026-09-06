@@ -43,7 +43,6 @@ public:
       Fullscreen = 1 << 0,
       Borderless = 1 << 1,
       Maximized = 1 << 4,
-      Minimized = 1 << 5,
     };
 
     /// @brief Title of the window to be created.
@@ -82,7 +81,11 @@ public:
   int Run(const Config &conf);
 
   /**
-   * @brief
+   * @brief Applies the changes done on Tourmaline::Game::Program::config
+   * to the window itself.
+   *
+   * @warning This feature only works with GLFW which is selected by default.
+   * If you modify tourmaline to use SDL2 or anything else
    */
   void ApplyNewConfig();
 
