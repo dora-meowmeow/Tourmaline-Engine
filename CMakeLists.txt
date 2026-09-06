@@ -54,9 +54,14 @@ external_dependency(Corrade
 )
 
 external_dependency(Magnum
-  URL https://github.com/mosra/magnum/archive/145fc82c756ba69afa1f983a914e6b4ad6d76bb3.zip
-  URL_HASH SHA256=a9709905cc4c0841edd8ccbfe86e539929cfa6e010bc377179121762f3343556
+  URL https://github.com/dora-meowmeow/magnum/archive/c6114f904020ef0b7e993bcdb8b27482d911ce38.zip
+  URL_HASH SHA256=9c45bc6f490c7d37e0eb79e41f7b3bbea14849bb40511bb3a24b5a28eaac8152
 )
+
+#external_dependency(Magnum
+#  URL https://github.com/mosra/magnum/archive/145fc82c756ba69afa1f983a914e6b4ad6d76bb3.zip
+#  URL_HASH SHA256=a9709905cc4c0841edd8ccbfe86e539929cfa6e010bc377179121762f3343556
+#)
 
 foreach(dep
   Corrade
