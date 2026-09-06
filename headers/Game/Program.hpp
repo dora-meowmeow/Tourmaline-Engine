@@ -35,6 +35,17 @@ class Program : private Magnum::Platform::GlfwApplication {
 public:
   /// @brief Program configuration.
   struct Config {
+    /**
+     * @brief Types of modes a window could be.
+     */
+    enum class WindowMode : uint32_t {
+      Windowed = 1 << 10,
+      Fullscreen = 1 << 0,
+      Borderless = 1 << 1,
+      Maximized = 1 << 4,
+      Minimized = 1 << 5,
+    };
+
     /// @brief Title of the window to be created.
     Corrade::Containers::String windowTitle{"Game Window"};
 
@@ -47,6 +58,9 @@ public:
      * framerate will not be capped.
      */
     uint64_t desiredFrameRate = 0;
+
+    /// @brief See Tourmaline::Game::Program::Config::WindowMode.
+    WindowMode windowMode = WindowMode::Windowed;
 
     /// @brief Set to false to disable Vsync, set to true to enable Vsync.
     bool vsyncEnabled = 1;
@@ -66,6 +80,11 @@ public:
    * @return Exit code. Anything except 0 means an error.
    */
   int Run(const Config &conf);
+
+  /**
+   * @brief
+   */
+  void ApplyNewConfig();
 
   /**
    * @brief Initialization/Setup step of the program.
@@ -114,6 +133,10 @@ public:
   /// @brief See Tourmaline::Game::Program::Args.
   static Args arguments;
 
+  /// @brief Configurations for the program. See
+  /// Tourmaline::Game::Program::Config.
+  Config config;
+
   /// @brief Time it took to draw the last frame in seconds.
   float deltaTime = 0;
 
@@ -121,9 +144,12 @@ private:
   void initialize();
   void drawEvent() override;
   void exitEvent(ExitEvent &event) override;
-  Magnum::Timeline timeline;
 
-  Config config;
+  // Magnum
+  Magnum::Timeline timeline;
+  Configuration magnumConfig;
+  bool isWindowCreated = false;
+
   // Empty data incase the dev doesn't want to pass arguments
   inline static char *_argv = (char *)"empty";
   inline static int _argc = 1;
