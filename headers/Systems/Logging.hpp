@@ -56,12 +56,12 @@ public:
    * optional, is highly recommended.
    * @param severity How severe this log message is. See
    * Tourmaline::Systems::Logging::LogLevel.
-   * @param assertion The log message will only be sent when this is set to
+   * @param condition The log message will only be sent when this is set to
    * true, otherwise it will be ignored.
    */
   static void Log(Corrade::Containers::StringView message,
                   Corrade::Containers::StringView position = "Unknown",
-                  LogLevel severity = LogLevel::Info, bool assertion = true);
+                  LogLevel severity = LogLevel::Info, bool condition = true);
 
   /**
    * @brief Formatting logging function.
@@ -91,8 +91,8 @@ public:
    * The function will be called right before std::terminate is called due to a
    * Logging::LogLevel::Critical level log.
    *
-   * @note It is heavily suggested that you set this function as a way to save the
-   * program state before a critical error termination.
+   * @note It is heavily suggested that you set this function as a way to save
+   * the program state before a critical error termination.
    *
    * @note This can be useful for, for example, taking a save of the game right
    * before a crash.

@@ -59,8 +59,8 @@ void Logging::LogToFile(String File) {
 }
 
 void Logging::Log(StringView message, StringView position,
-                  Logging::LogLevel severity, bool assertion) {
-  if (assertion) {
+                  Logging::LogLevel severity, bool condition) {
+  if (condition) {
     static String output{Corrade::ValueInit,
                          4096}; // This is done to stop allocations
     std::size_t formattedSize = formatInto(
