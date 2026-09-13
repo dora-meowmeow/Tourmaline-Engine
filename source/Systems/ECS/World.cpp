@@ -21,8 +21,8 @@ using namespace ECS;
 void World::Step() {
   preSystems();
 
-  for (uint8_t priority = SystemPriority::Start;
-       priority < SystemPriority::Final; priority++) {
+  for (uint8_t priority = static_cast<int8_t>(SystemPriority::Start);
+       priority < static_cast<int8_t>(SystemPriority::Final); priority++) {
     for (const System &system : systemList[priority]) {
       InvokeSystem(system);
     }
@@ -75,7 +75,8 @@ void World::InvokeSystem(const System &system, bool ignoreEnabled) {
 
 bool World::RemoveSystem(const System &system) {
   if (systemRegistry.Has(system)) {
-    SystemPriority priority = systemRegistry.Get(system).priority;
+    int32_t priority =
+        static_cast<int32_t>(systemRegistry.Get(system).priority);
     systemList[priority].erase(std::find(systemList[priority].begin(),
                                          systemList[priority].end(), system));
     systemRegistry.Remove(system);

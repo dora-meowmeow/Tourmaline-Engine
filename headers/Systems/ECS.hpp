@@ -53,7 +53,13 @@ using System = Tourmaline::Type::UUID;
 
 /// @brief The priority with which a system will run. Start will run first and
 /// Final will run last. The default is Default.
-enum SystemPriority { Start, Pre, Default, Post, Final };
+enum class SystemPriority {
+  Start = 0,
+  Pre = 1,
+  Default = 2,
+  Post = 3,
+  Final = 4
+};
 
 /**
  * @brief The fundamental class that owns the entire ECS system.
@@ -180,8 +186,10 @@ public:
    */
   template <typename SystemFunction, typename Instance>
   System AddSystem(SystemFunction &&system, Instance *instance,
-                   SystemPriority priority = Default, bool enabled = true) {
-    return AddSystem(system, priority, enabled, instance);
+                   SystemPriority priority = SystemPriority::Default,
+                   bool enabled = true) {
+    return AddSystem(std::forward<SystemFunction>(system), priority, enabled,
+                     instance);
   }
 
   /**
@@ -213,7 +221,8 @@ public:
    * there must be an instance of a class specified for the function to run in.
    */
   template <typename SystemFunction, typename Instance = Type::UnspecifiedType>
-  System AddSystem(SystemFunction &&system, SystemPriority priority = Default,
+  System AddSystem(SystemFunction &&system,
+                   SystemPriority priority = SystemPriority::Default,
                    bool enabled = true, Instance *instance = nullptr) {
     using Traits = Concepts::FunctionTraits<SystemFunction>;
     using returnType = Traits::returnType;
@@ -308,7 +317,7 @@ public:
     systemRegistry.Insert(newSystem,
                           {std::move(internalFunction), typeid(arguments),
                            newSystemCache, priority, enabled});
-    systemList[priority].push_back(newSystem);
+    systemList[static_cast<int32_t>(priority)].push_back(newSystem);
     return newSystem;
   }
 
@@ -547,8 +556,8 @@ private:
     bool isEnabled = true;
   };
 
-  Corrade::Containers::StaticArray<SystemPriority::Final + 1,
-                                   std::vector<System>>
+  Corrade::Containers::StaticArray<
+      static_cast<int32_t>(SystemPriority::Final) + 1, std::vector<System>>
       systemList;
   Containers::Hashmap<systemArgumentTupleId, systemCache> cacheRegistry;
   Containers::Hashmap<System, systemStorage> systemRegistry{};
