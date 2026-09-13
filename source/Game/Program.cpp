@@ -46,6 +46,9 @@ void Program::ApplyNewConfig() {
 
   // Only available on glfw (for now)
   updateWindowSettings(magnumConfig);
+
+  _aspectRatio =
+      static_cast<float>(config.windowSize.x()) / config.windowSize.y();
 }
 
 void Program::drawEvent() {
@@ -58,7 +61,7 @@ void Program::drawEvent() {
   redraw();
 
   timeline.nextFrame();
-  deltaTime = timeline.previousFrameDuration();
+  _deltaTime = timeline.previousFrameDuration();
 }
 
 void Program::exitEvent(ExitEvent &event) { event.setAccepted(OnExit()); }

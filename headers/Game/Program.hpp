@@ -141,7 +141,10 @@ public:
   Config config;
 
   /// @brief Time it took to draw the last frame in seconds.
-  float deltaTime = 0;
+  const float &deltaTime = _deltaTime;
+
+  /// @brief Aspect ratio of the window.
+  const float &aspectRatio = _aspectRatio;
 
 private:
   void initialize();
@@ -151,6 +154,10 @@ private:
   // Magnum
   Magnum::Timeline timeline;
   Configuration magnumConfig;
+
+  // Internal data
+  float _deltaTime = 0;
+  float _aspectRatio = 0;
 
   // Empty data incase the dev doesn't want to pass arguments
   inline static char *_argv = (char *)"empty";
