@@ -64,4 +64,8 @@ void Program::drawEvent() {
   _deltaTime = timeline.previousFrameDuration();
 }
 
+void Program::viewportEvent(ViewportEvent &event) {
+  GL::defaultFramebuffer.setViewport({{}, event.framebufferSize()});
+}
+
 void Program::exitEvent(ExitEvent &event) { event.setAccepted(OnExit()); }

@@ -149,6 +149,7 @@ public:
 private:
   void initialize();
   void drawEvent() override;
+  void viewportEvent(ViewportEvent &event) override;
   void exitEvent(ExitEvent &event) override;
 
   // Magnum
