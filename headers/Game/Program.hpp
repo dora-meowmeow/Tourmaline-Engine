@@ -68,7 +68,7 @@ public:
   /// @cond
   explicit Program()
       : Magnum::Platform::Application{Arguments{arguments.argc, arguments.argv},
-                                      Magnum::NoCreate} {};
+                                      Configuration{}} {};
   /// @endcond
 
   /**
@@ -151,7 +151,6 @@ private:
   // Magnum
   Magnum::Timeline timeline;
   Configuration magnumConfig;
-  bool isWindowCreated = false;
 
   // Empty data incase the dev doesn't want to pass arguments
   inline static char *_argv = (char *)"empty";

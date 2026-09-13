@@ -23,11 +23,7 @@ void Program::OnStart() {}
 void Program::OnStep() {}
 bool Program::OnExit() { return true; }
 
-void Program::initialize() {
-  ApplyNewConfig();
-  create(magnumConfig);
-  isWindowCreated = true;
-}
+void Program::initialize() { ApplyNewConfig(); }
 
 int Program::Run(const Config &conf) {
   config = conf;
@@ -49,9 +45,7 @@ void Program::ApplyNewConfig() {
   setSwapInterval(config.vsyncEnabled);
 
   // Only available on glfw (for now)
-  if (isWindowCreated) {
-    updateWindowSettings(magnumConfig);
-  }
+  updateWindowSettings(magnumConfig);
 }
 
 void Program::drawEvent() {
