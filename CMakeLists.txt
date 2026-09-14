@@ -58,14 +58,15 @@ external_dependency(Magnum
   URL_HASH SHA256=629aede57899f8e09e5b592444e0dcb8e4115058e4afb03c03dfb1aa4c42835c
 )
 
-#external_dependency(Magnum
-#  URL https://github.com/mosra/magnum/archive/145fc82c756ba69afa1f983a914e6b4ad6d76bb3.zip
-#  URL_HASH SHA256=a9709905cc4c0841edd8ccbfe86e539929cfa6e010bc377179121762f3343556
-#)
+external_dependency(MagnumPlugins
+  URL https://github.com/mosra/magnum-plugins/archive/4f2158f203720abeea68f393e611d5274b1ad823.zip
+  URL_HASH SHA256=f677d074366ce9cfb3b29b23e58f24668fb811b35858d107d49b654cf5f5f4d9
+)
 
 foreach(dep
   Corrade
   Magnum
+  MagnumPlugins
 )
   message(STATUS "Fetching ${dep}...")
   add_subdirectory(external/${dep})
@@ -78,6 +79,7 @@ add_library(${PROJECT_NAME} SHARED
   "source/Systems/ECS/World.cpp"
   "source/Systems/Logging.cpp"
   "source/Systems/Random.cpp"
+  "source/Systems/Importer.cpp"
   "source/Types/UUID.cpp"
   "source/Game/Program.cpp"
 )
@@ -97,6 +99,9 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     Magnum::GlfwApplication
     Magnum::GL
     Magnum::Trade
+    Magnum::Primitives
+    Magnum::MeshTools
+    Magnum::Shaders
 )
 
 # Module stuff
@@ -105,6 +110,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
 # Fetching source and compiled directories
 FetchContent_GetProperties(Corrade SOURCE_DIR corrade_SOURCE_DIR)
 FetchContent_GetProperties(Magnum SOURCE_DIR magnum_SOURCE_DIR)
+FetchContent_GetProperties(MagnumPlugins SOURCE_DIR magnum-plugins_SOURCE_DIR)
 
 # For Development
 target_include_directories(${PROJECT_NAME}
@@ -113,6 +119,7 @@ target_include_directories(${PROJECT_NAME}
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
     $<BUILD_INTERFACE:${corrade_SOURCE_DIR}/src>
     $<BUILD_INTERFACE:${magnum_SOURCE_DIR}/src>
+    $<BUILD_INTERFACE:${magnum-plugins_SOURCE_DIR}/src>
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
     $<INSTALL_INTERFACE:include/${PROJECT_NAME}External>
 )
