@@ -8,6 +8,7 @@
  */
 
 #include "Game/Program.hpp"
+#include "Game/Input.hpp"
 
 #include "Magnum/GL/AbstractFramebuffer.h"
 #include "Magnum/GL/DefaultFramebuffer.h"
@@ -16,6 +17,7 @@
 
 using namespace Magnum;
 using namespace Tourmaline::Game;
+using namespace Tourmaline::Game::Input;
 
 Program::Args Program::arguments{Program::_argc, &Program::_argv};
 
@@ -23,7 +25,28 @@ void Program::OnStart() {}
 void Program::OnStep() {}
 bool Program::OnExit() { return true; }
 
+const Input::Key &Program::GetKey(const KeyType &keyType) {
+  if (!_inputTrack.Has(keyType)) {
+    _inputTrack.Insert(keyType, {KeyState::Inactive, keyType});
+  }
+
+  return _inputTrack.Get(keyType);
+}
+
 void Program::initialize() { ApplyNewConfig(); }
+
+void Program::advanceKeyEvents() {
+  if (_advanceKeys.size() == 0) {
+    return;
+  }
+
+  for (const KeyType &keyType : _advanceKeys) {
+    Input::Key &key = _inputTrack.Get(keyType);
+    key.state =
+        key.state == KeyState::Pressed ? KeyState::Held : KeyState::Inactive;
+  }
+  _advanceKeys.clear();
+}
 
 int Program::Run(const Config &conf) {
   config = conf;
@@ -60,12 +83,38 @@ void Program::drawEvent() {
   swapBuffers();
   redraw();
 
+  advanceKeyEvents();
   timeline.nextFrame();
   _deltaTime = timeline.previousFrameDuration();
 }
 
 void Program::viewportEvent(ViewportEvent &event) {
   GL::defaultFramebuffer.setViewport({{}, event.framebufferSize()});
+}
+
+void Program::keyPressEvent(KeyEvent &event) {
+  KeyType type = event.key();
+  _advanceKeys.push_back(type);
+
+  if (!_inputTrack.Has(type)) {
+    _inputTrack.Insert(type, {KeyState::Pressed, type});
+    return;
+  }
+
+  _inputTrack.Get(type).state = KeyState::Pressed;
+}
+
+void Program::keyReleaseEvent(KeyEvent &event) {
+  KeyType type = event.key();
+  _advanceKeys.push_back(type);
+
+  // It is possible to get a release event before a press event!
+  if (!_inputTrack.Has(type)) {
+    _inputTrack.Insert(type, {KeyState::Released, type});
+    return;
+  }
+
+  _inputTrack.Get(type).state = KeyState::Released;
 }
 
 void Program::exitEvent(ExitEvent &event) { event.setAccepted(OnExit()); }

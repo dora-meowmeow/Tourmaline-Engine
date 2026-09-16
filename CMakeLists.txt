@@ -82,6 +82,7 @@ add_library(${PROJECT_NAME} SHARED
   "source/Systems/Importer.cpp"
   "source/Types/UUID.cpp"
   "source/Game/Program.cpp"
+  "source/Game/Keyboard.cpp"
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

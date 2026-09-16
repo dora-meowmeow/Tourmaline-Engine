@@ -9,13 +9,15 @@
 #ifndef GUARD_TOURMALINE_GAME_H
 #define GUARD_TOURMALINE_GAME_H
 
+#include "../Containers/Hashmap.hpp"
 #include "../Systems/ECS.hpp"
+#include "Input.hpp"
 
 #include "Corrade/Containers/String.h"
 #include "Magnum/Magnum.h"
 #include "Magnum/Platform/GlfwApplication.h"
-#include "Magnum/Tags.h"
 #include "Magnum/Timeline.h"
+
 #include <cstdint>
 
 namespace Tourmaline::Game {
@@ -112,9 +114,8 @@ public:
    */
   virtual bool OnExit();
 
-  /// @brief Built-in ECS system. See Tourmaline::Systems::ECS::World
-  /// for more info on how to use it.
-  Systems::ECS::World ECS;
+  [[nodiscard("Unnecessary call to GetKey")]]
+  const Input::Key &GetKey(const Input::KeyType &keyType);
 
   /**
    * @brief Allows access to the command line arguments.
@@ -140,6 +141,10 @@ public:
   /// Tourmaline::Game::Program::Config.
   Config config;
 
+  /// @brief Built-in ECS system. See Tourmaline::Systems::ECS::World
+  /// for more info on how to use it.
+  Systems::ECS::World ECS;
+
   /// @brief Time it took to draw the last frame in seconds.
   const float &deltaTime = _deltaTime;
 
@@ -148,9 +153,13 @@ public:
 
 private:
   void initialize();
+  void advanceKeyEvents();
+
   void drawEvent() override;
   void viewportEvent(ViewportEvent &event) override;
   void exitEvent(ExitEvent &event) override;
+  void keyPressEvent(KeyEvent &event) override;
+  void keyReleaseEvent(KeyEvent &event) override;
 
   // Magnum
   Magnum::Timeline timeline;
@@ -159,6 +168,8 @@ private:
   // Internal data
   float _deltaTime = 0;
   float _aspectRatio = 0;
+  Containers::Hashmap<Input::KeyType, Input::Key> _inputTrack;
+  std::vector<Input::KeyType> _advanceKeys;
 
   // Empty data incase the dev doesn't want to pass arguments
   inline static char *_argv = (char *)"empty";
