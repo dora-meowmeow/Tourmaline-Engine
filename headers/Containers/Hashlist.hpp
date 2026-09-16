@@ -147,6 +147,7 @@ public:
     }
 
     count = 0;
+    currentLoadFactor = 0.0f;
     bucketCount = Options.minimumBucketCount;
     std::vector<bucket> newStorage;
     storage.swap(newStorage);

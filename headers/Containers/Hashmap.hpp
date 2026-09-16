@@ -180,6 +180,7 @@ public:
     }
 
     count = 0;
+    currentLoadFactor = 0.0f;
     bucketCount = Options.minimumBucketCount;
     std::vector<bucket> newStorage;
     storage.swap(newStorage);
@@ -233,6 +234,7 @@ public:
   void Clear() noexcept {
     storage.clear();
     count = 0;
+    currentLoadFactor = 0.0f;
   }
 
   /**
