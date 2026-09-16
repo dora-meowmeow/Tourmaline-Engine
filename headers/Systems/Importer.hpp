@@ -55,6 +55,7 @@ public:
    * @see [Magnum::Trade::ImageData](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1Trade_1_1ImageData.html)
    */
+  [[nodiscard("Unnecesary call to LoadImage2D")]]
   static Magnum::Trade::ImageData2D
   LoadImage2D(Corrade::Containers::StringView path);
 
@@ -74,6 +75,7 @@ public:
    * @see [Magnum::GL::SamplerWrapping](
    * https://doc.magnum.graphics/magnum/namespaceMagnum_1_1GL.html#ae807f5b816812ec007253cae4ddc4520)
    */
+  [[nodiscard("Unnecesary call to LoadTexture2D")]]
   static Magnum::GL::Texture2D LoadTexture2D(
       Magnum::Trade::ImageData2D image,
       Magnum::GL::SamplerFilter filterType = Magnum::GL::SamplerFilter::Nearest,
@@ -100,6 +102,7 @@ public:
    * @see [Magnum::GL::SamplerWrapping](
    * https://doc.magnum.graphics/magnum/namespaceMagnum_1_1GL.html#ae807f5b816812ec007253cae4ddc4520)
    */
+  [[nodiscard("Unnecesary call to LoadTexture2D")]]
   static Magnum::GL::Texture2D LoadTexture2D(
       Corrade::Containers::StringView path,
       Magnum::GL::SamplerFilter filterType = Magnum::GL::SamplerFilter::Nearest,
@@ -120,6 +123,7 @@ public:
    * @see [Magnum::GL::Mesh](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
    */
+  [[nodiscard("Unnecesary call to LoadObject")]]
   static Magnum::GL::Mesh LoadObject(Corrade::Containers::StringView path);
 
 private:
