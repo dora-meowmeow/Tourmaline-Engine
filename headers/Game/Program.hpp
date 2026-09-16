@@ -114,6 +114,13 @@ public:
    */
   virtual bool OnExit();
 
+  /**
+   * @brief Fetch key inputs and states of keys.
+   *
+   * @param keyType The key to track. See @ref Tourmaline::Game::Input::KeyType.
+   *
+   * @return Returns a view to the state of a key.
+   */
   [[nodiscard("Unnecessary call to GetKey")]]
   const Input::Key &GetKey(const Input::KeyType &keyType);
 
