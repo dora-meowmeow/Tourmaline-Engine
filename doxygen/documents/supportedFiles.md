@@ -22,7 +22,10 @@ Currently the following importers are compiled when Tourmaline Engine compiles M
 
 ## 3D
 
-- [ObjImporter](https://doc.magnum.graphics/magnum/classMagnum_1_1Trade_1_1ObjImporter.html) supports:
+- [UfbxImporter](https://doc.magnum.graphics/magnum/classMagnum_1_1Trade_1_1UfbxImporter.html) supports:
   - `*.obj`
+  - `*.fbx`
+- [GltfImporter](https://doc.magnum.graphics/magnum/classMagnum_1_1Trade_1_1GltfImporter.html) supports:
+  - `.gltf/glb`
 
 @note Tourmaline Engine also compiles AnyImageImporter and AnySceneImporter for ease of use.
