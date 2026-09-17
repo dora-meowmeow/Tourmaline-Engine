@@ -120,7 +120,7 @@ public:
    * @return The 3D asset as a GL::Mesh.
    *
    * @warning If this function fails to find the specified asset at given path,
-   * it will throw!
+   * it will throw! Additionally if index cannot be found, it will also throw!
    *
    * @see [Magnum::GL::Mesh](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
@@ -140,7 +140,7 @@ public:
    * @return The 3D asset as a GL::Mesh.
    *
    * @warning If this function fails to find the specified asset at given path,
-   * it will throw!
+   * it will throw! Additionally if name cannot be found, it will also throw!
    *
    * @see [Magnum::GL::Mesh](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)

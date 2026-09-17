@@ -53,8 +53,10 @@ int Program::Run(const Config &conf) {
   initialize();
   OnStart();
   timeline.start();
-  return exec();
+  return mainLoopIteration();
 }
+
+int Program::Run() { return mainLoopIteration(); }
 
 void Program::ApplyNewConfig() {
   magnumConfig.setTitle(config.windowTitle)

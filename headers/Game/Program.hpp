@@ -81,6 +81,7 @@ public:
    * @return Exit code. Anything except 0 means an error.
    */
   int Run(const Config &conf);
+  int Run();
 
   /**
    * @brief Applies the changes done on Tourmaline::Game::Program::config
