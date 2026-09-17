@@ -65,7 +65,7 @@ GL::Texture2D Importer::LoadTexture2D(Containers::StringView path,
   return LoadTexture2D(LoadImage2D(path), filterType, wrappingRule);
 }
 
-GL::Mesh Importer::LoadObject(Containers::StringView path) {
+GL::Mesh Importer::LoadObject(Containers::StringView path, uint64_t index) {
   Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
                "Importer/LoadObject", Logging::Critical, !sceneImporter);
 
@@ -74,5 +74,21 @@ GL::Mesh Importer::LoadObject(Containers::StringView path) {
                           "Importer/LoadObject", Logging::Error, path);
   }
 
-  return MeshTools::compile(*sceneImporter->mesh(0));
+  return MeshTools::compile(*sceneImporter->mesh(index));
+}
+
+GL::Mesh Importer::LoadObject(Containers::StringView path,
+                              Containers::StringView name) {
+  Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
+               "Importer/LoadObject", Logging::Critical, !sceneImporter);
+
+  if (!sceneImporter->openFile(path)) {
+    Logging::LogFormatted("Could not open file {}! Throwing...",
+                          "Importer/LoadObject", Logging::Error, path);
+  }
+
+  // mesh(string) seems to be broken (or I am misunderstanding it). I found this
+  // to be more stable.
+  return MeshTools::compile(
+      *sceneImporter->mesh(sceneImporter->objectForName(name)));
 }

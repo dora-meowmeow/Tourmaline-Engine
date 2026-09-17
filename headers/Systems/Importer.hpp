@@ -114,6 +114,8 @@ public:
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
+   * @param index Some 3D file-types support multiple models in same file. You
+   * can select which object you want by setting this value.
    *
    * @return The 3D asset as a GL::Mesh.
    *
@@ -124,7 +126,28 @@ public:
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
    */
   [[nodiscard("Unnecesary call to LoadObject")]]
-  static Magnum::GL::Mesh LoadObject(Corrade::Containers::StringView path);
+  static Magnum::GL::Mesh LoadObject(Corrade::Containers::StringView path,
+                                     uint64_t index = 0);
+
+  /**
+   * @brief Imports an 3D asset as a GL::Mesh.
+   *
+   * @param path Path to the asset. See @ref supportedFileTypes to learn
+   * which file-types are supported.
+   * @param name Some 3D file-types support multiple models in same file. You
+   * can select which object you want by setting this value.
+   *
+   * @return The 3D asset as a GL::Mesh.
+   *
+   * @warning If this function fails to find the specified asset at given path,
+   * it will throw!
+   *
+   * @see [Magnum::GL::Mesh](
+   * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
+   */
+  [[nodiscard("Unnecesary call to LoadObject")]]
+  static Magnum::GL::Mesh LoadObject(Corrade::Containers::StringView path,
+                                     Corrade::Containers::StringView name);
 
 private:
   static Corrade::PluginManager::Manager<Magnum::Trade::AbstractImporter>
