@@ -19,6 +19,7 @@
 #include "Magnum/Timeline.h"
 
 #include <cstdint>
+#include <exception>
 
 namespace Tourmaline::Game {
 using namespace Magnum::Math::Literals;
@@ -105,6 +106,24 @@ public:
    * This function is called **BEFORE** ECS::World takes it's step.
    */
   virtual void OnStep();
+
+  /**
+   * @brief A function called right before a crash due to an unhandled
+   * exception.
+   *
+   * If during your game loop an exception is thrown and uncaught, the
+   * Game::Program will catch is as a last-line of chance. Once the exception is
+   * caught, this function will run.
+   *
+   * @param exception For diagnostics purposes the exception itself.
+   *
+   * @warning Unless you are handling exceptions, it is HIGHLY suggested that
+   * you define this function. A crash due to an uncaught exception could result
+   * in player's progress to be unsaved before the crash! We also strongly
+   * suggest setting Tourmaline::Systems::Logging::TerminationFunction for the
+   * same reason.
+   */
+  virtual void OnCrash(const std::exception &exception);
 
   /**
    * @brief Destruction/Last step of the program.

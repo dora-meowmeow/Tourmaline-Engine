@@ -14,6 +14,7 @@
 #include "Magnum/GL/DefaultFramebuffer.h"
 #include "Magnum/Math/Time.h"
 #include "Magnum/Platform/GlfwApplication.h"
+#include <exception>
 
 using namespace Magnum;
 using namespace Tourmaline::Game;
@@ -23,6 +24,7 @@ Program::Args Program::arguments{Program::_argc, &Program::_argv};
 
 void Program::OnStart() {}
 void Program::OnStep() {}
+void Program::OnCrash(const std::exception &e) { throw e; }
 bool Program::OnExit() { return true; }
 
 const Input::Key &Program::GetKey(const KeyType &keyType) {
@@ -50,10 +52,16 @@ void Program::advanceKeyEvents() {
 
 int Program::Run(const Config &conf) {
   config = conf;
-  initialize();
-  OnStart();
-  timeline.start();
-  return exec();
+  try {
+    initialize();
+    OnStart();
+    timeline.start();
+    return exec();
+  } catch (const std::exception &e) {
+    OnCrash(e);
+  }
+
+  return 1;
 }
 
 void Program::ApplyNewConfig() {
