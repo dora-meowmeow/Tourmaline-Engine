@@ -442,7 +442,7 @@ public:
    * It is HEAVILY advised that you cache the given reference after first usage.
    */
   template <isAComponent Component>
-  [[nodiscard("Pointless call of GetAllComponentOfType")]]
+  [[nodiscard("Pointless call of GetAllOfComponents")]]
   std::vector<std::pair<const Entity &, Component &>> &GetAllOfComponents() {
     static std::vector<std::pair<const Entity &, Component &>> result;
     if (!calledAllComponents.Has(typeid(Component))) {

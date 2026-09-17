@@ -23,18 +23,18 @@ namespace Tourmaline::Game::Input {
 /**
  * @brief Quality of life key axis function.
  *
- * @tparam returnType The type to return as. Must be signed and either an
+ * @tparam returnType The type to return as. Must be signed, and either an
  * integer or a float type.
  *
  * @param positiveKey Key to be the positive value on the axis.
  * @param negativeKey Key to be the negative value on the axis.
- * @param stateToCompare Which state should the keys be compared. Default is
+ * @param stateToCompare Which state the keys should be compared to. Default is
  * KeyState::Held.
- * @param scale Scales the result to specificed value.
+ * @param scale Scales the result to the specified value.
  *
- * @return If only positiveKey's state equals to stateToCompare, returns
- * `scale`. If both keys' states equal to stateToCompare, returns `0`. If only
- * negativeKey's state equals to stateToCompare, returns `-scale`.
+ * @return If only positiveKey's state equals stateToCompare, returns
+ * `scale`. If both keys' states equal stateToCompare, returns `0`. If only
+ * negativeKey's state equals stateToCompare, returns `-scale`.
  */
 template <typename returnType>
   requires(std::is_integral_v<returnType> ||
@@ -51,20 +51,20 @@ returnType KeyAxis(const Input::Key &positiveKey, const Input::Key &negativeKey,
 /**
  * @brief Vector2D variant of Tourmaline::Game::Input::KeyAxis.
  *
- * @tparam returnType The type to return as. Must be signed and either an
+ * @tparam returnType The type to return as. Must be signed, and either an
  * integer or a float type.
  *
  * @param xPositiveKey Key to be the positive value on the X axis.
  * @param xNegativeKey Key to be the negative value on the X axis.
  * @param yPositiveKey Key to be the positive value on the Y axis.
  * @param yNegativeKey Key to be the negative value on the Y axis.
- * @param stateToCompare Which state should the keys be compared. Default is
+ * @param stateToCompare Which state the keys should be compared to. Default is
  * KeyState::Held.
- * @param scale Scales the result to specificed value.
+ * @param scale Scales the result to the specified value.
  *
- * @return Vector2D axis multiplied scale.
- * __**If returnType is a floating point**__, vector2D is normalised then
- * multiplied with scale.
+ * @return Vector2D axis multiplied by scale.
+ * __**If returnType is a floating point**__, vector2D is normalised, then
+ * multiplied by scale.
  */
 template <typename returnType>
   requires(std::is_integral_v<returnType> ||

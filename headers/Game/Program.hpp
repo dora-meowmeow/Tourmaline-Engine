@@ -57,7 +57,7 @@ public:
     /**
      *-@brief Maximum/Desired frame rate per second. When set to 0 WITH VSYNC
      * DISABLED (See Tourmaline::Game::Program::Config::vsyncEnabled),
-     * framerate will not be capped.
+     * the framerate will not be capped.
      */
     uint64_t desiredFrameRate = 0;
 
@@ -88,7 +88,7 @@ public:
    * to the window itself.
    *
    * @warning This feature only works with GLFW which is selected by default.
-   * If you modify tourmaline to use SDL2 or anything else
+   * It will not work if you modify Tourmaline to use SDL2 or anything else.
    */
   void ApplyNewConfig();
 
@@ -103,7 +103,7 @@ public:
   /**
    * @brief A function called per frame.
    *
-   * This function is called **BEFORE** ECS::World takes it's step.
+   * This function is called **BEFORE** ECS::World takes its step.
    */
   virtual void OnStep();
 
@@ -111,16 +111,16 @@ public:
    * @brief A function called right before a crash due to an unhandled
    * exception.
    *
-   * If during your game loop an exception is thrown and uncaught, the
-   * Game::Program will catch is as a last-line of chance. Once the exception is
+   * If, during your game loop, an exception is thrown and uncaught,
+   * Game::Program will catch it as a last line of defense. Once the exception is
    * caught, this function will run.
    *
-   * @param exception For diagnostics purposes the exception itself.
+   * @param exception The exception itself (for diagnostics purposes).
    *
    * @warning Unless you are handling exceptions, it is HIGHLY suggested that
    * you define this function. A crash due to an uncaught exception could result
-   * in player's progress to be unsaved before the crash! We also strongly
-   * suggest setting Tourmaline::Systems::Logging::TerminationFunction for the
+   * in the player's progress being unsaved before the crash! We also strongly
+   * recommend setting Tourmaline::Systems::Logging::TerminationFunction for the
    * same reason.
    */
   virtual void OnCrash(const std::exception &exception);
@@ -134,7 +134,7 @@ public:
   virtual bool OnExit();
 
   /**
-   * @brief Fetch key inputs and states of keys.
+   * @brief Fetches key inputs and states of keys.
    *
    * @param keyType The key to track. See @ref Tourmaline::Game::Input::KeyType.
    *

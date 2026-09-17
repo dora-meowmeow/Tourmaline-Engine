@@ -16,11 +16,11 @@
  */
 namespace Tourmaline::Game::Input {
 /**
- * @brief States a key can be in.
+ * @brief The states a key can be in.
  *
- * @note Released event can fire without a pressed event firing. This usually
- * happens when the program is focused while holding a key down. This rarely
- * causes and issue but still should be noted.
+ * @note A released event may be triggered without a prior pressed event triggering. This usually
+ * occurs when the program window is brought into focus while a key is held down. This rarely
+ * causes an issue, but should still be noted.
  */
 enum class KeyState {
   Inactive = 0,
@@ -30,7 +30,7 @@ enum class KeyState {
 };
 
 /**
- * @brief Keycodes that GLFW uses.
+ * @brief The keycodes that GLFW uses.
  *
  * @see
  * [Magnum::Platform::GlfwApplication::Key](https://doc.magnum.graphics/magnum/classMagnum_1_1Platform_1_1GlfwApplication.html#a57b9583804a678cba5aea08b227061cc)

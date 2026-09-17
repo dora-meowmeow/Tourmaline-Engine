@@ -33,7 +33,7 @@ namespace Tourmaline::Systems {
  * (Specifically Magnum::GL namespace). This is due to the backend rendering
  * being mostly done by Magnum Graphics.
  *
- * It is heavily suggested that you [get yourself familiarised with how Magnum
+ * It is heavily suggested that you [familiarise yourself with how Magnum
  * Graphics works.](https://doc.magnum.graphics/magnum/)
  *
  * @see [Magnum Graphics' Magnum::GL namespace
@@ -42,14 +42,14 @@ namespace Tourmaline::Systems {
 class Importer {
 public:
   /**
-   * @brief Imports an image asset as a ImageData2D.
+   * @brief Imports an image asset as an ImageData2D.
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
    *
    * @return The image asset imported as an ImageData2D.
    *
-   * @warning If this function fails to find the specified asset at given path,
+   * @warning If this function fails to find the specified asset at the given path,
    * it will throw!
    *
    * @see [Magnum::Trade::ImageData](
@@ -92,7 +92,7 @@ public:
    *
    * @return The image imported as a Texture2D.
    *
-   * @warning If this function fails to find the specified asset at given path,
+   * @warning If this function fails to find the specified asset at the given path,
    * it will throw!
    *
    * @see [Magnum::GL::Texture](
@@ -119,7 +119,7 @@ public:
    *
    * @return The 3D asset as a GL::Mesh.
    *
-   * @warning If this function fails to find the specified asset at given path,
+   * @warning If this function fails to find the specified asset at the given path,
    * it will throw!
    *
    * @see [Magnum::GL::Mesh](
@@ -139,7 +139,7 @@ public:
    *
    * @return The 3D asset as a GL::Mesh.
    *
-   * @warning If this function fails to find the specified asset at given path,
+   * @warning If this function fails to find the specified asset at the given path,
    * it will throw!
    *
    * @see [Magnum::GL::Mesh](
