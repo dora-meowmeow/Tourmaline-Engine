@@ -92,3 +92,25 @@ GL::Mesh Importer::LoadObject(Containers::StringView path,
   return MeshTools::compile(
       *sceneImporter->mesh(sceneImporter->objectForName(name)));
 }
+
+std::vector<Importer::MeshInfo>
+Importer::LoadAllObjects(Corrade::Containers::StringView path) {
+  std::vector<Importer::MeshInfo> result;
+
+  Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
+               "Importer/LoadObject", Logging::Critical, !sceneImporter);
+
+  if (!sceneImporter->openFile(path)) {
+    Logging::LogFormatted("Could not open file {}! Throwing...",
+                          "Importer/LoadObject", Logging::Error, path);
+  }
+
+  uint64_t count = sceneImporter->meshCount();
+  result.reserve(count);
+  for (uint64_t index = 0; index < count; index++) {
+    result.emplace_back(index, sceneImporter->objectName(index),
+                        MeshTools::compile(*sceneImporter->mesh(index)));
+  }
+
+  return result;
+}

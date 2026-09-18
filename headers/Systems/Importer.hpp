@@ -19,6 +19,7 @@
 #include "Magnum/GL/Texture.h"
 #include "Magnum/Trade/AbstractImporter.h"
 #include "Magnum/Trade/ImageData.h"
+#include <vector>
 
 /**
  * @file
@@ -42,6 +43,15 @@ namespace Tourmaline::Systems {
 class Importer {
 public:
   /**
+   * @brief Info about the mesh, and the mesh data itself.
+   */
+  struct MeshInfo {
+    uint64_t index;
+    Corrade::Containers::String name;
+    Magnum::GL::Mesh mesh;
+  };
+
+  /**
    * @brief Imports an image asset as an ImageData2D.
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
@@ -49,8 +59,8 @@ public:
    *
    * @return The image asset imported as an ImageData2D.
    *
-   * @warning If this function fails to find the specified asset at the given path,
-   * it will throw!
+   * @warning If this function fails to find the specified asset at the given
+   * path, it will throw!
    *
    * @see [Magnum::Trade::ImageData](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1Trade_1_1ImageData.html)
@@ -92,8 +102,8 @@ public:
    *
    * @return The image imported as a Texture2D.
    *
-   * @warning If this function fails to find the specified asset at the given path,
-   * it will throw!
+   * @warning If this function fails to find the specified asset at the given
+   * path, it will throw!
    *
    * @see [Magnum::GL::Texture](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Texture.html)
@@ -119,8 +129,8 @@ public:
    *
    * @return The 3D asset as a GL::Mesh.
    *
-   * @warning If this function fails to find the specified asset at the given path,
-   * it will throw!
+   * @warning If this function fails to find the specified asset at the given
+   * path, it will throw!
    *
    * @see [Magnum::GL::Mesh](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
@@ -139,8 +149,8 @@ public:
    *
    * @return The 3D asset as a GL::Mesh.
    *
-   * @warning If this function fails to find the specified asset at the given path,
-   * it will throw!
+   * @warning If this function fails to find the specified asset at the given
+   * path, it will throw!
    *
    * @see [Magnum::GL::Mesh](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
@@ -148,6 +158,25 @@ public:
   [[nodiscard("Unnecesary call to LoadObject")]]
   static Magnum::GL::Mesh LoadObject(Corrade::Containers::StringView path,
                                      Corrade::Containers::StringView name);
+
+  /**
+   * @brief Imports all 3D assets in a file as a GL::Mesh.
+   *
+   * @param path Path to the asset. See @ref supportedFileTypes to learn
+   * which file-types are supported.
+   *
+   * @return The 3D assets as a Tourmaline::Systems::Importer::MeshInfo in an
+   * array.
+   *
+   * @warning If this function fails to find the specified asset at the given
+   * path, it will throw!
+   *
+   * @see [Magnum::GL::Mesh](
+   * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
+   */
+  [[nodiscard("Unnecesary call to LoadAllObjects")]]
+  static std::vector<MeshInfo>
+  LoadAllObjects(Corrade::Containers::StringView path);
 
 private:
   static Corrade::PluginManager::Manager<Magnum::Trade::AbstractImporter>
