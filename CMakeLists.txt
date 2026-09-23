@@ -127,7 +127,7 @@ target_include_directories(${PROJECT_NAME}
 
 # A way to live forever
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND printf "Dedicated to my beloved Goma, I love you. - Dora" >> $<TARGET_FILE:${PROJECT_NAME}>
+    COMMAND printf "Dedicated to my beloved Sara, I love you. - Dora" >> $<TARGET_FILE:${PROJECT_NAME}>
 )
 
 # Tourmaline Install
