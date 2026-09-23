@@ -8,7 +8,7 @@
 cmake_minimum_required(VERSION 3.10)
 cmake_policy(SET CMP0135 NEW)
 
-project(Tourmaline VERSION 1)
+project(Tourmaline VERSION 1 DESCRIPTION "A Hobbyist C++23 game engine." HOMEPAGE_URL "https://docs.tourmalineengine.dev/")
 
 include(GNUInstallDirs)
 include(FetchContent)
