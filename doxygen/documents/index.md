@@ -14,6 +14,7 @@ Currently the project is still trying to incorporate the following parts (in no 
 - [X] ECS (Builtin)
 - [X] Logging (Builtin)
 - [X] Random Generation (Builtin)
+- [X] Serialization (Builtin)
 - [ ] Graphics (Magnum Graphics)
 - [ ] Physics Integration (ReactPhysics3D)
 - [ ] Audio (Builtin + miniaudio)
@@ -27,9 +28,15 @@ Currently the project is still trying to incorporate the following parts (in no 
 
 Tourmaline is by no means currently usable. The project is incredibly volatile with constant changes and improvements. Please wait until a release is made.
 
-However, if you just cannot help yourself, there is currently a temporary compile script [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compile.sh) (there is also a debug variant [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compileWithCoverage.sh)).
+However, if you just cannot help yourself; After you compile and install Tourmaline, you can compile and link with the following command:
 
-\warning These scripts are used to test Tourmaline, they are not meant to be the final way to compile Tourmaline.
+```bash
+g++ main.cpp `pkg-config Tourmaline --cflags --libs` -o program
+```
+
+Do keep in mind that the order is sensitive. You want your implementation files (`*.cpp`) BEFORE the pkg-config command.
+
+\warning !! This is not meant to be the final way to compile Tourmaline. Everything here is subject to change !!
 
 # 3rd Party Libraries Credits
 
