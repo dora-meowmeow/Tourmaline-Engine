@@ -130,6 +130,19 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND printf "Dedicated to my beloved Sara, I love you. - Dora" >> $<TARGET_FILE:${PROJECT_NAME}>
 )
 
+# Pkg-config
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/Module/${PROJECT_NAME}.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+    @ONLY
+)
+
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+    DESTINATION /usr/share/pkgconfig
+)
+
+
 # Tourmaline Install
 install(
   TARGETS ${PROJECT_NAME}
