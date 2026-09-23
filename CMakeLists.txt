@@ -132,7 +132,7 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
 # Pkg-config
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/Module/${PROJECT_NAME}.pc.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/module/${PROJECT_NAME}.pc.in
     ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
     @ONLY
 )

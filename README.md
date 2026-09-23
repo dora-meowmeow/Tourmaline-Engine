@@ -43,8 +43,8 @@ Do keep in mind that the order is sensitive. You want your implementation files 
 # Special Thanks
 
 - [Lars "harmonyisdead"](https://github.com/larsl2005) for hosting the thenight.club services and renting the tourmalineengine.dev and tourmalineengine.com domains.
+- [Sara "Buren"](https://git.thenight.club/buren) for proofreading, generally helping with the upkeep of the project, and being my other half.
 - [Vladimír "Mosra" Vondruš](https://github.com/mosra) for their mentorship on my C++ knowledge/projects, and the people at the [magnum gitter channel](https://matrix.to/#/#mosra_magnum:gitter.im), for their continuous support and feedback on this project.
-- [Goma "Buren"](https://git.thenight.club/buren) for proofreading, generally helping with the upkeep of the project, and being my other half.
 - [Kae "voxelfoxkae"](https://voxelfox.co.uk/) for their mentorship.
 
 # Not-so-frequently asked questions
