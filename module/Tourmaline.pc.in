@@ -6,6 +6,6 @@ Name: @PROJECT_NAME@
 Description: @PROJECT_DESCRIPTION@
 URL: @PROJECT_HOMEPAGE_URL@
 Version: @PROJECT_VERSION@
-Requires.private: glfw3, glx
-Cflags: -std=c++23 -Wl,--disable-new-dtags -Wl,-rpath,${libdir} -I${includedir}
-Libs: -L${libdir} -lTourmaline -lMagnumGlfwApplication -lMagnum -lMagnumGL -lMagnumShaders -lGLX -lglfw -lCorradeUtility -lCorradePluginManager
+Requires: glfw3, glx
+Cflags: -std=c++@CMAKE_CXX_STANDARD@ -I${includedir}
+Libs: -L${libdir} -Wl,-rpath,${libdir} -lTourmaline -lMagnumGlfwApplication -lMagnum -lMagnumGL -lMagnumShaders -lMagnumTrade -lMagnumMeshTools -lCorradeUtility -lCorradePluginManager

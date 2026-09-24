@@ -6,7 +6,7 @@ This example is meant to guide you on how to set up Tourmaline. This guide will 
 - A Text Editor.
 - A C++ Language Server (For the purposes of this guide it will be assumed that you are using clangd).
 
-Additionally, the steps here are subject to change. Currently, Tourmaline does not have a cmake module or a pkg-config, however as these get added this page will be updated accordingly.
+Additionally, the steps here are subject to change. Currently, Tourmaline only generate a pkg-config file (as of 2026-09-24). However as other build systems get supported, this page will be updated accordingly.
 
 ## 1. Requirements
 
@@ -17,8 +17,9 @@ You must install the following software on your computer.
 - cmake
 - make
 - GLFW (with development/header files)
+- pkg-config or pkgconf (Optional but recommended)
 
-### If you want to generate the documentation, install these as well:
+### If you want to generate the documentation, install these as well
 
 - doxygen
 - texlive
@@ -47,29 +48,22 @@ You can also run `make -jX` where X is the amount of threads to compile Tourmali
 
 ## 4. Setting Up a Project
 
-After installing Tourmaline, we suggest fetching and using the compilation script [here](https://git.thenight.club/cat/TourmalineTests/src/branch/main/compile.sh). This is a temporary script to compile and link projects with Tourmaline.
-
-\note If you use a compiler other than GCC, you will have to modify the compiler script to use that compiler's flags.
-
-\warning If you changed `CMAKE_INSTALL_PREFIX`, you will have to modify the values `-Wl,-rpath,/usr/local/lib64/Tourmaline`, `-I/usr/local/include/TourmalineExternal`, and `-L/usr/local/lib64/Tourmaline`. On these flags, the path prefix `/usr/local/` should be replaced with the path you set `CMAKE_INSTALL_PREFIX` to.
-
-Make a new directory to put your project in. Afterwards, place the compilation script you downloaded earlier in the newly created directory. You may now create a new cpp file here to be your project.
+After installing Tourmaline, You can use `pkg-config` (or `pkgconf`) to link and compile your program with Tourmaline.
 
 To test if Tourmaline runs correctly, compile this simple test program:
 
 \include 01-Hello-Tourmaline/main.cpp
 
-To compile your project with the compilation script, you just need to run the following:
+To compile your project, you just need to run the following:
 
 ```bash
-./compile.sh your-source-file.cpp binary-name
-
-# To run the program
-./build/binary-name
+g++ main.cpp `pkg-config Tourmaline --cflags --libs` -o program
 ```
+
+\note You do not need to use GCC/G++. Clang and other compilers should work fine as long as the compiler supports C++23 features.
 
 ## 5. You are ready
 
-That's it! You can now start using Tourmaline Engine. Feel free to tinker with the compile script and the engine. We highly suggest customising any part of the engine to your needs.
+That's it! You can now start using Tourmaline Engine. We highly suggest customising any part of the engine to your needs.
 
 You can continue learning more about Tourmaline Engine at \ref examples.
