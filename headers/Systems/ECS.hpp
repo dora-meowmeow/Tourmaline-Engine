@@ -183,6 +183,8 @@ public:
    * This is an overload for the sake of convenience, for when specifying
    * a class instance. It doesn't do anything differently except
    * take a different order of arguments.
+   *
+   * @htmlinclude SystemTypeRequirements.html
    */
   template <typename SystemFunction, typename Instance>
   System AddSystem(SystemFunction &&system, Instance *instance,
@@ -209,16 +211,7 @@ public:
    * in).
    *
    * @return The System UUID of the created system.
-   *
-   * ## A function must follow the following rules to be a system.
-   * - The return type of the function must be void.
-   * - Must have at least 2 arguments.
-   *   - First argument must be of type const Entity& (or const
-   * Tourmaline::Systems::ECS::Entity&).
-   *   - Every argument except the first must be of a type that publicly
-   * inherits Tourmaline::Systems::ECS::Component.
-   * - If it is a pointer-to-member function (i.e. member function of a class),
-   * there must be an instance of a class specified for the function to run in.
+   * @htmlinclude SystemTypeRequirements.html
    */
   template <typename SystemFunction, typename Instance = Type::UnspecifiedType>
   System AddSystem(SystemFunction &&system,

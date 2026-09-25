@@ -1,0 +1,13 @@
+<h3>A function must follow all of these rules to be a system</h3>
+
+<ul>
+  <li>The return type of the function must be void.</li>
+  <li>
+    Must have at least 2 arguments.
+    <ul>
+      <li>First argument must be of type const Entity& (or const Tourmaline::Systems::ECS::Entity&)</li>
+      <li>Every argument except the first must be of a type that publicly inherits Tourmaline::Systems::ECS::Component.</li>
+    </ul>
+  </li>
+  <li>If it is a pointer-to-member function (i.e. member function of a class), there must be an instance of a class specified for the function to run in.</li>
+</ul>
