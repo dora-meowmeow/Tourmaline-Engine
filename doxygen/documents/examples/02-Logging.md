@@ -1,4 +1,4 @@
-\page 03-Logging 03. Logging - How to write log messages
+\page 02-Logging 02. Logging - How to write log messages
 
 Tourmaline defines all of its Logging functions under `Tourmaline/Systems/Logging.hpp`. So we will start by including the said header.
 

@@ -1,4 +1,4 @@
-\page 04-Random 04. Random - Random value generation
+\page 03-Random 03. Random - Random value generation
 
 Tourmaline defines all of its Random functions under `Tourmaline/Systems/Random.hpp`. So we will start by including the said header.
 
