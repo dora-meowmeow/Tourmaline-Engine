@@ -46,13 +46,14 @@ int main() {
 
   // We can add a custom component as shown below.
   //
-  // The first two arguments are always the same: Which entity to add the component to,
-  // and whether it should be enabled on creation. The remaining arguments will be
-  // forwarded to construct the class.
+  // The first two arguments are always the same: Which entity to add the
+  // component to, and whether it should be enabled on creation. The remaining
+  // arguments will be forwarded to construct the class.
   //
-  // In this example, our player entity will have 200 HP and 200 Max HP as the values of
-  // its Stats component, while our other entity (entity) will have the default values of 100
-  // (On the second function call, below this one), as no component arguments are passed.
+  // In this example, our player entity will have 200 HP and 200 Max HP as the
+  // values of its Stats component, while our other entity (entity) will have
+  // the default values of 100 (On the second function call, below this one), as
+  // no component arguments are passed.
   world.AddComponent<Stats>(player, true, 200, 200);
 
   // AddComponent will return a reference to the added component so you don't
@@ -75,7 +76,9 @@ int main() {
 
   // Entities with no label set will automatically be labeled as "unknown".
   auto entityName = world.GetEntityLabel(entity);
+  auto playerName = world.GetEntityLabel(player);
   Logging::Log(entityName, "Game");
+  Logging::Log(playerName, "Game");
 
   // We can destroy entities with this function.
   //
@@ -92,8 +95,8 @@ int main() {
   // Likewise we can delete components (except
   // Tourmaline::Systems::Components::Transform)
   //
-  // Just like before with entity deletion, it is highly advised to verify that a
-  // component exists before destroying it.
+  // Just like before with entity deletion, it is highly advised to verify that
+  // a component exists before destroying it.
   if (world.HasComponent<Stats>(player)) {
     // You can also check if the component was successfully deleted using the
     // returned value, as with entities.
