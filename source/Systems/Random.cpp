@@ -26,3 +26,5 @@ Tourmaline::Type::UUID Random::GenerateUUID() {
 
   return Tourmaline::Type::UUID(random_ab, random_c);
 }
+
+void Random::SetSeed(uint64_t seed) { generator.seed(seed); }

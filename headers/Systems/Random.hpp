@@ -49,6 +49,13 @@ public:
    */
   static Tourmaline::Type::UUID GenerateUUID();
 
+  /**
+   * @brief Sets the seed on the xoshiro generator.
+   * @note If this function is not ran, default seed will be unix timestamp at
+   * runtime of the software.
+   */
+  static void SetSeed(uint64_t seed);
+
 private:
   static Xoshiro::Xoshiro256PP generator;
 };
