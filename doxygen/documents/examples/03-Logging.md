@@ -232,6 +232,6 @@ terminate called after throwing an instance of 'std::runtime_error'
 Aborted                    ./program
 ```
 
-That's all you need to know to use \ref Tourmaline::Systems::Logging features!
+That's all you need to know to use \ref Tourmaline::Systems::Logging !
 
 You can continue learning more about Tourmaline Engine at \ref examples.
