@@ -75,7 +75,6 @@ public:
 bool isStarted = false;
 
 int main() {
-  // You can additionally use Logging::LogLevel::Info
   Logging::Log("Hello Tourmaline", "Test1", Logging::Info, isStarted);
   isStarted = true;
   Logging::Log("Hello Tourmaline", "Test2", Logging::Info, isStarted);
@@ -127,8 +126,9 @@ public:
 bool isStarted = false;
 
 int main() {
+  // When path unspecified, the log file will be called ./Tourmaline-Year-Month-Day.txt
   Logging::LogToFile();
-  // You can additionally use Logging::LogLevel::Info
+
   Logging::Log("Hello Tourmaline", "Test1", Logging::Info, isStarted);
   isStarted = true;
   Logging::Log("Hello Tourmaline", "Test2", Logging::Info, isStarted);
@@ -136,7 +136,6 @@ int main() {
 
   x Thing;
   Thing.coolNumber = 6;
-  // LogFormatted does not support lazing logging
   Logging::LogFormatted("Here is some info x.coolNumber = {}, x.twoPi = {}, "
                         "x.favouriteLetter {:c}, x.someWords {}.",
                         "Test3", Logging::Info, Thing.coolNumber, Thing.twoPi,
