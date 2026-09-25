@@ -42,13 +42,13 @@ struct HashContainerOptions {
   float minimizeFactor = 0.20f;
 
   /**
-   * @brief Higher values mean leaning more towards minimizeFactor when recalculating a
-   * load factor.
+   * @brief Higher values mean leaning more towards minimizeFactor when
+   * recalculating a load factor.
    *
    * When reallocating, the newly reallocated container will calculate
    * the desired load factor with the following formula:
    *
-   * @f(newLoadFactor = (loadFactor + minimizeFactor) / leaningFactor@f)
+   * @f$ newLoadFactor = (loadFactor + minimizeFactor) / leaningFactor @f$
    *
    * This value should generally be set to make newLoadFactor be between
    * loadFactor and minimizeFactor. If your container needs to grow gradually,
@@ -68,8 +68,8 @@ struct HashContainerOptions {
   /**
    * @brief Per bucket reserved space.
    *
-   * Each bucket is a vector under the hood. In order to avoid unnecessary reallocations,
-   * the bucket will reserve this much space for entries.
+   * Each bucket is a vector under the hood. In order to avoid unnecessary
+   * reallocations, the bucket will reserve this much space for entries.
    */
   std::size_t reservedBucketSpace = 4;
 };
