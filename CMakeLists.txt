@@ -5,7 +5,7 @@
 # v. 2.0. If a copy of the MPL was not distributed with this file, You can
 # obtain one at http://mozilla.org/MPL/2.0/.
 
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.20)
 cmake_policy(SET CMP0135 NEW)
 
 project(Tourmaline VERSION 1 DESCRIPTION "A Hobbyist C++23 game engine." HOMEPAGE_URL "https://docs.tourmalineengine.dev/")
@@ -19,8 +19,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME}")
-set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}External")
+set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/Tourmaline")
+set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/TourmalineExternal")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fsanitize=address -coverage")
@@ -74,7 +74,7 @@ foreach(dep
 endforeach()
 
 # Building
-add_library(${PROJECT_NAME} SHARED
+add_library(Tourmaline SHARED
   "source/Systems/ECS/Components.cpp"
   "source/Systems/ECS/Entities.cpp"
   "source/Systems/ECS/World.cpp"
@@ -86,12 +86,8 @@ add_library(${PROJECT_NAME} SHARED
   "source/Game/Keyboard.cpp"
 )
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-  target_compile_options(${PROJECT_NAME} PRIVATE "-ftime-report")
-endif()
-
 # Actual linking
-target_link_libraries(${PROJECT_NAME} PUBLIC
+target_link_libraries(Tourmaline PUBLIC
     Corrade::Main
     Corrade::Containers
     Corrade::Utility
@@ -106,52 +102,50 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     Magnum::Shaders
 )
 
-# Module stuff
-set_target_properties(${PROJECT_NAME} PROPERTIES VERSION ${PROJECT_VERSION})
-
 # Fetching source and compiled directories
 FetchContent_GetProperties(Corrade SOURCE_DIR corrade_SOURCE_DIR)
 FetchContent_GetProperties(Magnum SOURCE_DIR magnum_SOURCE_DIR)
 FetchContent_GetProperties(MagnumPlugins SOURCE_DIR magnum-plugins_SOURCE_DIR)
 
 # For Development
-target_include_directories(${PROJECT_NAME}
+target_include_directories(Tourmaline
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/headers>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/> # This is for TourmalineExternal
     $<BUILD_INTERFACE:${corrade_SOURCE_DIR}/src>
     $<BUILD_INTERFACE:${magnum_SOURCE_DIR}/src>
     $<BUILD_INTERFACE:${magnum-plugins_SOURCE_DIR}/src>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
-    $<INSTALL_INTERFACE:include/${PROJECT_NAME}External>
+    $<INSTALL_INTERFACE:include/Tourmaline>
+    $<INSTALL_INTERFACE:include/TourmalineExternal>
 )
 
 # A way to live forever
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND printf "Dedicated to my beloved Sara, I love you. - Dora" >> $<TARGET_FILE:${PROJECT_NAME}>
+add_custom_command(TARGET Tourmaline POST_BUILD
+    COMMAND printf "Dedicated to my beloved Sara, I love you. - Dora" >> $<TARGET_FILE:Tourmaline>
+)
+
+# Tourmaline export
+install(
+  TARGETS Tourmaline
+  EXPORT TourmalineTargets
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  INCLUDES DESTINATION include/Tourmaline
 )
 
 # Pkg-config
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/module/${PROJECT_NAME}.pc.in
-    ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+    ${CMAKE_CURRENT_SOURCE_DIR}/module/Tourmaline.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/Tourmaline.pc
     @ONLY
 )
 
 install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.pc
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/Tourmaline.pc
     DESTINATION /usr/share/pkgconfig
 )
 
-
-# Tourmaline Install
-install(
-  TARGETS ${PROJECT_NAME}
-  EXPORT ${PROJECT_NAME}Targets
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  INCLUDES DESTINATION include/${PROJECT_NAME}
-)
-
-install(DIRECTORY headers/ DESTINATION include/${PROJECT_NAME})
-install(DIRECTORY ${PROJECT_NAME}External/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+# Install includes
+install(DIRECTORY headers/ DESTINATION include/Tourmaline)
+install(DIRECTORY TourmalineExternal/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
