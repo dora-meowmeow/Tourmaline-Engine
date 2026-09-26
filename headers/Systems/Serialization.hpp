@@ -26,21 +26,22 @@
 
 namespace Tourmaline::Systems::Serialization {
 /**
- * @brief When inherited publically, it allows serialization of a class.
+ * @brief When inherited publically, it allows the serialization of a class.
  *
  * @tparam Type Type of the class that is inheriting from (CRTP).
  *
  * Marks a class/struct as serializable. This allows Tourmaline to serialize,
- * and deserialize any member with given pointer inside `serialList` (see note).
+ * and deserialize any member with a given pointer inside the class/struct's
+ * `serialList` (see note).
  *
  * @note Every class that inherits Serializable must declare a
  * `static inline SerialList serialList{};`. The name MUST be `serialList`.
  * see @ref Tourmaline::Systems::Serialization::Serializable::SerialList to
  * learn more.
  *
- * @warning As stated in the note before it must be static, also the type and
- * the name must be EXACT. You cannot name it anything else or use a different
- * type or make it not static. It may not be inline, if you prefer.
+ * @warning As stated in the note before, `serialList` must be static, and the type and
+ * name must match EXACTLY. Different types, names, and non-static
+ * implementations are not supported. It may not be inline, if you prefer.
  */
 template <typename Type> struct Serializable {
   /**
@@ -50,20 +51,20 @@ template <typename Type> struct Serializable {
    * @tparam dataType The data type of each member pointer. Should resolve
    * automatically.
    *
-   * This struct will hold every member point that is requested to be
+   * This struct will hold every member pointer that is requested to be
    * serialized/deserialized. This does allow you to skip some members of a
    * class from serialization/deserialization. Any member that is not
    * serialized/deserialized, will not be affected/changed.
    *
    * @note As stated in @ref Tourmaline::Systems::Serialization::Serializable
-   * Each class/struct that inherits Serializable requires to define `static
+   * Each class/struct that inherits Serializable is required to contain a defined `static
    * inline SerialList serialList{};`. Everything except the `inline` is
-   * required. The name MUST be `serialList` and nothing else.
+   * required, including the name, which must be EXACTLY `serialList` and nothing else.
    */
   template <typename... dataType>
   struct SerialList : public std::tuple<dataType Type::*...> {
     /**
-     * @brief Constructs the list with given member pointers.
+     * @brief Constructs the list with the given member pointers.
      *
      * @param memberPointers Every member that should be serialized's member
      * pointer (example: &x::y).
@@ -104,7 +105,7 @@ template <typename Type> struct Serializable {
    * @brief Deserializes the string into the class/struct's members in
    * serialList.
    *
-   * @param serialData The raw serialized data from Serialize() function.
+   * @param serialData The raw serialized data from the Serialize() function.
    *
    * For each type a ToData and FromData must be defined for proper
    * serialization/deserialization. See

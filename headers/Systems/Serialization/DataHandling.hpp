@@ -16,7 +16,7 @@
 
 /**
  * @file
- * @brief How-to serialize data
+ * @brief Serialization functions to define how to serialize/deserialize data
  */
 namespace Tourmaline::Systems::Serialization {
 template <typename Type> struct Serializable;
@@ -27,13 +27,14 @@ template <typename Type> struct Serializable;
  * serialization.
  *
  * @tparam type The type this function applies to. You can also use C++20
- * concepts to make a more broader function.
+ * concepts to make a broader function.
  *
  * @return The data as a string for serialization.
  *
  * @warning The first 4 bytes must contain the length of the data being written.
- * So if you are writing 20 bytes of data first 4 bytes in uint32_t must be 20.
- * Failure to add the proper length will break rest of the serialization.
+ * So, if you are writing 20 bytes of data, the first 4 bytes as a uint32_t must 
+ * have the value 20.
+ * Failure to add the proper length will break the rest of the serialization.
  */
 template <typename type> static std::string ToData(type) {
   static_assert(false, "ToData function requires a overload defined for this "
@@ -42,19 +43,19 @@ template <typename type> static std::string ToData(type) {
 }
 
 /**
- * @brief Template function used to convert a  to a string for
- * serialization.
+ * @brief Template function used to convert a serialized string back into
+ * its data type during deserialization.
  *
  * @tparam type The type this function applies to. You can also use C++20
- * concepts to make a more broader function.
+ * concepts to make a broader function.
  *
- * @param dataStart Where the data starts. First 4 bytes will contain the
+ * @param dataStart Where the data starts. The first 4 bytes will contain the
  * length of the data.
- * @param result Reference to where to write the result of deserialization.
+ * @param result Reference to where the result of the deserialization should be written.
  *
- * @warning First 4 bytes in uint32_t will contain how long the data inside
- * dataStart is. So if data stored in dataStart is 20 bytes, first 4 bytes
- * in uint32_t will be 20.
+ * @warning The first 4 bytes contain how long the data inside dataStart
+ * is, as a uint_32_t. So, if the data stored in dataStart is 20 bytes, the first 4 bytes,
+ * as a uint32_t, will have the value 20.
  */
 template <typename type>
 static void FromData(const char *dataStart, type &result) {
@@ -92,8 +93,8 @@ static void FromData(const char *, type &) {
  * @brief Currently pointers and references are not supported for
  * serialization/deserialization.
  *
- * It is still possible to do so, if per type pointer/reference is defined for
- * ToData/FromData.
+ * It is still possible to do so, if a per type of pointer/reference overload is defined for
+ * the ToData/FromData functions.
  */
 template <typename type>
   requires std::is_reference_v<type> || std::is_pointer_v<type>
@@ -109,8 +110,8 @@ static std::string ToData(type) {
  * @brief Currently pointers and references are not supported for
  * serialization/deserialization.
  *
- * It is still possible to do so, if per type pointer/reference is defined for
- * ToData/FromData.
+ * It is still possible to do so, if a per type of pointer/reference overload is defined for
+ * the ToData/FromData functions.
  */
 template <typename type>
   requires std::is_reference_v<type> || std::is_pointer_v<type>
@@ -121,9 +122,8 @@ static void FromData(const char *, type &) {
 
 // Classes with Serialization support
 /**
- * @brief Calls Serialize() recursively so class inside a class can be
- * serialized as well. Class inside the class also needs to inherits
- * Serializable.
+ * @brief Calls Serialize() recursively so a class inside a class can be
+ * serialized as well. The inner class must also inherit Serializable.
  */
 template <typename type>
   requires std::is_base_of_v<Serializable<type>, type>
@@ -137,9 +137,8 @@ static std::string ToData(type value) {
 }
 
 /**
- * @brief Calls Deserialize() recursively so class inside a class can be
- * deserialized as well. Class inside the class also needs to inherits
- * Serializable.
+ * @brief Calls Deserialize() recursively so a class inside a class can be
+ * deserialized as well. The inner class must also inherit Serializable.
  */
 template <typename type>
   requires std::is_base_of_v<Serializable<type>, type>

@@ -165,8 +165,8 @@ public:
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
    *
-   * @return The 3D assets as a Tourmaline::Systems::Importer::MeshInfo in an
-   * array.
+   * @return An array containing the 3D assets as
+   * Tourmaline::Systems::Importer::MeshInfo.
    *
    * @warning If this function fails to find the specified asset at the given
    * path, it will throw!
