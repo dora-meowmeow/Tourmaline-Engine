@@ -30,7 +30,7 @@ However, if you just cannot help yourself: After you compile and install Tourmal
 g++ main.cpp `pkg-config Tourmaline --cflags --libs` -o program
 ```
 
-Do keep in mind that the order is sensitive. You want your implementation files (`*.cpp`) BEFORE the pkg-config command.
+Do keep in mind that the command is order-sensitive. You want your implementation files (`*.cpp`) BEFORE the pkg-config command.
 
 ### !! This is not meant to be the final way to compile Tourmaline. Everything here is subject to change
 

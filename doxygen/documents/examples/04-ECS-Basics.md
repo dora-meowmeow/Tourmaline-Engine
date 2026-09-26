@@ -1,6 +1,6 @@
 \page 04-ECS-Basics 04. ECS Basics - Entities & Components
 
-Tourmaline defines all of its Random functions under `Tourmaline/Systems/ECS.hpp`. So we will start by including the said header.
+Tourmaline defines all of its ECS functions under `Tourmaline/Systems/ECS.hpp`. So we will start by including said header.
 
 (for convenience sake, we will use namespace `Tourmaline` and `Tourmaline::Systems`)
 
@@ -18,11 +18,11 @@ int main(){
 
 # What is ECS?
 
-Entity Component System (shortened to ECS) is a programming pattern made out of 3 distinct parts. Many game engines support ECS as it maps nicely to game logic. So we suggest that you familiarise yourself with the concept.
+The Entity Component System (shortened to ECS) is a programming pattern made out of 3 distinct parts. Many game engines support ECS as it maps nicely to game logic. So we suggest that you familiarise yourself with the concept.
 
 ## Entities
 
-Entities have sole job of owning components. They do not store any data by themselves other than what component they own. Each entity can only own one copy of the component, so for example an entity cannot own two copies of `Health` component. They are usually given an ID of some sort. Tourmaline defines each entity as a \ref Tourmaline::Type::UUID.
+Entities have a sole job of owning components. They do not store any data by themselves other than what components they own. Each entity can only own one copy of each component, so, for example, an entity cannot own two copies of a `Health` component. They are usually given an ID of some sort. Tourmaline defines each entity as a \ref Tourmaline::Type::UUID.
 
 ## Components
 
@@ -30,9 +30,9 @@ Components are structs that store information. They do not store any class/struc
 
 ## Systems
 
-Systems are the functions that run on components owned by entities. They all have certain list of components they need to run. For example: A system can request to run on every component `Transform` that is owned by an entity.
+Systems are the functions that run on components owned by entities. They all have a certain list of components they need to run. For example: A system can request to run on every component `Transform` that is owned by an entity.
 
-Additionally systems can request to run on multiple component if they are __**both**__ owned by same entity. For example: A system can request to run on any entity that has component `isEnemy` and `Transform`. This means this system will ONLY run on each entity that __**both**__ owns `isEnemy` and `Transform`.
+Additionally, systems may request to run on multiple components if they are __**both**__ owned by the same entity. For example: A system can request to run on any entity that has the components `isEnemy` and `Transform`. This means this system will ONLY run on each entity that __**both**__ owns `isEnemy` and `Transform`.
 
 In Tourmaline a system is any function that satisfies the following requirements:
 
@@ -42,11 +42,11 @@ In Tourmaline a system is any function that satisfies the following requirements
 
 ### World
 
-World is the main class that actually owns every Entity, Component, and System. You will be interacting with the world to use the ECS. In Tourmaline this is done by the class \ref Tourmaline::Systems::ECS::World.
+World is the main class that owns every Entity, Component, and System. You will be interacting with the world to use the ECS. In Tourmaline this is done with the class \ref Tourmaline::Systems::ECS::World.
 
 ### Prefabs
 
-Prefabs allow you to define an entity and which components it should have ahead of time. This allows you to make a prefab for say an enemy, include all of its components and set all of its values. Later on when you need to make that said enemy, you can just use the prefab to make it. In Tourmaline this is done by the class \ref Tourmaline::Systems::ECS::Prefab in `Tourmaline/Systems/ECS/Prefab.hpp`.
+Prefabs allow you to define an entity and which components it should have ahead of time. This allows you to make a prefab for, say, an enemy, include all of its components and set all of its values. Later on when you need to make said enemy, you can just use the prefab to make it. In Tourmaline this is done with the class \ref Tourmaline::Systems::ECS::Prefab in `Tourmaline/Systems/ECS/Prefab.hpp`.
 
 # Creating the world
 
@@ -69,7 +69,7 @@ By itself the world won't do anything. However, it will be very useful as we sta
 
 # Adding entities
 
-You can add entities by using \ref Tourmaline::Systems::ECS::World::CreateEntity function. If you ever want to reference that function, it is suggested that you store the \ref Tourmaline::Type::UUID returned.
+You can add entities by using the \ref Tourmaline::Systems::ECS::World::CreateEntity function. If you ever want to reference that function, it is suggested that you store the returned \ref Tourmaline::Type::UUID.
 
 ```c++
 #include <Tourmaline/Systems/ECS.hpp>
@@ -94,7 +94,7 @@ int main() {
 
 # Getting components
 
-By default every entity will have \ref Tourmaline::Systems::Components::Transform. This component __cannot__ be deleted. We can get a component owned by an entity by using \ref Tourmaline::Systems::ECS::World::GetComponent. This function will return you a reference to the component which you can freely modify. The reference will __never__ go stale during its lifetime, so if you find yourself getting the same component over and over again. It would be wise to cache it. Systems by default cache each component they fetch.
+By default, every entity will have the \ref Tourmaline::Systems::Components::Transform component. This component __cannot__ be deleted. We can get a component owned by an entity by using \ref Tourmaline::Systems::ECS::World::GetComponent. This function will return a reference to the component which you can freely modify. The reference will __never__ go stale during its lifetime, so if you find yourself getting the same component over and over again. It would be wise to cache it. Systems by default cache each component they fetch.
 
 ```c++
 #include <Tourmaline/Systems/ECS.hpp>
@@ -128,7 +128,7 @@ int main() {
 
 ## Defining a custom component
 
-Components are defined as any struct that inherits \ref Tourmaline::Systems::ECS::Component and contains members that store data. There is no rule on what members a component can contain, a component can have a member that is a pointer or reference.
+Components are defined as any struct that inherits \ref Tourmaline::Systems::ECS::Component and contains members that store data. There is no rule on what members a component can contain, a component may have a member that is a pointer or reference.
 
 ```c++
 #include <Tourmaline/Systems/ECS.hpp>
@@ -160,7 +160,7 @@ int main() {
 
 ## Adding a custom component to an entity
 
-You can add a new component to an entity by using \ref Tourmaline::Systems::ECS::World::AddComponent. It will return, if successful, the refernece to the newly created component. This reference will __**never**__ go stale during its lifetime, so you can use it for as long as you desire.
+You can add a new component to an entity by using \ref Tourmaline::Systems::ECS::World::AddComponent. It will return, if successful, the reference to the newly created component. This reference will __**never**__ go stale during its lifetime, so you can use it for as long as you desire.
 
 ```c++
 #include <Tourmaline/Systems/ECS.hpp>
@@ -205,7 +205,7 @@ int main() {
 
 # Enabling/disabling entities and components
 
-While currently not useful for our example, it is important to know for ECS advance example how to enable and disable entities and components. For disabling entities we can use \ref Tourmaline::Systems::ECS::World::SetEntityEnable, for components you can just set `.isEnabled` to `true` or `false`.
+While currently not useful for this example, it is important to know for the ECS Advanced example how to enable and disable entities and components. For disabling entities we can use \ref Tourmaline::Systems::ECS::World::SetEntityEnable, for components you can just set `.isEnabled` to `true` or `false`.
 
 ```c++
 #include <Tourmaline/Systems/ECS.hpp>
@@ -248,7 +248,7 @@ int main() {
 
 # Putting labels on entities
 
-It can be quite beneficial to know entity UUID stands for which entity. This can be done by using \ref Tourmaline::Systems::ECS::World::SetEntityLabel, likewise you can get the label of an entity by using \ref Tourmaline::Systems::ECS::World::GetEntityLabel.
+It can be quite beneficial to know which entity UUID stands for which entity. This can be done by using \ref Tourmaline::Systems::ECS::World::SetEntityLabel. You can then also get the label of an entity by using \ref Tourmaline::Systems::ECS::World::GetEntityLabel.
 
 ```c++
 #include <Tourmaline/Systems/ECS.hpp>
@@ -364,7 +364,7 @@ Output:
 
 # Checking and detroying components
 
-Just like entities, components can aslo be checked to see if they exist and destroyed. Checking if exists is done by \ref Tourmaline::Systems::ECS::World::HasComponent, and the component can be removed with \ref Tourmaline::Systems::ECS::World::RemoveComponent.
+Just like entities, components can also be checked to see whether they exist and can be destroyed. Checking if a component exists is done with \ref Tourmaline::Systems::ECS::World::HasComponent, and the component can be removed with \ref Tourmaline::Systems::ECS::World::RemoveComponent.
 
 ```c++
 #include <Tourmaline/Systems/ECS.hpp>
@@ -431,7 +431,7 @@ Output:
 
 # Further reading
 
-This example only focuses on Entity and Component aspect of the ECS system. In ECS advance example, we will be delving into how to add Systems and how to use Prefabs.
+This example only focuses on the Entity and Component aspects of the ECS system. In the ECS Advanced example, we will be delving into how to add Systems and how to use Prefabs.
 
 You can also get this entire example as a source file here: \subpage ECS-Basics-Example.
 

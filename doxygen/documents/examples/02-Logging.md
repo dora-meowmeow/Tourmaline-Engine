@@ -1,8 +1,8 @@
 \page 02-Logging 02. Logging - How to write log messages
 
-Tourmaline defines all of its Logging functions under `Tourmaline/Systems/Logging.hpp`. So we will start by including the said header.
+Tourmaline defines all of its Logging functions under `Tourmaline/Systems/Logging.hpp`. So we will start by including said header.
 
-(for convenience sake, we will use namespace `Tourmaline` and `Tourmaline::Systems`)
+(For convenience's sake, we will use the `Tourmaline` and `Tourmaline::Systems` namespaces)
 
 ```c++
 #include <Tourmaline/Systems/Logging.hpp>
@@ -18,7 +18,7 @@ int main(){
 
 # Non-formatted logging
 
-We can log by using \ref Tourmaline::Systems::Logging::Log function. This function takes the string to print, where the string originates from, the severity level, and lastly if there is a condition that needs to be **true** for it to print.
+We can log by using the \ref Tourmaline::Systems::Logging::Log function. This function takes the string to print, where the string originates from, the severity level, and lastly if there is a condition that needs to be **true** for it to print.
 
 ```c++
 #include <Tourmaline/Systems/Logging.hpp>
@@ -46,16 +46,16 @@ Output:
  [Info@Unknown] Lazy logging -3-
 ```
 
-As you can see only Test2 ran since `isStarted` was `false`. This is really useful when you want to output a warning.
+As you can see only Test2 ran since `isStarted` was `false` for Test1. This is really useful when you want to output a warning.
 
-While you can lazily log as shown above, this way of logging is strongly discouraged. We suggest specifying where a log message coming from.
+While you can lazily log as shown above, this way of logging is strongly discouraged. We suggest specifying where a log message is coming from.
 
 # Formatted logging
 
-Using  \ref Tourmaline::Systems::Logging::LogFormatted. We can log integers, floats, boolean, pointers, other strings etc... It is near identical to `std::format` from C++20.
+Using  \ref Tourmaline::Systems::Logging::LogFormatted. We can log integers, floats, boolean, pointers, other strings etc... It is nearly identical to `std::format` from C++20.
 This function uses [Corrade::Utility::format](https://doc.magnum.graphics/corrade/namespaceCorrade_1_1Utility.html#a6ed9378fb78a4da408fd5154a9d9a308) to format strings, please read the documentation for it to learn its full capacity.
 
-\note Unlike \ref Tourmaline::Systems::Logging::Log, \ref Tourmaline::Systems::Logging::LogFormatted does not support the last condition argument. It will always send.
+\note Unlike \ref Tourmaline::Systems::Logging::Log, \ref Tourmaline::Systems::Logging::LogFormatted does not support the last condition argument. It will always log.
 
 ```c++
 #include <Tourmaline/Systems/Logging.hpp>
@@ -106,7 +106,7 @@ Output:
 
 # Writing to a file
 
-If you wish to write outputs to both console and a file. You can use the \ref Tourmaline::Systems:Logging::LogToFile function. If you don't specify a file path, it will write the file where ever the program file is with the name `Tourmaline-Year-Month-Day.txt`.
+If you wish to write outputs to both the console and a file, you can use the \ref Tourmaline::Systems:Logging::LogToFile function. If you don't specify a file path, it will write the file to whatever directory the program file is in, with the name formatted as: `Tourmaline-Year-Month-Day.txt`.
 
 ```c++
 #include <Tourmaline/Systems/Logging.hpp>
@@ -168,7 +168,7 @@ cat Tourmaline-2026-9-24.txt
 
 ## Logging::Error
 
-If any log that is in severity Logging::Error gets triggered, It will also throw with `std::runtime_error`. You can catch this error and correct your code accordingly.
+If any log of severity Logging::Error gets triggered, It will also throw an `std::runtime_error`. You may catch this error and correct your code accordingly.
 
 ```c++
 #include <Tourmaline/Systems/Logging.hpp>
@@ -197,7 +197,7 @@ Output:
 
 ## Logging::Critical and Logging::TerminationFunction()
 
-If any log that is in severity Logging::Critical gets triggered, the program will call `std::terminate`! However to make sure you don't randomly lose data, right before `std::terminate` is called we call \ref Tourmaline::Systems::Logging::TerminationFunction.
+If any log of severity Logging::Critical gets triggered, the program will call `std::terminate`! However to make sure you don't randomly lose data, right before `std::terminate` is called we call \ref Tourmaline::Systems::Logging::TerminationFunction.
 
 By itself \ref Tourmaline::Systems::Logging::TerminationFunction doesn't do anything, however each program can define what it should do.
 

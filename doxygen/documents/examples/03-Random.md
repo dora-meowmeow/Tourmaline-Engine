@@ -1,8 +1,8 @@
 \page 03-Random 03. Random - Random value generation
 
-Tourmaline defines all of its Random functions under `Tourmaline/Systems/Random.hpp`. So we will start by including the said header.
+Tourmaline defines all of its Random functions under `Tourmaline/Systems/Random.hpp`. So we will start by including said header.
 
-(for convenience sake, we will use namespace `Tourmaline` and `Tourmaline::Systems`)
+(For convenience's sake, we will use the `Tourmaline` and `Tourmaline::Systems` namespaces)
 
 ```c++
 #include <Tourmaline/Systems/Random.hpp>
@@ -18,13 +18,13 @@ int main(){
 
 # How does random generation work under the hood?
 
-Under the hood Tourmaline uses `Xoshiro256PP` random number generator from [Xohiro.h](https://github.com/david-cortes/xoshiro_cpp/blob/master/xoshiro.h). This number generator is quite fast and generates numbers evenly.
+Under the hood Tourmaline uses the `Xoshiro256PP` random number generator from [Xohiro.h](https://github.com/david-cortes/xoshiro_cpp/blob/master/xoshiro.h). This number generator is quite fast and generates numbers evenly.
 
 # Generating a random number
 
-It's fairly straight forward to generate random numbers, you can call \ref Tourmaline::Systems::Random::Generate function. It will generate a number based on the type of maximum and minimum argument.
+It's fairly straight forward to generate random numbers, you can call the \ref Tourmaline::Systems::Random::Generate function. It will generate a number based on the type of the maximum and minimum arguments.
 
-\note Both maximum and minimum values are inclusive. So any generated number is in \f$ min \leq x \leq max \f$.
+\note Both maximum and minimum values are inclusive. So for any generated number x, \f$ min \leq x \leq max \f$.
 
 ```c++
 #include <Tourmaline/Systems/Random.hpp>
@@ -53,7 +53,7 @@ int main() {
 
 # Setting a seed
 
-You can set the seed for the generator by \ref Tourmaline::Systems::Random::SetSeed. If not set, the default seed will be unix timestamp of when the program started running.
+You can set the seed for the generator by using \ref Tourmaline::Systems::Random::SetSeed. If not set, the default seed will be unix timestamp of when the program started running.
 
 ```c++
 #include <Tourmaline/Systems/Logging.hpp>
@@ -88,7 +88,7 @@ As you can see setting the seed to a number specified at compile time makes the 
 
 # Generating other stuff
 
-Currently only other thing you can generate randomly is a \ref Tourmaline::Type::UUID. You can do so by using \ref Tourmaline::Systems::Random::GenerateUUID.
+Currently the only other thing you can generate randomly is a \ref Tourmaline::Type::UUID. You can do so by using \ref Tourmaline::Systems::Random::GenerateUUID.
 
 ```c++
 #include <Tourmaline/Systems/Logging.hpp>
