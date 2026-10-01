@@ -112,8 +112,8 @@ public:
    * exception.
    *
    * If, during your game loop, an exception is thrown and uncaught,
-   * Game::Program will catch it as a last line of defense. Once the exception is
-   * caught, this function will run.
+   * Game::Program will catch it as a last line of defense. Once the exception
+   * is caught, this function will run.
    *
    * @param exception The exception itself (for diagnostics purposes).
    *
@@ -142,6 +142,9 @@ public:
    */
   [[nodiscard("Unnecessary call to GetKey")]]
   const Input::Key &GetKey(const Input::KeyType &keyType);
+
+  [[nodiscard("Unnecessary call to GetMouse")]]
+  const Input::Pointer &GetMouse();
 
   /**
    * @brief Allows access to the command line arguments.
@@ -179,13 +182,19 @@ public:
 
 private:
   void initialize();
-  void advanceKeyEvents();
+  void advanceInputEvents();
 
   void drawEvent() override;
   void viewportEvent(ViewportEvent &event) override;
   void exitEvent(ExitEvent &event) override;
+
   void keyPressEvent(KeyEvent &event) override;
   void keyReleaseEvent(KeyEvent &event) override;
+
+  void pointerPressEvent(PointerEvent &event) override;
+  void pointerReleaseEvent(PointerEvent &event) override;
+  void pointerMoveEvent(PointerMoveEvent &event) override;
+  void scrollEvent(ScrollEvent &event) override;
 
   // Magnum
   Magnum::Timeline timeline;
@@ -194,8 +203,11 @@ private:
   // Internal data
   float _deltaTime = 0;
   float _aspectRatio = 0;
-  Containers::Hashmap<Input::KeyType, Input::Key> _inputTrack;
+  Containers::Hashmap<Input::KeyType, Input::Key> _keyboardTrack;
   std::vector<Input::KeyType> _advanceKeys;
+
+  Input::Pointer _primaryPointer;
+  std::vector<Input::PointerButtonState *> _advancePointerButtons;
 
   // Empty data incase the dev doesn't want to pass arguments
   inline static char *_argv = (char *)"empty";

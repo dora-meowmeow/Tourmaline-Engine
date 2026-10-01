@@ -84,6 +84,7 @@ add_library(Tourmaline SHARED
   "source/Types/UUID.cpp"
   "source/Game/Program.cpp"
   "source/Game/Keyboard.cpp"
+  "source/Game/Pointer.cpp"
 )
 
 # Actual linking
