@@ -143,6 +143,11 @@ public:
   [[nodiscard("Unnecessary call to GetKey")]]
   const Input::Key &GetKey(const Input::KeyType &keyType);
 
+  /**
+   * @brief Fetches data regarding the mouse.
+   *
+   * @return Returns a view of the mouse and its stats.
+   */
   [[nodiscard("Unnecessary call to GetMouse")]]
   const Input::Pointer &GetMouse();
 
