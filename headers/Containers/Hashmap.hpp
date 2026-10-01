@@ -108,7 +108,7 @@ public:
    * @return True if the map has the pair, false otherwise.
    */
   [[nodiscard("Unnecessary call of Has function")]]
-  bool Has(const Key &key) noexcept {
+  bool Has(const Key &key) const noexcept {
     std::size_t keyHash = std::hash<Key>{}(key),
                 keyHashPosition = keyHash % storage.size();
 
@@ -148,6 +148,39 @@ public:
         "Hashmap", Systems::Logging::Error, storage[keyHashPosition].empty());
 
     for (hashStorage &hash : storage[keyHashPosition]) {
+      if (hash.hash == keyHash && hash.key == key) {
+        return hash.value;
+      }
+    }
+
+    Systems::Logging::Log("Trying to access a non-existant key! Throwing...",
+                          "Hashmap", Systems::Logging::Error);
+    throw;
+  }
+
+  /**
+   * @brief Fetches the value as a view (const/read-only) of the key-value pair
+   * matching the specified key.
+   *
+   * @param key The key of the key-value pair to fetch.
+   *
+   * @return A constant reference to the fetched value.
+   *
+   * @warning If you try to get a key-value pair that does not exist,
+   * this will throw a runtime exception (Tourmaline::Systems::Logging::Error).
+   * Please check the presence of the key in the map with the Has function
+   * first.
+   */
+  [[nodiscard("Unnecessary call of Get function")]]
+  const Value &GetView(const Key &key) const {
+    std::size_t keyHash = std::hash<Key>{}(key),
+                keyHashPosition = keyHash % storage.size();
+
+    Systems::Logging::Log(
+        "Trying to access a non-existant bucket for a key! Throwing...",
+        "Hashmap", Systems::Logging::Error, storage[keyHashPosition].empty());
+
+    for (const hashStorage &hash : storage[keyHashPosition]) {
       if (hash.hash == keyHash && hash.key == key) {
         return hash.value;
       }

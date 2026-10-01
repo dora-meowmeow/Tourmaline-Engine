@@ -108,7 +108,7 @@ public:
    * @return True if the list has it, false otherwise.
    */
   [[nodiscard("Unnecessary call of Has function")]]
-  bool Has(const Entry &entry) noexcept {
+  bool Has(const Entry &entry) const noexcept {
     std::size_t entryHash = std::hash<Entry>{}(entry),
                 entryHashPosition = entryHash % storage.size();
 
