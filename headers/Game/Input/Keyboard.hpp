@@ -6,8 +6,8 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef GUARD_TOURMALINE_INPUT_H
-#define GUARD_TOURMALINE_INPUT_H
+#ifndef GUARD_TOURMALINE_INPUT_KEYBOARD_H
+#define GUARD_TOURMALINE_INPUT_KEYBOARD_H
 
 #include "Magnum/Platform/GlfwApplication.h"
 /**
@@ -18,9 +18,10 @@ namespace Tourmaline::Game::Input {
 /**
  * @brief The states a key can be in.
  *
- * @note A released event may be triggered without a prior pressed event triggering. This usually
- * occurs when the program window is brought into focus while a key is held down. This rarely
- * causes an issue, but should still be noted.
+ * @note A released event may be triggered without a prior pressed event
+ * triggering. This usually occurs when the program window is brought into focus
+ * while a key is held down. This rarely causes an issue, but should still be
+ * noted.
  */
 enum class KeyState {
   Inactive = 0,
