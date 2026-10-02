@@ -146,7 +146,8 @@ public:
   /**
    * @brief Fetches data regarding the mouse.
    *
-   * @return Returns a view of the mouse and its stats.
+   * @return Returns a view of the mouse and its stats. See @ref
+   * Tourmaline::Game::Input::Pointer.
    */
   [[nodiscard("Unnecessary call to GetMouse")]]
   const Input::Pointer &GetMouse();

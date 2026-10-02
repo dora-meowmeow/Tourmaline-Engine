@@ -120,14 +120,14 @@ public:
           Magnum::GL::SamplerWrapping::ClampToEdge);
 
   /**
-   * @brief Imports an 3D asset as a GL::Mesh.
+   * @brief Imports an 3D Object's mesh as a GL::Mesh.
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
-   * @param index Some 3D file-types support multiple models in same file. You
+   * @param name Some 3D file-types support multiple meshes in same file. You
    * can select which object you want by setting this value.
    *
-   * @return The 3D asset as a GL::Mesh.
+   * @return The 3D Object's mesh as a GL::Mesh.
    *
    * @warning If this function fails to find the specified asset at the given
    * path, it will throw!
@@ -135,19 +135,19 @@ public:
    * @see [Magnum::GL::Mesh](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
    */
-  [[nodiscard("Unnecesary call to LoadObject")]]
-  static Magnum::GL::Mesh LoadObject(Corrade::Containers::StringView path,
-                                     uint64_t index = 0);
+  [[nodiscard("Unnecesary call to LoadMesh")]]
+  static Magnum::GL::Mesh LoadMesh(Corrade::Containers::StringView path,
+                                   uint64_t index = 0);
 
   /**
-   * @brief Imports an 3D asset as a GL::Mesh.
+   * @brief Imports an 3D Object's mesh as a GL::Mesh.
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
-   * @param name Some 3D file-types support multiple models in same file. You
+   * @param name Some 3D file-types support multiple meshes in same file. You
    * can select which object you want by setting this value.
    *
-   * @return The 3D asset as a GL::Mesh.
+   * @return The 3D Object's mesh as a GL::Mesh.
    *
    * @warning If this function fails to find the specified asset at the given
    * path, it will throw!
@@ -155,17 +155,17 @@ public:
    * @see [Magnum::GL::Mesh](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
    */
-  [[nodiscard("Unnecesary call to LoadObject")]]
-  static Magnum::GL::Mesh LoadObject(Corrade::Containers::StringView path,
-                                     Corrade::Containers::StringView name);
+  [[nodiscard("Unnecesary call to LoadMesh")]]
+  static Magnum::GL::Mesh LoadMesh(Corrade::Containers::StringView path,
+                                   Corrade::Containers::StringView name);
 
   /**
-   * @brief Imports all 3D assets in a file as a GL::Mesh.
+   * @brief Imports all of the meshes in a 3D assets as a GL::Mesh.
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
    *
-   * @return An array containing the 3D assets as
+   * @return An array containing the 3D assets' meshes as
    * Tourmaline::Systems::Importer::MeshInfo.
    *
    * @warning If this function fails to find the specified asset at the given
@@ -174,9 +174,9 @@ public:
    * @see [Magnum::GL::Mesh](
    * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
    */
-  [[nodiscard("Unnecesary call to LoadAllObjects")]]
+  [[nodiscard("Unnecesary call to LoadAllMeshes")]]
   static std::vector<MeshInfo>
-  LoadAllObjects(Corrade::Containers::StringView path);
+  LoadAllMeshes(Corrade::Containers::StringView path);
 
 private:
   static Corrade::PluginManager::Manager<Magnum::Trade::AbstractImporter>

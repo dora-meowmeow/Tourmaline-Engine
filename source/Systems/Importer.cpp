@@ -65,26 +65,26 @@ GL::Texture2D Importer::LoadTexture2D(Containers::StringView path,
   return LoadTexture2D(LoadImage2D(path), filterType, wrappingRule);
 }
 
-GL::Mesh Importer::LoadObject(Containers::StringView path, uint64_t index) {
+GL::Mesh Importer::LoadMesh(Containers::StringView path, uint64_t index) {
   Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
-               "Importer/LoadObject", Logging::Critical, !sceneImporter);
+               "Importer/LoadMesh", Logging::Critical, !sceneImporter);
 
   if (!sceneImporter->openFile(path)) {
     Logging::LogFormatted("Could not open file {}! Throwing...",
-                          "Importer/LoadObject", Logging::Error, path);
+                          "Importer/LoadMesh", Logging::Error, path);
   }
 
   return MeshTools::compile(*sceneImporter->mesh(index));
 }
 
-GL::Mesh Importer::LoadObject(Containers::StringView path,
-                              Containers::StringView name) {
+GL::Mesh Importer::LoadMesh(Containers::StringView path,
+                            Containers::StringView name) {
   Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
-               "Importer/LoadObject", Logging::Critical, !sceneImporter);
+               "Importer/LoadMesh", Logging::Critical, !sceneImporter);
 
   if (!sceneImporter->openFile(path)) {
     Logging::LogFormatted("Could not open file {}! Throwing...",
-                          "Importer/LoadObject", Logging::Error, path);
+                          "Importer/LoadMesh", Logging::Error, path);
   }
 
   // mesh(string) seems to be broken (or I am misunderstanding it). I found this
@@ -94,15 +94,15 @@ GL::Mesh Importer::LoadObject(Containers::StringView path,
 }
 
 std::vector<Importer::MeshInfo>
-Importer::LoadAllObjects(Corrade::Containers::StringView path) {
+Importer::LoadAllMeshes(Corrade::Containers::StringView path) {
   std::vector<Importer::MeshInfo> result;
 
   Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
-               "Importer/LoadObject", Logging::Critical, !sceneImporter);
+               "Importer/LoadAllMeshes", Logging::Critical, !sceneImporter);
 
   if (!sceneImporter->openFile(path)) {
     Logging::LogFormatted("Could not open file {}! Throwing...",
-                          "Importer/LoadObject", Logging::Error, path);
+                          "Importer/LoadAllMeshes", Logging::Error, path);
   }
 
   uint64_t count = sceneImporter->meshCount();
