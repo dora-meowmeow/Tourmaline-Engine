@@ -62,8 +62,7 @@ public:
    * @warning If this function fails to find the specified asset at the given
    * path, it will throw!
    *
-   * @see [Magnum::Trade::ImageData](
-   * https://doc.magnum.graphics/magnum/classMagnum_1_1Trade_1_1ImageData.html)
+   * @see Magnum::Trade::ImageData
    */
   [[nodiscard("Unnecesary call to LoadImage2D")]]
   static Magnum::Trade::ImageData2D
@@ -78,12 +77,9 @@ public:
    *
    * @return The image data as a Texture2D.
    *
-   * @see [Magnum::Trade::ImageData](
-   * https://doc.magnum.graphics/magnum/classMagnum_1_1Trade_1_1ImageData.html)
-   * @see [Magnum::GL::SamplerFilter](
-   * https://doc.magnum.graphics/magnum/namespaceMagnum_1_1GL.html#ac5625b1b6d9959c520df40ccaca38f70)
-   * @see [Magnum::GL::SamplerWrapping](
-   * https://doc.magnum.graphics/magnum/namespaceMagnum_1_1GL.html#ae807f5b816812ec007253cae4ddc4520)
+   * @see Magnum::Trade::ImageData
+   * @see Magnum::GL::SamplerFilter
+   * @see Magnum::GL::SamplerWrapping
    */
   [[nodiscard("Unnecesary call to LoadTexture2D")]]
   static Magnum::GL::Texture2D LoadTexture2D(
@@ -105,12 +101,9 @@ public:
    * @warning If this function fails to find the specified asset at the given
    * path, it will throw!
    *
-   * @see [Magnum::GL::Texture](
-   * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Texture.html)
-   * @see [Magnum::GL::SamplerFilter](
-   * https://doc.magnum.graphics/magnum/namespaceMagnum_1_1GL.html#ac5625b1b6d9959c520df40ccaca38f70)
-   * @see [Magnum::GL::SamplerWrapping](
-   * https://doc.magnum.graphics/magnum/namespaceMagnum_1_1GL.html#ae807f5b816812ec007253cae4ddc4520)
+   * @see Magnum::GL::Texture
+   * @see Magnum::GL::SamplerFilter
+   * @see Magnum::GL::SamplerWrapping
    */
   [[nodiscard("Unnecesary call to LoadTexture2D")]]
   static Magnum::GL::Texture2D LoadTexture2D(
@@ -132,8 +125,7 @@ public:
    * @warning If this function fails to find the specified asset at the given
    * path, it will throw!
    *
-   * @see [Magnum::GL::Mesh](
-   * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
+   * @see Magnum::GL::Mesh
    */
   [[nodiscard("Unnecesary call to LoadMesh")]]
   static Magnum::GL::Mesh LoadMesh(Corrade::Containers::StringView path,
@@ -152,8 +144,7 @@ public:
    * @warning If this function fails to find the specified asset at the given
    * path, it will throw!
    *
-   * @see [Magnum::GL::Mesh](
-   * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
+   * @see Magnum::GL::Mesh
    */
   [[nodiscard("Unnecesary call to LoadMesh")]]
   static Magnum::GL::Mesh LoadMesh(Corrade::Containers::StringView path,
@@ -171,8 +162,7 @@ public:
    * @warning If this function fails to find the specified asset at the given
    * path, it will throw!
    *
-   * @see [Magnum::GL::Mesh](
-   * https://doc.magnum.graphics/magnum/classMagnum_1_1GL_1_1Mesh.html)
+   * @see Magnum::GL::Mesh
    */
   [[nodiscard("Unnecesary call to LoadAllMeshes")]]
   static std::vector<MeshInfo>

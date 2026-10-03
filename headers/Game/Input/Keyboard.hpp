@@ -32,9 +32,6 @@ enum class KeyState {
 
 /**
  * @brief The keycodes that GLFW uses.
- *
- * @see
- * [Magnum::Platform::GlfwApplication::Key](https://doc.magnum.graphics/magnum/classMagnum_1_1Platform_1_1GlfwApplication.html#a57b9583804a678cba5aea08b227061cc)
  */
 using KeyType = Magnum::Platform::GlfwApplication::Key;
 

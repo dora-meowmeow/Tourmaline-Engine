@@ -38,9 +38,6 @@ enum class PointerButtonState {
 
 /**
  * @brief The pointer button codes that GLFW uses.
- *
- * @see
- * [Magnum::Platform::GlfwApplication::Pointer](https://doc.magnum.graphics/magnum/classMagnum_1_1Platform_1_1GlfwApplication.html#aa40e11a0a9664b881e6ce916aeea72c4)
  */
 using PointerButtonType = Magnum::Platform::GlfwApplication::Pointer;
 
@@ -85,8 +82,8 @@ struct Pointer {
    * @brief Quality of Life function to check state.
    *
    * @return Returns true if state is equal to
-   * [PointerButtonState::Inactive](@ref Tourmaline::Game::Input::PointerButtonState), 
-   * otherwise returns false.
+   * [PointerButtonState::Inactive](@ref
+   * Tourmaline::Game::Input::PointerButtonState), otherwise returns false.
    */
   bool IsInactive(PointerButtonType button) const noexcept;
 
@@ -94,8 +91,8 @@ struct Pointer {
    * @brief Quality of Life function to check state.
    *
    * @return Returns true if state __**IS NOT**__ equal to
-   * [PointerButtonState::Inactive](@ref Tourmaline::Game::Input::PointerButtonState), 
-   * otherwise returns false.
+   * [PointerButtonState::Inactive](@ref
+   * Tourmaline::Game::Input::PointerButtonState), otherwise returns false.
    */
   bool IsActive(PointerButtonType button) const noexcept;
 
@@ -103,10 +100,10 @@ struct Pointer {
    * @brief Quality of Life function to check state.
    *
    * @return Returns true if state is equal to either
-   * [PointerButtonState::Pressed](@ref Tourmaline::Game::Input::PointerButtonState)
-   * or
-   * [PointerButtonState::Held](@ref Tourmaline::Game::Input::PointerButtonState), 
-   * otherwise returns false.
+   * [PointerButtonState::Pressed](@ref
+   * Tourmaline::Game::Input::PointerButtonState) or
+   * [PointerButtonState::Held](@ref
+   * Tourmaline::Game::Input::PointerButtonState), otherwise returns false.
    */
   bool IsDown(PointerButtonType button) const noexcept;
 
@@ -114,8 +111,8 @@ struct Pointer {
    * @brief Quality of Life function to check state.
    *
    * @return Returns true if state is equal to
-   * [PointerButtonState::Pressed](@ref Tourmaline::Game::Input::PointerButtonState),
-   * otherwise returns false.
+   * [PointerButtonState::Pressed](@ref
+   * Tourmaline::Game::Input::PointerButtonState), otherwise returns false.
    */
   bool IsPressed(PointerButtonType button) const noexcept;
 
@@ -123,8 +120,8 @@ struct Pointer {
    * @brief Quality of Life function to check state.
    *
    * @return Returns true if state is equal to
-   * [PointerButtonState::Released](@ref Tourmaline::Game::Input::PointerButtonState), 
-   * otherwise returns false.
+   * [PointerButtonState::Released](@ref
+   * Tourmaline::Game::Input::PointerButtonState), otherwise returns false.
    */
   bool IsReleased(PointerButtonType button) const noexcept;
 
@@ -132,8 +129,8 @@ struct Pointer {
    * @brief Quality of Life function to check state.
    *
    * @return Returns true if state is equal to
-   * [PointerButtonState::Held](@ref Tourmaline::Game::Input::PointerButtonState), 
-   * otherwise returns false.
+   * [PointerButtonState::Held](@ref
+   * Tourmaline::Game::Input::PointerButtonState), otherwise returns false.
    */
   bool IsHeld(PointerButtonType button) const noexcept;
 
