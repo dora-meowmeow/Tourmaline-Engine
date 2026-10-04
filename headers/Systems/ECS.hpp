@@ -84,7 +84,8 @@ public:
    *
    * @return The created entity's UUID.
    */
-  Entity CreateEntity(bool isEnabled = true, Type::UUID presetUUID = {0, 0});
+  Entity CreateEntity(bool isEnabled = true,
+                      Type::UUID presetUUID = Type::UUID::Empty);
 
   /**
    * @brief Creates an entity with
@@ -104,7 +105,7 @@ public:
   template <isAComponent... Components>
   Entity CreateFromPrefab(const Prefab<Components...> &prefab,
                           bool isEnabled = true,
-                          Type::UUID presetUUID = {0, 0}) {
+                          Type::UUID presetUUID = Type::UUID::Empty) {
     Entity entity = CreateEntity(isEnabled, presetUUID);
 
     using tupleSignature = decltype(prefab)::tupleSignature;

@@ -64,6 +64,10 @@ public:
 
   /// @brief The first half of the UUID as 64 bit unsigned integer.
   uint64_t secondHalf;
+
+  /// @brief A shorthand way to generate/compare with an empty UUID. An empty
+  /// UUID is all zeroes.
+  static const UUID Empty;
 };
 
 /**

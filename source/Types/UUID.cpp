@@ -18,6 +18,9 @@
 using namespace Tourmaline::Type;
 using namespace Corrade::Containers;
 using namespace Corrade::Utility;
+
+const UUID UUID::Empty(0, 0);
+
 String UUID::asString() const {
   return format("{:.16X}{:.16X}", firstHalf, secondHalf);
 }
