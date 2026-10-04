@@ -41,10 +41,10 @@ public:
   /**
    * @brief Creates a UUID with 2 specified 64-bit unsigned integers.
    * @see https://www.rfc-editor.org/rfc/rfc9562.html#name-uuid-version-4
-   * @param firstHalf a 64-bit unsigned integer. This becomes the 0th to 63rd bits of the
-   * UUID.
-   * @param secondHalf a 64-bit unsigned integer. This becomes the 64th to 127th bits of
-   * the UUID.
+   * @param firstHalf a 64-bit unsigned integer. This becomes the 0th to 63rd
+   * bits of the UUID.
+   * @param secondHalf a 64-bit unsigned integer. This becomes the 64th to 127th
+   * bits of the UUID.
    * @note It is suggested to use Tourmaline::Systems::Random::GenerateUUID() to
    * generate new UUIDs.
    */

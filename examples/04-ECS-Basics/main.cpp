@@ -42,7 +42,7 @@ int main() {
       world.GetComponent<Components::Transform>(player);
 
   // Changes done will directly affect the component itself.
-  playerTransform.Translate = {3, 0.5, -10.2};
+  playerTransform.matrix.translation() = {3, 0.5, -10.2};
 
   // We can add a custom component as shown below.
   //

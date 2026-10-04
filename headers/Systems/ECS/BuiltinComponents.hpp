@@ -10,7 +10,8 @@
 #ifndef GUARD_TOURMALINE_BUILTIN_COMPONENTS_H
 #define GUARD_TOURMALINE_BUILTIN_COMPONENTS_H
 
-#include "Magnum/Math/Vector3.h"
+#include "Magnum/Magnum.h"
+#include "Magnum/Math/Matrix4.h"
 #include <concepts>
 
 /**
@@ -47,20 +48,12 @@ namespace Tourmaline::Systems::Components {
  */
 struct Transform : public ECS::Component {
   /**
-   * @brief A 3 dimensional vector using doubles. Used to set position of the
-   * entity.
+   * @brief A 4x4 float transformation matrix.
+   *
+   * @see [What is a transformation
+   * matrix?](https://www.geeksforgeeks.org/maths/transformation-matrix/)
    */
-  Magnum::Math::Vector3<double> Translate{0};
-  /**
-   * @brief A 3 dimensional vector using doubles. Used to set rotation of the
-   * entity.
-   */
-  Magnum::Math::Vector3<double> Rotate{0};
-  /**
-   * @brief A 3 dimensional vector using doubles. Used to set scale of the
-   * entity.
-   */
-  Magnum::Math::Vector3<double> Scale{1};
+  Magnum::Matrix4 matrix;
 };
 } // namespace Tourmaline::Systems::Components
 #endif

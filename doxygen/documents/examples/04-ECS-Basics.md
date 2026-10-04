@@ -118,7 +118,7 @@ int main() {
       world.GetComponent<Components::Transform>(player);
 
   // Changes done will directly affect the component itself.
-  playerTransform.Translate = {3, 0.5, -10.2};
+  playerTransform.matrix.translation() = {3, 0.5, -10.2};
 
   return 0;
 }
@@ -152,7 +152,7 @@ int main() {
   Components::Transform &playerTransform =
       world.GetComponent<Components::Transform>(player);
 
-  playerTransform.Translate = {3, 0.5, -10.2};
+  playerTransform.matrix.translation() = {3, 0.5, -10.2};
 
   return 0;
 }
@@ -183,7 +183,7 @@ int main() {
   Components::Transform &playerTransform =
       world.GetComponent<Components::Transform>(player);
 
-  playerTransform.Translate = {3, 0.5, -10.2};
+  playerTransform.matrix.translation() = {3, 0.5, -10.2};
 
   // The first two arguments are always the same: Which entity to add the
   // component to, and whether it should be enabled on creation. The remaining
@@ -228,7 +228,7 @@ int main() {
   Components::Transform &playerTransform =
       world.GetComponent<Components::Transform>(player);
 
-  playerTransform.Translate = {3, 0.5, -10.2};
+  playerTransform.matrix.translation() = {3, 0.5, -10.2};
 
   world.AddComponent<Stats>(player, true, 200, 200);
   Stats &entitysStats = world.AddComponent<Stats>(entity, true);
@@ -271,7 +271,7 @@ int main() {
   Components::Transform &playerTransform =
       world.GetComponent<Components::Transform>(player);
 
-  playerTransform.Translate = {3, 0.5, -10.2};
+  playerTransform.matrix.translation() = {3, 0.5, -10.2};
 
   world.AddComponent<Stats>(player, true, 200, 200);
   Stats &entitysStats = world.AddComponent<Stats>(entity, true);
@@ -326,7 +326,7 @@ int main() {
   Components::Transform &playerTransform =
       world.GetComponent<Components::Transform>(player);
 
-  playerTransform.Translate = {3, 0.5, -10.2};
+  playerTransform.matrix.translation() = {3, 0.5, -10.2};
 
   world.AddComponent<Stats>(player, true, 200, 200);
   Stats &entitysStats = world.AddComponent<Stats>(entity, true);
@@ -387,7 +387,7 @@ int main() {
   Components::Transform &playerTransform =
       world.GetComponent<Components::Transform>(player);
 
-  playerTransform.Translate = {3, 0.5, -10.2};
+  playerTransform.matrix.translation() = {3, 0.5, -10.2};
 
   world.AddComponent<Stats>(player, true, 200, 200);
   Stats &entitysStats = world.AddComponent<Stats>(entity, true);
