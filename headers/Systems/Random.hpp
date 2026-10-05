@@ -9,7 +9,7 @@
 
 #ifndef GUARD_TOURMALINE_RANDOM_H
 #define GUARD_TOURMALINE_RANDOM_H
-#include "../Types.hpp"
+#include "../Types/UUID.hpp"
 #include "TourmalineExternal/random/xoshiro.h"
 
 #include <type_traits>

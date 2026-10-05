@@ -7,8 +7,8 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "Types/UUID.hpp"
 #include "Corrade/Utility/Format.h"
-#include "Types.hpp"
 
 #include <charconv>
 #include <cstdint>

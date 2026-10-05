@@ -24,7 +24,8 @@
 #include "../Containers/DualkeyMap.hpp"
 #include "../Containers/Hashlist.hpp"
 #include "../Containers/Hashmap.hpp"
-#include "../Types.hpp"
+#include "../Types/UUID.hpp"
+#include "../Types/UnspecifiedType.hpp"
 #include "ECS/Prefab.hpp"
 
 #include "Corrade/Containers/Array.h"

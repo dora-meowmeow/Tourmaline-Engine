@@ -7,8 +7,8 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#ifndef GUARD_TOURMALINE_TYPES_H
-#define GUARD_TOURMALINE_TYPES_H
+#ifndef GUARD_TOURMALINE_TYPE_UUID_H
+#define GUARD_TOURMALINE_TYPE_UUID_H
 
 #include "Corrade/Containers/String.h"
 #include "TourmalineExternal/random/xoshiro.h"
@@ -18,7 +18,7 @@
 #include <string>
 /**
  * @file
- * @brief Custom types used by Tourmaline.
+ * @brief UUID type definition
  */
 namespace Tourmaline::Type {
 /**
@@ -69,12 +69,6 @@ public:
   /// UUID is all zeroes.
   static const UUID Empty;
 };
-
-/**
- * @brief A placeholder struct for templates. If a template has a type
- * set as this, that type (and possibly the argument itself) is optional.
- */
-struct UnspecifiedType {};
 } // namespace Tourmaline::Type
 
 /// @cond
