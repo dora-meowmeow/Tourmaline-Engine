@@ -73,6 +73,9 @@ foreach(dep
   add_subdirectory(external/${dep})
 endforeach()
 
+# For Magnum::Application
+find_package(Magnum REQUIRED GlfwApplication)
+
 # Building
 add_library(Tourmaline SHARED
   "source/Systems/ECS/Components.cpp"
@@ -95,7 +98,7 @@ target_link_libraries(Tourmaline PUBLIC
     Corrade::PluginManager
 
     Magnum::Magnum
-    Magnum::GlfwApplication
+    Magnum::Application
     Magnum::GL
     Magnum::Trade
     Magnum::Primitives

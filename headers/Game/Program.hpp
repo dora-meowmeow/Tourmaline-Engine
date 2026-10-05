@@ -34,7 +34,7 @@ using namespace Magnum::Math::Literals;
  * Inherit this class publicly, it will come with most things pre-set.
  * You will just need to override any virtual functions you need.
  */
-class Program : private Magnum::Platform::GlfwApplication {
+class Program : private Magnum::Platform::Application {
 public:
   /// @brief Program configuration.
   struct Config {
