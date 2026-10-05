@@ -98,7 +98,7 @@ void Program::drawEvent() {
   GL::defaultFramebuffer.clear(GL::FramebufferClear::Color |
                                GL::FramebufferClear::Depth);
   OnStep();
-  ECS.Step();
+  World.Step();
 
   swapBuffers();
   redraw();

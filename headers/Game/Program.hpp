@@ -178,7 +178,7 @@ public:
 
   /// @brief Built-in ECS system. See Tourmaline::Systems::ECS::World
   /// for more info on how to use it.
-  Systems::ECS::World ECS;
+  Systems::ECS::World World;
 
   /// @brief Time it took to draw the last frame in seconds.
   const float &deltaTime = _deltaTime;
