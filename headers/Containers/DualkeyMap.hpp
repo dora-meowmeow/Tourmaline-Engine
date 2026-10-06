@@ -248,9 +248,7 @@ public:
       }
     }
     hashList.clear();
-
-    // wth this is a thing???
-    std::ignore = graveyard.empty();
+    graveyard = decltype(graveyard)();
   }
 
   // Queries

@@ -22,7 +22,7 @@ void World::Step() {
   preSystems();
 
   for (uint8_t priority = static_cast<int8_t>(SystemPriority::Start);
-       priority < static_cast<int8_t>(SystemPriority::Final); priority++) {
+       priority <= static_cast<int8_t>(SystemPriority::Final); priority++) {
     for (const System &system : systemList[priority]) {
       InvokeSystem(system);
     }
@@ -45,7 +45,7 @@ bool World::GetSystemEnable(const System &system) noexcept {
 }
 
 void World::SetSystemEnable(const System &system, bool beEnabled) {
-  if (!systemRegistry.Has(system)) {
+  if (!systemRegistry.Has(system)) [[unlikely]] {
     Logging::LogFormatted(
         "System {} does not exist therefore it cannot be set!",
         "ECS/SetSystemEnable", Logging::Warning, system.asString());
@@ -74,7 +74,7 @@ void World::InvokeSystem(const System &system, bool ignoreEnabled) {
 }
 
 bool World::RemoveSystem(const System &system) {
-  if (systemRegistry.Has(system)) {
+  if (systemRegistry.Has(system)) [[unlikely]] {
     int32_t priority =
         static_cast<int32_t>(systemRegistry.Get(system).priority);
     systemList[priority].erase(std::find(systemList[priority].begin(),

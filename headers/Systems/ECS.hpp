@@ -10,6 +10,7 @@
 #ifndef GUARD_TOURMALINE_ECS_H
 #define GUARD_TOURMALINE_ECS_H
 #include <cstddef>
+#include <cstdint>
 #include <cstdlib>
 #include <functional>
 #include <memory>
@@ -243,8 +244,10 @@ public:
     // Making sure that everything is infact a component
     [&]<std::size_t... index>(std::index_sequence<index...>) {
       static_assert(
-          (!std::is_base_of_v<typename Traits::template argument<index + 1>,
-                              ECS::Component> &&
+          (std::is_base_of_v<
+               ECS::Component,
+               std::remove_cvref_t<
+                   typename Traits::template argument<index + 1>>> &&
            ...),
           "Every argument aside from the first argument must be derived from "
           "ECS::Component");
