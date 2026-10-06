@@ -46,12 +46,15 @@
  */
 
 namespace Tourmaline::Systems::ECS {
-/// @brief Alias for Tourmaline::Type::UUID. Entity UUIDs and System UUIDs are
-/// stored seperately.
+/// @brief Alias for Tourmaline::Type::UUID. Entity UUIDs, Hook UUIDs, and
+/// System UUIDs are stored seperately.
 using Entity = Tourmaline::Type::UUID;
-/// @brief Alias for Tourmaline::Type::UUID. Entity UUIDs and System UUIDs are
-/// stored seperately.
+/// @brief Alias for Tourmaline::Type::UUID. Entity UUIDs, Hook UUIDs, and
+/// System UUIDs are stored seperately.
 using System = Tourmaline::Type::UUID;
+/// @brief Alias for Tourmaline::Type::UUID. Entity UUIDs, Hook UUIDs, and
+/// System UUIDs are stored seperately.
+using Hook = Tourmaline::Type::UUID;
 
 /// @brief The priority with which a system will run. Start will run first and
 /// Final will run last. The default is Default.
@@ -62,6 +65,14 @@ enum class SystemPriority {
   Post = 3,
   Final = 4
 };
+
+/**
+ * @brief This sets when should the hook be triggered.
+ *
+ * Creation will trigger when a component is added to an entity. Destruction for
+ * when you remove the component from an entity. Both for either of those cases.
+ */
+enum HookTo : uint8_t { Creation = 1, Destruction = 2, Both = 3 };
 
 /**
  * @brief The fundamental class that owns the entire ECS system.
@@ -389,9 +400,11 @@ public:
     auto newComponent = entityComponentMap.Insert(
         entity, typeid(Component), std::make_unique<Component>(args...));
 
+    ECS::Component *componentPointer = std::get<2>(newComponent).get();
+    triggerHooks<Component>(entity, componentPointer, HookTo::Creation);
     refreshAndInvalidateCaches<Component>();
 
-    return static_cast<Component &>(*std::get<2>(newComponent).get());
+    return static_cast<Component &>(*componentPointer);
   }
 
   /**
@@ -494,11 +507,112 @@ public:
     static_assert(!std::is_same_v<Component, Components::Transform>,
                   "Tried to remove Tourmaline::Systems::Components::Transform "
                   "from an entity. This is not allowed!");
+
+    triggerHooks<Component>(entity, HookTo::Destruction);
     size_t result = entityComponentMap.Remove(entity, typeid(Component));
-    refreshAndInvalidateCaches<Component>();
+    if (result) {
+      refreshAndInvalidateCaches<Component>();
+    }
 
     return result;
   }
+
+  // ======== Hooks ========
+  /**
+   * @brief Adds a function that hooks into the component addition/removal
+   * system.
+   *
+   * @tparam Instance If the function is a member function of a class, set this
+   * as the class type. Otherwise leave it as is.
+   *
+   * @param instance A pointer to a class instance. Required for member
+   * functions of a class that AREN'T static (as context to run the function
+   * in).
+   *
+   * @return The Hook UUID of the created hook.
+   * @htmlinclude HookTypeRequirements.html
+   */
+  template <typename HookFunction, typename Instance = Type::UnspecifiedType>
+  Hook AddHook(HookFunction &&hook, HookTo hookPosition, bool isEnabled = true,
+               Instance *instance = nullptr) {
+    using Traits = Concepts::FunctionTraits<HookFunction>;
+    using returnType = Traits::returnType;
+    using firstArgument = Traits::template argument<0>;
+    constexpr bool requiresInstance =
+        std::is_member_function_pointer_v<HookFunction>;
+
+    // Welcome to defensive programming hell v2
+    static_assert(std::is_void_v<returnType>, "Return type must be void!");
+    if constexpr (requiresInstance) {
+      static_assert(std::is_class_v<Instance>,
+                    "Non-static pointer-to-member functions must supply which "
+                    "instance to run the function on!");
+    }
+
+    static_assert(Traits::argumentCount == 2,
+                  "A Hook is required to have exactly 2 arguments. First "
+                  "argument being const Entity& and second being the component "
+                  "that is being hooked onto!");
+    using hookedComponent = Traits::template argument<1>;
+    static_assert(std::is_same_v<firstArgument, const Entity &>,
+                  "First Argument must be of the type const Entity&!");
+    static_assert(
+        std::is_base_of_v<ECS::Component, std::remove_cvref_t<hookedComponent>>,
+        "Second argument must be derived from "
+        "ECS::Component");
+
+    Hook newHook = Random::GenerateUUID();
+    hookFunction internalFunction = [hook, instance,
+                                     requiresInstance](const Entity &entity,
+                                                       ECS::Component *arg) {
+      // Pointer to Member functions
+      if constexpr (requiresInstance) {
+        (instance->*hook)(entity, static_cast<hookedComponent>(*arg));
+      } else {
+        hook(entity, static_cast<hookedComponent>(*arg));
+      };
+    };
+
+    hookStorage *newHookPointer = &hookRegistry.Insert(
+        newHook, hookStorage{std::move(internalFunction), hookPosition,
+                             typeid(hookedComponent), isEnabled});
+
+    if (!hookComponentMap.Has(typeid(hookedComponent))) {
+      hookComponentMap.Insert(typeid(hookedComponent), {newHookPointer});
+    } else {
+      hookComponentMap.Get(typeid(hookedComponent)).push_back(newHookPointer);
+    }
+
+    return newHook;
+  }
+
+  /**
+   * @brief Checks if a hook is enabled/disabled.
+   *
+   * @param hook Hook UUID of the hook to check.
+   *
+   * @return True if enabled, false otherwise.
+   */
+  [[nodiscard("Pointless call of GetHookEnable")]]
+  bool GetHookEnable(const Hook &hook) noexcept;
+
+  /**
+   * @brief Enables/disables a hook.
+   *
+   * @param hook Hook UUID of the system to enable/disable.
+   * @param beEnabled True to enable, false to disable.
+   */
+  void SetHookEnable(const Hook &hook, bool beEnabled = true);
+
+  /**
+   * @brief Removes a Hook (if it exists).
+   *
+   * @param hook Hook UUID of the hook to attempt to remove.
+   *
+   * @return True if the hook existed and was successfully destroyed,
+   * false otherwise.
+   */
+  bool RemoveHook(const Hook &hook);
 
   /// @warning Copying is not allowed, since the ECS world is meant to be
   /// a session with its own private session-sensitive variables.
@@ -509,6 +623,41 @@ public:
   World &operator=(const World &) = delete;
 
 private:
+  // Useful in insertions
+  template <isAComponent ComponentType>
+  void triggerHooks(const Entity &entity, ECS::Component *component,
+                    HookTo position) {
+    if (hookComponentMap.Has(typeid(ComponentType))) [[unlikely]] {
+      std::span<hookStorage *> hooks =
+          hookComponentMap.Get(typeid(ComponentType));
+      for (hookStorage *hook : hooks) {
+        if (hook->isEnabled && (hook->position & position)) [[likely]] {
+          hook->function(entity, component);
+        }
+      }
+    }
+  }
+
+  // Useful in deletions
+  template <isAComponent ComponentType>
+  void triggerHooks(const Entity &entity, HookTo position) {
+    if (!HasComponent<ComponentType>(entity)) [[unlikely]] {
+      return;
+    }
+
+    if (!hookComponentMap.Has(typeid(ComponentType))) [[unlikely]] {
+      return;
+    }
+
+    std::span<hookStorage *> hooks =
+        hookComponentMap.Get(typeid(ComponentType));
+    for (hookStorage *hook : hooks) {
+      if (hook->isEnabled && (hook->position & position)) [[likely]] {
+        hook->function(entity, static_cast<ECS::Component *>(
+                                   &GetComponent<ComponentType>(entity)));
+      }
+    }
+  }
   template <isAComponent Component> void refreshAndInvalidateCaches() {
     // Function Caches
     if (componentCacheMap.Has(typeid(Component))) {
@@ -562,6 +711,18 @@ private:
   Containers::Hashmap<componentId, std::vector<systemCache *>>
       componentCacheMap;
   Containers::Hashlist<Entity> disabledEntityList;
+
+  // Hooks
+  using hookFunction =
+      Corrade::Containers::Function<void(const Entity &, ECS::Component *)>;
+  struct hookStorage {
+    hookFunction function;
+    HookTo position;
+    componentId hookedComponent;
+    bool isEnabled = true;
+  };
+  Containers::Hashmap<Hook, hookStorage> hookRegistry;
+  Containers::Hashmap<componentId, std::vector<hookStorage *>> hookComponentMap;
 
   // ======== Life-cycle ========
   void preSystems();

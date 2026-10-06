@@ -35,8 +35,13 @@ Entity World::CreateEntity(bool isEnabled, Type::UUID presetUUID) {
   }
 
   // Default components
-  entityComponentMap.Insert(newEntity, typeid(Components::Transform),
-                            std::make_unique<Components::Transform>());
+  auto newComponent =
+      entityComponentMap.Insert(newEntity, typeid(Components::Transform),
+                                std::make_unique<Components::Transform>());
+  ECS::Component *componentPointer = std::get<2>(newComponent).get();
+  triggerHooks<Components::Transform>(newEntity, componentPointer,
+                                      HookTo::Creation);
+
   refreshAndInvalidateCaches<Components::Transform>();
 
   if (!isEnabled) {
@@ -104,8 +109,11 @@ World::GetEntityLabel(const Entity &entity) noexcept {
 }
 
 bool World::DestroyEntity(Entity entity) {
+  triggerHooks<Components::Transform>(entity, HookTo::Destruction);
   size_t result = entityComponentMap.Remove(entity, std::nullopt);
-  refreshAndInvalidateCaches<Components::Transform>();
+  if (result) {
+    refreshAndInvalidateCaches<Components::Transform>();
+  }
 
   return result;
 }

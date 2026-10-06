@@ -88,3 +88,34 @@ bool World::RemoveSystem(const System &system) {
                         system.asString());
   return false;
 }
+
+bool World::GetHookEnable(const Hook &hook) noexcept {
+  return hookRegistry.Has(hook) && hookRegistry.Get(hook).isEnabled;
+}
+
+void World::SetHookEnable(const Hook &hook, bool beEnabled) {
+  if (!hookRegistry.Has(hook)) [[unlikely]] {
+    Logging::LogFormatted("Hook {} does not exist therefore it cannot be set!",
+                          "ECS/SetHookEnable", Logging::Warning,
+                          hook.asString());
+    return;
+  }
+
+  hookRegistry.Get(hook).isEnabled = beEnabled;
+}
+
+bool World::RemoveHook(const Hook &hook) {
+  if (!hookRegistry.Has(hook)) [[unlikely]] {
+    Logging::LogFormatted(
+        "Hook {} does not exist therefore it cannot be removed!",
+        "ECS/RemoveHook", Logging::Warning, hook.asString());
+    return false;
+  }
+
+  hookStorage *storage = &hookRegistry.Get(hook);
+  std::vector<hookStorage *> &hooks =
+      hookComponentMap.Get(storage->hookedComponent);
+  hooks.erase(std::find(hooks.begin(), hooks.end(), storage));
+
+  return true;
+}
