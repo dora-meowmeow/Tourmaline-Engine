@@ -1,0 +1,11 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+includedir=${prefix}/@CMAKE_INSTALL_INCLUDEDIR@
+libdir=${prefix}/@CMAKE_INSTALL_LIBDIR@
+
+Name: @PROJECT_NAME@Debug
+Description: @PROJECT_NAME@ (Debug Flags)
+URL: @PROJECT_HOMEPAGE_URL@
+Version: @PROJECT_VERSION@
+Requires: glfw3, glx
+Cflags: -g -fsanitize=address -O0
+Libs: -lMagnum-d -lMagnumGL-d -lMagnumShaders-d -lMagnumTrade-d -lMagnumMeshTools-d -lMagnumPrimitives-d -lCorradeUtility-d -lCorradePluginManager-d

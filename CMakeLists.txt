@@ -24,7 +24,7 @@ set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/TourmalineExternal")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fsanitize=address -coverage")
-  set(CORRADE_CPU_USE_IFUNC "OFF")
+  set(CORRADE_CPU_USE_IFUNC OFF)
   message(WARNING "Making a debug build do NOT ship!")
 else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
@@ -139,6 +139,18 @@ install(
 )
 
 # Pkg-config
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/module/TourmalineDebug.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/TourmalineDebug.pc
+    @ONLY
+  )
+
+  install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/TourmalineDebug.pc
+    DESTINATION /usr/share/pkgconfig
+  )
+endif()
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/module/Tourmaline.pc.in
     ${CMAKE_CURRENT_BINARY_DIR}/Tourmaline.pc
