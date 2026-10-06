@@ -117,7 +117,7 @@ public:
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
-   * @param name Some 3D file-types support multiple meshes in same file. You
+   * @param index Some 3D file-types support multiple meshes in same file. You
    * can select which object you want by setting this value.
    *
    * @return The 3D Object's mesh as a GL::Mesh.

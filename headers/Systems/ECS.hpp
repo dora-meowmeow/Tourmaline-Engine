@@ -522,9 +522,15 @@ public:
    * @brief Adds a function that hooks into the component addition/removal
    * system.
    *
+   * @tparam HookFunction A function (could be a member function of a class)
+   * which follows the rules specified below.
    * @tparam Instance If the function is a member function of a class, set this
    * as the class type. Otherwise leave it as is.
    *
+   *
+   * @param hook The function to add as a hook.
+   * @param hookPosition Refer to Tourmaline::System::ECS::HookTo.
+   * @param isEnabled Whether the hook should be enabled from creation.
    * @param instance A pointer to a class instance. Required for member
    * functions of a class that AREN'T static (as context to run the function
    * in).
