@@ -85,6 +85,7 @@ add_library(Tourmaline SHARED
   "source/Systems/Random.cpp"
   "source/Systems/Importer.cpp"
   "source/Types/UUID.cpp"
+  "source/Types/Matrix.cpp"
   "source/Game/Program.cpp"
   "source/Game/Keyboard.cpp"
   "source/Game/Pointer.cpp"
