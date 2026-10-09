@@ -27,7 +27,10 @@
 #include "../Containers/Hashmap.hpp"
 #include "../Types/UUID.hpp"
 #include "../Types/UnspecifiedType.hpp"
+#include "ECS/BuiltinComponents.hpp"
 #include "ECS/Prefab.hpp"
+#include "Logging.hpp"
+#include "Random.hpp"
 
 #include "Corrade/Containers/Array.h"
 #include "Corrade/Containers/Containers.h"
@@ -36,9 +39,6 @@
 #include "Corrade/Containers/String.h"
 #include "Corrade/Containers/StringView.h"
 #include "Corrade/Tags.h"
-#include "ECS/BuiltinComponents.hpp"
-#include "Logging.hpp"
-#include "Random.hpp"
 
 /**
  * @file
@@ -88,6 +88,21 @@ public:
   void Step();
 
   // ========  Entities  ========
+  /**
+   * @brief Creates an entity with a pre-defined
+   * Tourmaline::Systems::Components::Transform component.
+   *
+   * @param isEnabled Whether or not the entity should be enabled on creation.
+   * @param transformMatrix Useful if you want to start the entity in a specific
+   * location, rotation, and scale.
+   * @param presetUUID Useful if you need an entity to have a specific UUID.
+   *
+   * @return The created entity's UUID.
+   */
+  Entity CreateEntity(const Components::Transform &transformMatrix,
+                      bool isEnabled = true,
+                      Type::UUID presetUUID = Type::UUID::Empty);
+
   /**
    * @brief Creates an entity with a
    * Tourmaline::Systems::Components::Transform component.
