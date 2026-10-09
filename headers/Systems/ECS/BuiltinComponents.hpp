@@ -10,8 +10,7 @@
 #ifndef GUARD_TOURMALINE_BUILTIN_COMPONENTS_H
 #define GUARD_TOURMALINE_BUILTIN_COMPONENTS_H
 
-#include "Magnum/Magnum.h"
-#include "Magnum/Math/Matrix4.h"
+#include "../../Types/Matrix.hpp"
 #include <concepts>
 
 /**
@@ -41,19 +40,21 @@ public:
 template <typename T>
 concept isAComponent = std::derived_from<T, ECS::Component>;
 } // namespace Tourmaline::Systems::ECS
-
 namespace Tourmaline::Systems::Components {
 /**
  * @brief Fundamental Transform component that every entity in ECS must have.
  */
 struct Transform : public ECS::Component {
   /**
-   * @brief A 4x4 float transformation matrix.
+   * @brief Transformation Matrix used to move an object in 3D space.
    *
    * @see [What is a transformation
    * matrix?](https://www.geeksforgeeks.org/maths/transformation-matrix/)
+   * @see Tourmaline::Type::Matrix
+   * @see Magnum::Math::Matrix4
    */
-  Magnum::Matrix4 matrix;
+  Type::Matrix Matrix;
+  Transform(Type::Matrix matrix = {}) : Matrix(matrix) {}
 };
 } // namespace Tourmaline::Systems::Components
 #endif
