@@ -17,6 +17,8 @@
 #include "Magnum/Math/Vector3.h"
 
 #include "Units.hpp"
+#include <algorithm>
+#include <cstdint>
 
 namespace Tourmaline::Type {
 /**
@@ -27,10 +29,19 @@ namespace Tourmaline::Type {
  */
 class Matrix : public Magnum::Math::Matrix4<float> {
 public:
+  static constexpr uint8_t Rows = Matrix4<float>::Rows;
+  static constexpr uint8_t Columns = Matrix4<float>::Cols;
+  static constexpr uint8_t Elements = Rows * Columns;
+
   Matrix() : Matrix(Magnum::Math::Vector3<float>{0.0f}) {}
   Matrix(float fillWith) : Magnum::Math::Matrix4<float>(fillWith) {};
   Matrix(const Magnum::Math::Matrix4<float> &copy)
       : Magnum::Math::Matrix4<float>(copy) {};
+
+  Matrix &operator=(const Magnum::Math::Matrix4<float> &copy) {
+    std::copy(copy.data(), copy.data() + Elements, this->data());
+    return *this;
+  }
 
   static Matrix
   FromTranslation(const Magnum::Math::Vector3<float> &translation) {
