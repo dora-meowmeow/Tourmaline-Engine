@@ -79,7 +79,16 @@ enum HookTo : uint8_t { Creation = 1, Destruction = 2, Both = 3 };
  */
 class World {
 public:
-  World() {}
+  /**
+   * @brief Creates a new world to hold all ECS information.
+   * @param minimumEntryCount This will pre-allocate memory for every entity and
+   * component entry.
+   *
+   * Entry count can be calculated as @f(EntityCount = entityCount *
+   * componentCount @f).
+   */
+  World(uint64_t minimumEntryCount = 20'000)
+      : entityComponentMap({minimumEntryCount}) {}
   // ====== World controls ======
   /**
    * @brief Runs each system for one time. Could be interpreted as a
@@ -698,6 +707,7 @@ private:
       entityComponentMap{};
   Containers::Hashmap<Entity, Corrade::Containers::String> entityLabelList{};
   Containers::Hashlist<componentId> calledAllComponents;
+  Containers::Hashlist<Entity> usedEntityUUIDs;
 
   // Systems
   using systemFunction = Corrade::Containers::Function<void(

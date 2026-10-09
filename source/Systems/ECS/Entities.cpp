@@ -11,6 +11,7 @@
 #include "Systems/ECS/BuiltinComponents.hpp"
 #include "Systems/Logging.hpp"
 #include "Systems/Random.hpp"
+#include "Types/Matrix.hpp"
 #include <memory>
 
 using namespace Tourmaline::Systems;
@@ -48,27 +49,18 @@ Entity World::CreateEntity(const Components::Transform &transformMatrix,
   if (!isEnabled) {
     SetEntityEnable(newEntity, isEnabled);
   }
+  usedEntityUUIDs.Insert(newEntity);
 
   return newEntity;
 }
 
 Entity World::CreateEntity(bool isEnabled, Type::UUID presetUUID) {
-  return CreateEntity({}, isEnabled, presetUUID);
+  static Type::Matrix defaultLocation;
+  return CreateEntity(defaultLocation, isEnabled, presetUUID);
 }
 
 bool World::EntityExists(const Entity &entity) noexcept {
-  bool exists = false;
-  entityComponentMap.Scan(
-      [&exists, entity](const Tourmaline::Type::UUID &currentEntity,
-                        const std::type_index &,
-                        std::unique_ptr<ECS::Component> &) -> bool {
-        if (currentEntity == entity) {
-          exists = true;
-          return true;
-        }
-        return false;
-      });
-  return exists;
+  return usedEntityUUIDs.Has(entity);
 }
 
 void World::SetEntityEnable(const Entity &entity, bool beEnabled) noexcept {
@@ -121,6 +113,7 @@ bool World::DestroyEntity(Entity entity) {
   size_t result = entityComponentMap.Remove(entity, std::nullopt);
   if (result) {
     refreshAndInvalidateCaches<Components::Transform>();
+    usedEntityUUIDs.Remove(entity);
   }
 
   return result;
