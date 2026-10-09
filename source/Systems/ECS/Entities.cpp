@@ -53,37 +53,7 @@ Entity World::CreateEntity(const Components::Transform &transformMatrix,
 }
 
 Entity World::CreateEntity(bool isEnabled, Type::UUID presetUUID) {
-  bool isUnspecified = presetUUID == Type::UUID::Empty;
-  auto newEntity = isUnspecified ? Random::GenerateUUID() : presetUUID;
-
-  // In case someone is astronomically unlucky
-  bool warned = false;
-  while (EntityExists(newEntity)) {
-    if (!isUnspecified && !warned) {
-      Logging::LogFormatted(
-          "Specified UUID {} already exists, generating a new UUID...",
-          "ECS/CreateEntity", Logging::Warning, newEntity.asString());
-      warned = true;
-    }
-
-    newEntity = Random::GenerateUUID();
-  }
-
-  // Default components
-  auto newComponent =
-      entityComponentMap.Insert(newEntity, typeid(Components::Transform),
-                                std::make_unique<Components::Transform>());
-  ECS::Component *componentPointer = std::get<2>(newComponent).get();
-  triggerHooks<Components::Transform>(newEntity, componentPointer,
-                                      HookTo::Creation);
-
-  refreshAndInvalidateCaches<Components::Transform>();
-
-  if (!isEnabled) {
-    SetEntityEnable(newEntity, isEnabled);
-  }
-
-  return newEntity;
+  return CreateEntity({}, isEnabled, presetUUID);
 }
 
 bool World::EntityExists(const Entity &entity) noexcept {
