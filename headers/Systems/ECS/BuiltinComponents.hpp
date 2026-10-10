@@ -54,6 +54,9 @@ struct Transform : public ECS::Component {
    * @see Magnum::Math::Matrix4
    */
   Type::Matrix Matrix;
+  /**
+   * @brief Constructs a Transform component using Tourmaline::Type::Matrix.
+   */
   Transform(Type::Matrix matrix = {}) : Matrix(matrix) {}
 };
 } // namespace Tourmaline::Systems::Components

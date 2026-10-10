@@ -257,6 +257,9 @@ public:
    */
   Matrix &setScaling(float scale);
 
+  /**
+   * @brief Returns the matrix itself as a Magnum::Math::Matrix4.
+   */
   Magnum::Math::Matrix4<float> &asMagnumMatrix();
 
 private:
