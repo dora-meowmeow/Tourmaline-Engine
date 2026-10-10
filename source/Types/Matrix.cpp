@@ -13,6 +13,7 @@
 #include "Magnum/Math/Quaternion.h"
 
 #include "Magnum/Math/Vector3.h"
+#include "Systems/Logging.hpp"
 #include "Types/Matrix.hpp"
 #include "Types/Units.hpp"
 
@@ -59,6 +60,14 @@ Magnum::Math::Quaternion<float> Type::Matrix::getQuaternion() const {
 Type::Matrix &Type::Matrix::rotate(float angle,
                                    Magnum::Math::Vector3<float> rotationAxis,
                                    Apply order, AngleUnit anglesIn) {
+  if (rotationAxis.isZero()) {
+    Systems::Logging::Log("Tried to rotate with a vector that is equal to "
+                          "(0,0,0). This is impossible since this vector "
+                          "cannot be an axis. Returning...",
+                          "Matrix/rotate", Systems::Logging::Warning);
+    return *this;
+  }
+
   Quaternion<float> rotation;
   if (anglesIn == AngleUnit::Radiants) [[likely]] {
     rotation = Quaternion<float>::rotation(Rad<float>(angle),
