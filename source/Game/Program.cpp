@@ -17,6 +17,7 @@
 #include "Magnum/Math/Time.h"
 #include "Magnum/Platform/GlfwApplication.h"
 
+#include <cstdint>
 #include <exception>
 
 using namespace Magnum;
@@ -77,18 +78,19 @@ int Program::Run(const Config &conf) {
 }
 
 void Program::ApplyNewConfig() {
-  magnumConfig.setTitle(config.windowTitle)
-      .setSize(config.windowSize)
-      .setWindowFlags(
-          static_cast<Configuration::WindowFlag>(config.windowMode));
-
   if (config.desiredFrameRate != 0) {
     setMinimalLoopPeriod(1.0_sec / config.desiredFrameRate);
   }
   setSwapInterval(config.vsyncEnabled);
 
-  // Only available on glfw (for now)
-  updateWindowSettings(magnumConfig);
+  setWindowTitle(config.windowTitle);
+  setWindowSize(config.windowSize);
+  clearWindowFlags(static_cast<WindowFlags>(UINT16_MAX));
+
+  if (config.windowMode != Config::WindowMode::Windowed) {
+    addWindowFlags(
+        static_cast<WindowFlags>(static_cast<uint16_t>(config.windowMode)));
+  }
 
   _aspectRatio =
       static_cast<float>(config.windowSize.x()) / config.windowSize.y();

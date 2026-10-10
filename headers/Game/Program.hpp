@@ -23,7 +23,6 @@
 
 namespace Tourmaline::Game {
 using namespace Magnum::Math::Literals;
-
 /**
  * @file
  * @brief The fundamentals to make a game.
@@ -41,11 +40,12 @@ public:
     /**
      * @brief Types of modes a window could be.
      */
-    enum class WindowMode : uint32_t {
-      Windowed = 1 << 10,
+    enum class WindowMode : uint16_t {
       Fullscreen = 1 << 0,
       Borderless = 1 << 1,
       Maximized = 1 << 4,
+      BorderlessFullscreen = Fullscreen | (1 << 9),
+      Windowed = 1 << 10
     };
 
     /// @brief Title of the window to be created.
@@ -204,7 +204,6 @@ private:
 
   // Magnum
   Magnum::Timeline timeline;
-  Configuration magnumConfig;
 
   // Internal data
   float _deltaTime = 0;
