@@ -20,7 +20,7 @@ using namespace Tourmaline;
 using namespace Magnum::Math;
 
 Vector3<float>
-Type::Matrix::getAnglesEuler(Tourmaline::Type::AngleUnit anglesIn) const {
+Type::Matrix::getEulerAngels(Tourmaline::Type::AngleUnit anglesIn) const {
   Vector3<Rad<float>> result =
       Magnum::Math::Quaternion<float>::fromMatrix(this->rotation()).toEuler();
 
@@ -31,30 +31,58 @@ Type::Matrix::getAnglesEuler(Tourmaline::Type::AngleUnit anglesIn) const {
 }
 
 Type::Matrix &Type::Matrix::rotateEuler(const Vector3<float> &angels,
-                                        AngleUnit anglesIn, Apply order) {
+                                        Apply order, AngleUnit anglesIn) {
+  Matrix4<float> rotation;
+  if (anglesIn == AngleUnit::Radiants) [[likely]] {
+    rotation = Matrix4::rotationX(Rad(angels.x())) *
+               Matrix4::rotationY(Rad(angels.y())) *
+               Matrix4::rotationZ(Rad(angels.z()));
+  } else {
+    rotation = Matrix4::rotationX(Deg(angels.x())) *
+               Matrix4::rotationY(Deg(angels.y())) *
+               Matrix4::rotationZ(Deg(angels.z()));
+  }
+
   if (order == Apply::Locally) {
-    if (anglesIn == AngleUnit::Radiants) {
-      *this = *this * Matrix4::rotationX(Rad(angels.x())) *
-              Matrix4::rotationY(Rad(angels.y())) *
-              Matrix4::rotationZ(Rad(angels.z()));
-      return *this;
-    }
-    *this = *this * Matrix4::rotationX(Deg(angels.x())) *
-            Matrix4::rotationY(Deg(angels.y())) *
-            Matrix4::rotationZ(Deg(angels.z()));
+    *this = *this * rotation;
     return *this;
   }
 
-  // Global
-  if (anglesIn == AngleUnit::Radiants) {
-    *this = Matrix4::rotationX(Rad(angels.x())) *
-            Matrix4::rotationY(Rad(angels.y())) *
-            Matrix4::rotationZ(Rad(angels.z())) * *this;
+  *this = rotation * *this;
+  return *this;
+}
+
+Magnum::Math::Quaternion<float> Type::Matrix::getQuaternion() const {
+  return Magnum::Math::Quaternion<float>::fromMatrix(this->rotation());
+}
+
+Type::Matrix &Type::Matrix::rotate(float angle,
+                                   Magnum::Math::Vector3<float> rotationAxis,
+                                   Apply order, AngleUnit anglesIn) {
+  Quaternion<float> rotation;
+  if (anglesIn == AngleUnit::Radiants) [[likely]] {
+    rotation = Quaternion<float>::rotation(Rad<float>(angle),
+                                           rotationAxis.normalized());
+  } else {
+    rotation = Quaternion<float>::rotation(Rad<float>(Deg<float>(angle)),
+                                           rotationAxis.normalized());
+  }
+
+  return rotateQuaternion(rotation, order);
+}
+
+Type::Matrix &
+Type::Matrix::rotateQuaternion(Magnum::Math::Quaternion<float> quaternion,
+                               Apply order) {
+  static Vector3<float> center{0.0f};
+  Matrix4<float> rotation = Matrix4<float>::from(quaternion.toMatrix(), center);
+
+  if (order == Apply::Locally) {
+    *this = *this * rotation;
     return *this;
   }
-  *this = Matrix4::rotationX(Deg(angels.x())) *
-          Matrix4::rotationY(Deg(angels.y())) *
-          Matrix4::rotationZ(Deg(angels.z())) * *this;
+  *this = rotation * *this;
+
   return *this;
 }
 

@@ -14,6 +14,7 @@
  * @brief Matrix type definition
  */
 #include "Magnum/Math/Matrix4.h"
+#include "Magnum/Math/Quaternion.h"
 #include "Magnum/Math/Vector3.h"
 
 #include "Units.hpp"
@@ -53,12 +54,19 @@ public:
                     Apply order = Apply::Locally);
   Matrix &setTranslation(const Magnum::Math::Vector3<float> &position);
 
-  // Rotation
-  Magnum::Math::Vector3<float>
-  getAnglesEuler(AngleUnit anglesIn = AngleUnit::Radiants) const;
+  // Rotate
+  Matrix &rotate(float angle, Magnum::Math::Vector3<float> rotationAxis,
+                 Apply order = Apply::Locally,
+                 AngleUnit anglesIn = AngleUnit::Radiants);
+  Matrix &rotateQuaternion(Magnum::Math::Quaternion<float> quaternion,
+                           Apply order = Apply::Locally);
   Matrix &rotateEuler(const Magnum::Math::Vector3<float> &angels,
-                      AngleUnit anglesIn = AngleUnit::Radiants,
-                      Apply order = Apply::Locally);
+                      Apply order = Apply::Locally,
+                      AngleUnit anglesIn = AngleUnit::Radiants);
+  // Rotation Get
+  Magnum::Math::Vector3<float>
+  getEulerAngels(AngleUnit anglesIn = AngleUnit::Radiants) const;
+  Magnum::Math::Quaternion<float> getQuaternion() const;
 
   // Scaling
   Matrix &scale(const Magnum::Math::Vector3<float> &scaling,
