@@ -25,8 +25,15 @@ enum class AngleUnit { Radiants = 0, Degrees = 1 };
 /**
  * @brief Wheter or not something should be applied local or globally.
  *
- * Usually used by matrix functions to decide if the matrix should be
- * on the left() or right of the other matrix.
+ * Usually used by matrix functions to decide; if matrix being multiplied should
+ * be on the right (this is known as local), or left (this is known as global).
+ *
+ * Most of the time local (putting the pure transformation to the right) is the
+ * desired outcome. However if you want to affect something from perspective of
+ * the world, try using global.
+ *
+ * @see [3blue1brown's introduction on matrix multiplication and
+ * order](https://www.3blue1brown.com/lessons/matrix-multiplication/).
  */
 enum class Apply { Globally = 0, Locally = 1 };
 

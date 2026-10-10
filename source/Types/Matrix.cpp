@@ -21,7 +21,7 @@ using namespace Tourmaline;
 using namespace Magnum::Math;
 
 Vector3<float>
-Type::Matrix::getEulerAngels(Tourmaline::Type::AngleUnit anglesIn) const {
+Type::Matrix::getEulerAngles(Tourmaline::Type::AngleUnit anglesIn) const {
   Vector3<Rad<float>> result =
       Magnum::Math::Quaternion<float>::fromMatrix(this->rotation()).toEuler();
 
@@ -31,17 +31,17 @@ Type::Matrix::getEulerAngels(Tourmaline::Type::AngleUnit anglesIn) const {
   return Vector3<float>(Vector3<Deg<float>>(result));
 }
 
-Type::Matrix &Type::Matrix::rotateEuler(const Vector3<float> &angels,
+Type::Matrix &Type::Matrix::rotateEuler(const Vector3<float> &angles,
                                         Apply order, AngleUnit anglesIn) {
   Matrix4<float> rotation;
   if (anglesIn == AngleUnit::Radiants) [[likely]] {
-    rotation = Matrix4::rotationX(Rad(angels.x())) *
-               Matrix4::rotationY(Rad(angels.y())) *
-               Matrix4::rotationZ(Rad(angels.z()));
+    rotation = Matrix4::rotationX(Rad(angles.x())) *
+               Matrix4::rotationY(Rad(angles.y())) *
+               Matrix4::rotationZ(Rad(angles.z()));
   } else {
-    rotation = Matrix4::rotationX(Deg(angels.x())) *
-               Matrix4::rotationY(Deg(angels.y())) *
-               Matrix4::rotationZ(Deg(angels.z()));
+    rotation = Matrix4::rotationX(Deg(angles.x())) *
+               Matrix4::rotationY(Deg(angles.y())) *
+               Matrix4::rotationZ(Deg(angles.z()));
   }
 
   if (order == Apply::Locally) {
@@ -112,13 +112,13 @@ Type::Matrix::setTranslation(const Magnum::Math::Vector3<float> &position) {
   return *this;
 }
 
-Type::Matrix &Type::Matrix::scale(const Magnum::Math::Vector3<float> &scaling,
+Type::Matrix &Type::Matrix::scale(const Magnum::Math::Vector3<float> &scaleBy,
                                   Apply order) {
   if (order == Apply::Locally) {
-    *this = *this * Matrix::scaling(scaling);
+    *this = *this * Matrix::scaling(scaleBy);
     return *this;
   }
-  *this = Matrix::scaling(scaling) * *this;
+  *this = Matrix::scaling(scaleBy) * *this;
   return *this;
 }
 
@@ -127,17 +127,17 @@ Type::Matrix &Type::Matrix::scale(float scaleBy, Apply order) {
 }
 
 Type::Matrix &
-Type::Matrix::setScaling(const Magnum::Math::Vector3<float> &scaling) {
+Type::Matrix::setScaling(const Magnum::Math::Vector3<float> &scale) {
   Matrix3x3<float> top = this->rotation();
   // Trying best to preserve rotation
   for (uint8_t index = 0; index < 3; index++) {
-    (*this)[index][index] = scaling[index] * top[index][index];
+    (*this)[index][index] = scale[index] * top[index][index];
   }
   return *this;
 }
 
-Type::Matrix &Type::Matrix::setScaling(float scaleBy) {
-  return setScaling(Vector3<float>{scaleBy});
+Type::Matrix &Type::Matrix::setScaling(float scale) {
+  return setScaling(Vector3<float>{scale});
 }
 
 Magnum::Math::Matrix4<float> &Type::Matrix::asMagnumMatrix() {
