@@ -12,6 +12,7 @@
 #include "../Types/UUID.hpp"
 #include "TourmalineExternal/random/xoshiro.h"
 
+#include <cstdint>
 #include <type_traits>
 /**
  * @file
@@ -56,8 +57,16 @@ public:
    */
   static void SetSeed(uint64_t seed);
 
+  /**
+   * @brief Returns the seed on the xoshiro generator.
+   *
+   * @return The seed as an unsigned 64 bit integer.
+   */
+  static uint64_t GetSeed();
+
 private:
   static Xoshiro::Xoshiro256PP generator;
+  static uint64_t seed;
 };
 } // namespace Tourmaline::Systems
 #endif

@@ -15,7 +15,9 @@
 
 using namespace Tourmaline::Systems;
 
-Xoshiro::Xoshiro256PP Random::generator(static_cast<uint64_t>(time(NULL)));
+uint64_t Random::seed = static_cast<uint64_t>(time(NULL));
+Xoshiro::Xoshiro256PP Random::generator(Random::seed);
+
 Tourmaline::Type::UUID Random::GenerateUUID() {
   uint64_t random_ab = generator(), random_c = generator(), hold = 0;
   hold = std::rotr(random_ab, 12);
@@ -27,4 +29,9 @@ Tourmaline::Type::UUID Random::GenerateUUID() {
   return Tourmaline::Type::UUID(random_ab, random_c);
 }
 
-void Random::SetSeed(uint64_t seed) { generator.seed(seed); }
+void Random::SetSeed(uint64_t seed) {
+  Random::seed = seed;
+  generator.seed(Random::seed);
+}
+
+uint64_t Random::GetSeed() { return Random::seed; }
