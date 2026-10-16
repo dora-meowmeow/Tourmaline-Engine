@@ -22,6 +22,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/Tourmaline")
 set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/TourmalineExternal")
 
+# Arguments
+option(TOURMALINE_WITH_TESTS ON)
+
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fsanitize=address -coverage")
   set(CORRADE_CPU_USE_IFUNC OFF)
@@ -97,6 +100,7 @@ target_link_libraries(Tourmaline PUBLIC
     Corrade::Containers
     Corrade::Utility
     Corrade::PluginManager
+    Corrade::TestSuite
 
     Magnum::Magnum
     Magnum::Application
@@ -166,3 +170,19 @@ install(
 # Install includes
 install(DIRECTORY headers/ DESTINATION include/Tourmaline)
 install(DIRECTORY TourmalineExternal/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+# Temp
+if(TOURMALINE_WITH_TESTS)
+  add_executable(TourmalineTest
+    "tests/Tests.cpp"
+    "tests/Random.cpp"
+  )
+
+  target_link_libraries(TourmalineTest
+      Tourmaline
+  )
+
+  add_custom_command(TARGET TourmalineTest POST_BUILD
+    COMMAND ./bin/TourmalineTest
+  )
+endif()
