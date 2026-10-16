@@ -106,10 +106,13 @@ World::GetEntityLabel(const Entity &entity) noexcept {
 }
 
 bool World::DestroyEntity(Entity entity) {
-  // TODO: Hook here runs even if the destruction fails.
   // TODO: Hook here does not run for **every** component of an entity. Doing a
   // loop of RemoveComponent would be incredibly costly!
-  triggerHooks<Components::Transform>(entity, HookTo::Destruction);
+
+  // If this list has the UUID it is guranteed to be deletable.
+  if (usedEntityUUIDs.Has(entity)) {
+    triggerHooks<Components::Transform>(entity, HookTo::Destruction);
+  }
   size_t result = entityComponentMap.Remove(entity, std::nullopt);
   if (result) {
     refreshAndInvalidateCaches<Components::Transform>();
