@@ -10,6 +10,7 @@
 #define GUARD_TOURMALINE_TESTS_H
 
 #include "Corrade/TestSuite/Tester.h"
+#include "Systems/ECS.hpp"
 
 #define CORRADE_VERIFY_TYPE(x, y) CORRADE_VERIFY(typeid(x) == typeid(y))
 
@@ -19,12 +20,28 @@ public:
     // Random
     addTests({&Tests::Random_SetSeed});
     addBenchmarks({&Tests::Random_Benchmark_Generating1kIntegers}, batchCount);
+
+    // ECS
+    addBenchmarks(
+        {&Tests::ECS_Benchmark_GoalCreate, &Tests::ECS_Benchmark_FetchAndStep},
+        1);
+    addBenchmarks({&Tests::ECS_Benchmark_Step}, stepBatchCount);
+    addBenchmarks({&Tests::ECS_Benchmark_60Steps}, multiStepBatchCount);
   }
 
   // Tourmaline::Systems::Random
   static constexpr uint32_t batchCount = 10;
   void Random_SetSeed();
   void Random_Benchmark_Generating1kIntegers();
+
+  // Tourmaline::Systems::ECS
+  static constexpr uint32_t ecsGoal = 100'000, multiStepBatchCount = 5,
+                            stepBatchCount = 20;
+  static Tourmaline::Systems::ECS::World world;
+  void ECS_Benchmark_GoalCreate();
+  void ECS_Benchmark_FetchAndStep();
+  void ECS_Benchmark_60Steps();
+  void ECS_Benchmark_Step();
 };
 
 #endif

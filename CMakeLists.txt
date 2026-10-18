@@ -176,6 +176,7 @@ if(TOURMALINE_WITH_TESTS)
   add_executable(TourmalineTest
     "tests/Tests.cpp"
     "tests/Random.cpp"
+    "tests/ECS.cpp"
   )
 
   target_link_libraries(TourmalineTest
