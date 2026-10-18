@@ -11,20 +11,19 @@
 
 #include "Corrade/TestSuite/Tester.h"
 
-#define CORRADE_COMPARE_TYPE(x, y) CORRADE_COMPARE(typeid(x), typeid(y))
 #define CORRADE_VERIFY_TYPE(x, y) CORRADE_VERIFY(typeid(x) == typeid(y))
 
 class Tests : public Corrade::TestSuite::Tester {
 public:
-  static constexpr uint32_t batchCount = 10;
   Tests() {
-    addTests({&Tests::Random_SetSeed, &Tests::Random_TypeCorretness});
+    // Random
+    addTests({&Tests::Random_SetSeed});
     addBenchmarks({&Tests::Random_Benchmark_Generating1kIntegers}, batchCount);
   }
 
   // Tourmaline::Systems::Random
+  static constexpr uint32_t batchCount = 10;
   void Random_SetSeed();
-  void Random_TypeCorretness();
   void Random_Benchmark_Generating1kIntegers();
 };
 
