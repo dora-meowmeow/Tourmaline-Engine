@@ -43,10 +43,13 @@ public:
   /**
    * @brief When executed, logged messages will also be written to
    * a file.
-   * @param File Optional path for the log file. If not specified, the file name
+   * @param file Optional path for the log file. If not specified, the file name
    * will be `./Tourmaline-yy-mm-dd.txt`
+   * @param clearContent When set to true the content inside the file will be
+   * wiped before writing. This is set to false by default.
    */
-  static void LogToFile(Corrade::Containers::String File = "");
+  static void LogToFile(Corrade::Containers::String file = "",
+                        bool clearContent = false);
 
   /**
    * @brief Non-formatting logging function.

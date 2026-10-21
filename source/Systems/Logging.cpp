@@ -10,6 +10,7 @@
 #include "Systems/Logging.hpp"
 
 #include "Corrade/Containers/String.h"
+#include "Corrade/Containers/StringStl.h"
 #include "Corrade/Containers/StringView.h"
 #include "Corrade/Tags.h"
 #include "Corrade/Utility/Format.h"
@@ -41,22 +42,35 @@ bool Logging::WithANSIColour = true;
 
 Corrade::Containers::Function<void()> Logging::TerminationFunction = [] {};
 
-void Logging::LogToFile(String File) {
-  if (File == "") {
+void Logging::LogToFile(String file, bool clearContent) {
+  if (Logging::File.is_open()) {
+    Logging::File.close(); // This flushes
+    Logging::File.clear();
+  }
+
+  if (file == "") {
     const auto now = std::chrono::system_clock::now();
     std::chrono::year_month_day ymd{std::chrono::floor<std::chrono::days>(now)};
-    File = String{Corrade::ValueInit, 128};
-    formatInto(File, "Tourmaline-{}-{}-{}.txt", static_cast<int>(ymd.year()),
+    file = String{Corrade::ValueInit, 128};
+    formatInto(file, "Tourmaline-{}-{}-{}.txt", static_cast<int>(ymd.year()),
                static_cast<unsigned>(ymd.month()),
                static_cast<unsigned>(ymd.day()));
   }
-  Logging::File.open(File.data(), std::fstream::out);
+
+  // Could've been done with ternary, thought this was more legible
+  std::fstream::openmode mode = std::fstream::out;
+
+  if (!clearContent) {
+    mode |= std::fstream::app;
+  }
+
+  Logging::File.open(file, mode);
 
   if (Logging::File.fail()) {
     String error =
-        format("FAILED! Could not open or create the file: {}! Error: {}", File,
+        format("FAILED! Could not open or create the file: {}! Error: {}", file,
                strerror(errno));
-    throw std::runtime_error(error.data());
+    throw std::runtime_error(error);
   }
 }
 
