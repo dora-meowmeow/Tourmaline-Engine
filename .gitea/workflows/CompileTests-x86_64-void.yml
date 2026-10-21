@@ -1,0 +1,26 @@
+name: Compile
+run-name: Compiling with Unit Tests (x86-64-glibc/Void Linux)
+on: [push]
+
+jobs:
+  Compile:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/void-linux/void-glibc-full:20261021r2
+    steps:
+      - name: Install dependencies
+        run: |
+          xbps-install -Syu xbps
+          xbps-install -Syu
+          xbps-install -y gcc git cmake make nodejs glfw-devel libGL pkg-config
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Compiling and running tests
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DTOURMALINE_WITH_TESTS=ON
+          make -j20
+

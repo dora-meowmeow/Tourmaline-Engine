@@ -19,6 +19,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/Magnum/src/modules/")
+
 set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/Tourmaline")
 set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/TourmalineExternal")
 
@@ -171,7 +173,7 @@ install(
 install(DIRECTORY headers/ DESTINATION include/Tourmaline)
 install(DIRECTORY TourmalineExternal/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-# Temp
+# Unit Tests
 if(TOURMALINE_WITH_TESTS)
   add_executable(TourmalineTest
     "tests/Tests.cpp"
