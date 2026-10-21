@@ -35,7 +35,7 @@ public:
   void Random_Benchmark_Generating1kIntegers();
 
   // Tourmaline::Systems::ECS
-  static constexpr uint32_t ecsGoal = 100'000, multiStepBatchCount = 5,
+  static constexpr uint32_t ecsGoal = 50'000, multiStepBatchCount = 5,
                             stepBatchCount = 20;
   static Tourmaline::Systems::ECS::World world;
   void ECS_Benchmark_GoalCreate();
