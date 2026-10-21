@@ -99,6 +99,13 @@ public:
    */
   static Corrade::Containers::Function<void()> TerminationFunction;
 
+  /**
+   * @brief Should the output contain ANSI escape codes.
+   *
+   * When set to false no ANSI escape codes will be used, otherwise it will.
+   */
+  static bool WithANSIColour;
+
 private:
   static std::fstream File;
   static const char *LogLevelToColour[Trace + 1];

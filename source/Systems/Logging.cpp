@@ -37,6 +37,8 @@ const char *Logging::LogLevelToString[Logging::Trace + 1]{
     "Critical", "Error", "Warning", "Info", "Debug", "Trace"};
 std::fstream Logging::File;
 
+bool Logging::WithANSIColour = true;
+
 Corrade::Containers::Function<void()> Logging::TerminationFunction = [] {};
 
 void Logging::LogToFile(String File) {
@@ -64,11 +66,17 @@ void Logging::Log(StringView message, StringView position,
     static String output{Corrade::ValueInit,
                          4096}; // This is done to stop allocations
     std::size_t formattedSize = formatInto(
-        output, "[{}@{}] {}\n", LogLevelToString[severity], position, message);
+        output, " [{}@{}] {}\n", LogLevelToString[severity], position, message);
 
-    std::print(
-        "\033{} {}\033[0m", LogLevelToColour[severity],
-        std::string_view{output.begin(), output.begin() + formattedSize});
+    if (WithANSIColour) {
+      std::print(
+          "\033{}{}\033[0m", LogLevelToColour[severity],
+          std::string_view{output.begin(), output.begin() + formattedSize});
+    } else {
+      std::print("{}", std::string_view{output.begin(),
+                                        output.begin() + formattedSize});
+    }
+
     if (Logging::File.is_open()) {
       Logging::File.write(output.data(), formattedSize);
       Logging::File.flush(); // Terrible but necessary sadly
