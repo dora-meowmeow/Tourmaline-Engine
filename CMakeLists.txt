@@ -185,6 +185,6 @@ if(TOURMALINE_WITH_TESTS)
   )
 
   add_custom_command(TARGET TourmalineTest POST_BUILD
-    COMMAND ./bin/TourmalineTest
+    COMMAND ./bin/TourmalineTest --verbose
   )
 endif()

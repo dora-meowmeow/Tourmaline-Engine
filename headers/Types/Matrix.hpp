@@ -18,7 +18,6 @@
 #include "Magnum/Math/Vector3.h"
 
 #include "Units.hpp"
-#include <algorithm>
 #include <cstdint>
 
 namespace Tourmaline::Type {
@@ -74,15 +73,6 @@ public:
    */
   Matrix(const Magnum::Math::Matrix4<float> &copy)
       : Magnum::Math::Matrix4<float>(copy) {};
-
-  /**
-   * @brief Copy data (using Magnum::Math::Matrix4).
-   * @see Magnum::Math::Matrix4
-   */
-  Matrix &operator=(const Magnum::Math::Matrix4<float> &copy) {
-    std::copy(copy.data(), copy.data() + Elements, this->data());
-    return *this;
-  }
 
   /**
    * @brief Constructs a matrix at a specified position/translation.
