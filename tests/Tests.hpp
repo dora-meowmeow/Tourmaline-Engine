@@ -34,6 +34,10 @@ public:
     Tourmaline::Systems::Logging::WithANSIColour = false; // Less headache
     addTests({&Tests::Logging_ConsoleAndFileSync, &Tests::Logging_FileSwitching,
               &Tests::Logging_ErrorAndCritical});
+
+    // Serialization
+    addTests({&Tests::Serialization_CanSerialize,
+              &Tests::Serialization_CanDeserialize});
   }
 
   // Tourmaline::Systems::Random
@@ -55,6 +59,11 @@ public:
   void Logging_ConsoleAndFileSync();
   void Logging_FileSwitching();
   void Logging_ErrorAndCritical();
+
+  // Tourmaline::Systems::Serialization
+  static Corrade::Containers::String serialDataFileName;
+  void Serialization_CanSerialize();
+  void Serialization_CanDeserialize();
 
   // Helpers
   void Helper_SwitchSTDOUT(bool fakeSTD);
