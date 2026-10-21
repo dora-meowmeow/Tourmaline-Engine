@@ -19,7 +19,8 @@ public:
   Tests() {
     // Random
     addTests({&Tests::Random_SetSeed});
-    addBenchmarks({&Tests::Random_Benchmark_Generating1kIntegers}, batchCount);
+    addBenchmarks({&Tests::Random_Benchmark_Generating1kIntegers},
+                  randomBatchCount);
 
     // ECS
     addBenchmarks(
@@ -30,7 +31,7 @@ public:
   }
 
   // Tourmaline::Systems::Random
-  static constexpr uint32_t batchCount = 10;
+  static constexpr uint32_t randomBatchCount = 10;
   void Random_SetSeed();
   void Random_Benchmark_Generating1kIntegers();
 
