@@ -177,6 +177,7 @@ if(TOURMALINE_WITH_TESTS)
     "tests/Tests.cpp"
     "tests/Random.cpp"
     "tests/ECS.cpp"
+    "tests/Logging.cpp"
   )
 
   target_link_libraries(TourmalineTest

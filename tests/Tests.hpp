@@ -9,6 +9,7 @@
 #ifndef GUARD_TOURMALINE_TESTS_H
 #define GUARD_TOURMALINE_TESTS_H
 
+#include "Corrade/Containers/String.h"
 #include "Corrade/TestSuite/Tester.h"
 #include "Systems/ECS.hpp"
 
@@ -28,6 +29,11 @@ public:
         1);
     addBenchmarks({&Tests::ECS_Benchmark_Step}, stepBatchCount);
     addBenchmarks({&Tests::ECS_Benchmark_60Steps}, multiStepBatchCount);
+
+    // Logging
+    Tourmaline::Systems::Logging::WithANSIColour = false; // Less headache
+    addTests({&Tests::Logging_ConsoleAndFileSync, &Tests::Logging_FileSwitching,
+              &Tests::Logging_ErrorAndCritical});
   }
 
   // Tourmaline::Systems::Random
@@ -43,6 +49,15 @@ public:
   void ECS_Benchmark_FetchAndStep();
   void ECS_Benchmark_60Steps();
   void ECS_Benchmark_Step();
+
+  // Tourmaline::Systems::Logging
+  static Corrade::Containers::String fakeStdOutName;
+  void Logging_ConsoleAndFileSync();
+  void Logging_FileSwitching();
+  void Logging_ErrorAndCritical();
+
+  // Helpers
+  void Helper_SwitchSTDOUT(bool fakeSTD);
 };
 
 #endif
