@@ -19,8 +19,6 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_BINARY_DIR}/Magnum/src/modules/")
-
 set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/Tourmaline")
 set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/TourmalineExternal")
 
@@ -77,6 +75,13 @@ foreach(dep
   message(STATUS "Fetching ${dep}...")
   add_subdirectory(external/${dep})
 endforeach()
+
+# Where to find Find*.cmake files
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_BINARY_DIR}/Corrade/src/modules/"
+    "${CMAKE_CURRENT_BINARY_DIR}/Magnum/src/modules/"
+    "${CMAKE_CURRENT_BINARY_DIR}/MagnumPlugins/src/modules/"
+)
 
 # For Magnum::Application
 find_package(Magnum REQUIRED GlfwApplication)
