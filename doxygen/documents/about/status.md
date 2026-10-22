@@ -4,10 +4,15 @@
 
 Currently the project is still trying to incorporate the following parts (in no particular order):
 
+## Done
+
 - [X] ECS (Builtin)
 - [X] Logging (Builtin)
 - [X] Random Generation (Builtin)
 - [X] Serialization (Builtin)
+
+## To-do
+
 - [ ] Graphics (Magnum Graphics)
 - [ ] Physics Integration (ReactPhysics3D)
 - [ ] Audio (Builtin + miniaudio)

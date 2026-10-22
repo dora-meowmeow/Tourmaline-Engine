@@ -18,6 +18,16 @@ html {
   }
 }
 
+.checked::before {
+  content: " " !important;
+  color: var(--primary-color);
+}
+
+.unchecked::before {
+  content: " " !important;
+  color: var(--primary-dark-color);
+}
+
 @font-face {
   font-family: "Anka/Coder";
   src: url(AnkaCoderNerdFont-Regular.ttf);
