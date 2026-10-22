@@ -1,38 +1,12 @@
 # Tourmaline Engine
 
-Tourmaline Engine is a game engine created for C++23.
+Tourmaline Engine is a C++23 game engine. It is a pet project of [cat@thenight.club](https://git.thenight.club/cat). This project does not use generative AI or LLMs.
 
 - [Source Code](https://git.thenight.club/cat/Tourmaline-Engine/).
+- [Source Code (github mirror)](https://github.com/dora-meowmeow/Tourmaline-Engine/).
 - [Visit the documentation website](https://docs.tourmalineengine.dev/).
-
-### Currently the project is still trying to incorporate the following parts (in no particular order)
-
-- [X] ECS (Builtin)
-- [X] Logging (Builtin)
-- [X] Random Generation (Builtin)
-- [X] Serialization (Builtin)
-- [ ] Graphics (Magnum Graphics)
-- [ ] Physics Integration (ReactPhysics3D)
-- [ ] Audio (Builtin + miniaudio)
-- [ ] Particles (Builtin)
-- [ ] Video playback (Builtin + FFmpeg(subject to change))
-- [ ] Asset Archiving (Searching for a library)
-- [ ] UI (Magnum UI)
-- [ ] Shaders (Builtin)
-
-# Usability Status
-
-Tourmaline is by no means currently usable. The project is incredibly volatile with constant changes and improvements. Please wait until a release is made.
-
-However, if you just cannot help yourself: After you compile and install Tourmaline, you can compile and link with the following command:
-
-```bash
-g++ main.cpp `pkg-config Tourmaline --cflags --libs` -o program
-```
-
-Do keep in mind that the command is order-sensitive. You want your implementation files (`*.cpp`) BEFORE the pkg-config command.
-
-### !! This is not meant to be the final way to compile Tourmaline. Everything here is subject to change
+- [Project Status](https://docs.tourmalineengine.dev/status.html)
+- [Not-so FAQ](https://docs.tourmalineengine.dev/faq.html).
 
 # 3rd Party Libraries Credits
 
@@ -47,18 +21,6 @@ Do keep in mind that the command is order-sensitive. You want your implementatio
 - [Vladimír "Mosra" Vondruš](https://github.com/mosra) for their mentorship on my C++ knowledge/projects, and the people at the [magnum gitter channel](https://matrix.to/#/#mosra_magnum:gitter.im), for their continuous support and feedback on this project.
 - [Kae "voxelfoxkae"](https://voxelfox.co.uk/) for their mentorship.
 
-# Not-so-frequently asked questions
+# License
 
-### Versioning Scheme
-
-Tourmaline uses a single digit versioning scheme that ticks up by 1 for each version. There are no major or minor updates or versions. The project can be seen as a rolling release project. There is yet to be a release.
-
-### What is Tourmaline and Why is that the name?
-
-From [Wikipedia](https://en.wikipedia.org/wiki/Tourmaline)
-> Tourmaline is a crystalline silicate mineral group in which boron is compounded with elements such as aluminium, iron, magnesium, sodium, lithium, or potassium.
-
-From [Find Gemstone](https://www.findgemstone.com/blog/what-is-tourmaline-used-for-in-industry/)
-> Tourmaline has unique electric properties, including the ability to generate an electric charge as well as maintain electromagnetic radiation. These characteristics make tourmaline useful in the production of a range of electronics.
-
-In short, Tourmaline is a very versatile "Gem". This is the name given to the third iteration of a project that once only concerned itself with Video playback on Magnum graphics.
+Tourmaline Engine's source code is subject to the terms of the Mozilla Public License, v. 2.0. <http://mozilla.org/MPL/2.0/>.

@@ -188,11 +188,6 @@
       <arglist></arglist>
     </member>
   </compound>
-  <compound kind="class">
-    <name>Tourmaline::Shaders::Base</name>
-    <filename>classTourmaline_1_1Shaders_1_1Base.html</filename>
-    <base>Magnum::GL::AbstractShaderProgram</base>
-  </compound>
   <compound kind="struct">
     <name>Tourmaline::Systems::ECS::Component</name>
     <filename>structTourmaline_1_1Systems_1_1ECS_1_1Component.html</filename>
@@ -703,8 +698,8 @@
       <type>static void</type>
       <name>LogToFile</name>
       <anchorfile>classTourmaline_1_1Systems_1_1Logging.html</anchorfile>
-      <anchor>a3cd8f7fe5b027e8615b3810e011c635b</anchor>
-      <arglist>(Corrade::Containers::String File=&quot;&quot;)</arglist>
+      <anchor>ac3b19cb653a1bcb8e2b56dbd067023a2</anchor>
+      <arglist>(Corrade::Containers::String file=&quot;&quot;, bool clearContent=false)</arglist>
     </member>
     <member kind="function" static="yes">
       <type>static void</type>
@@ -725,6 +720,13 @@
       <name>TerminationFunction</name>
       <anchorfile>classTourmaline_1_1Systems_1_1Logging.html</anchorfile>
       <anchor>ab9000641fb8e46a2fc7f12043dfbc547</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static bool</type>
+      <name>WithANSIColour</name>
+      <anchorfile>classTourmaline_1_1Systems_1_1Logging.html</anchorfile>
+      <anchor>a786a3ad00cfe82431ec22469a6a4b484</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -751,13 +753,6 @@
       <name>Matrix</name>
       <anchorfile>classTourmaline_1_1Type_1_1Matrix.html</anchorfile>
       <anchor>a9ce89208d89dca504694b03f8c1ab328</anchor>
-      <arglist>(const Magnum::Math::Matrix4&lt; float &gt; &amp;copy)</arglist>
-    </member>
-    <member kind="function">
-      <type>Matrix &amp;</type>
-      <name>operator=</name>
-      <anchorfile>classTourmaline_1_1Type_1_1Matrix.html</anchorfile>
-      <anchor>a0ed27c968a0f7df62a9875923aa2e57a</anchor>
       <arglist>(const Magnum::Math::Matrix4&lt; float &gt; &amp;copy)</arglist>
     </member>
     <member kind="function">
@@ -1124,6 +1119,13 @@
       <anchor>a18320f47f89c11a3cf50fb95b5f6ce6f</anchor>
       <arglist>(uint64_t seed)</arglist>
     </member>
+    <member kind="function" static="yes">
+      <type>static uint64_t</type>
+      <name>GetSeed</name>
+      <anchorfile>classTourmaline_1_1Systems_1_1Random.html</anchorfile>
+      <anchor>af4f168ab6ec6316d16a0991d7278093d</anchor>
+      <arglist>()</arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>Tourmaline::Systems::Serialization::Serializable</name>
@@ -1466,6 +1468,23 @@
     <filename>conceptTourmaline_1_1Systems_1_1ECS_1_1isAComponent.html</filename>
   </compound>
   <compound kind="page">
+    <name>about</name>
+    <title>About</title>
+    <filename>about.html</filename>
+    <subpage>faq.html</subpage>
+    <subpage>status.html</subpage>
+  </compound>
+  <compound kind="page">
+    <name>faq</name>
+    <title>Not-so Frequently Asked Questions</title>
+    <filename>faq.html</filename>
+  </compound>
+  <compound kind="page">
+    <name>status</name>
+    <title>Roadmap and Project Status</title>
+    <filename>status.html</filename>
+  </compound>
+  <compound kind="page">
     <name>01-Hello-Tourmaline</name>
     <title>01. Getting Started - Installing and Preparing Tourmaline</title>
     <filename>01-Hello-Tourmaline.html</filename>
@@ -1507,7 +1526,7 @@
   </compound>
   <compound kind="page">
     <name>index</name>
-    <title>Info</title>
+    <title>Welcome to Tourmaline Engine Documentations</title>
     <filename>index.html</filename>
   </compound>
 </tagfile>
