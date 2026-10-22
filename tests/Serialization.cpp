@@ -13,8 +13,8 @@
 #include "Corrade/TestSuite/Tester.h"
 #include "Corrade/Utility/Path.h"
 
+#include "Systems/Serialization.hpp"
 #include "Tests.hpp"
-#include "Tourmaline/Systems/Serialization.hpp"
 
 using namespace Tourmaline;
 using namespace Systems;
