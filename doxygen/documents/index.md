@@ -5,6 +5,7 @@ Tourmaline Engine is a C++23 game engine. It is a pet project of [cat@thenight.c
 - [Source Code (main/gitea)](https://git.thenight.club/cat/Tourmaline-Engine/).
 - [Source Code (github mirror)](https://github.com/dora-meowmeow/Tourmaline-Engine/).
 - [The Documentation](https://docs.tourmalineengine.dev/).
+- [Examples and Tutorials](\ref examples).
 - [Project Status](\ref status).
 - [Not-so FAQ](\ref faq).
 

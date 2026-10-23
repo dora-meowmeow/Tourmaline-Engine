@@ -1471,6 +1471,7 @@
     <name>about</name>
     <title>About</title>
     <filename>about.html</filename>
+    <subpage>supportedFileTypes.html</subpage>
     <subpage>faq.html</subpage>
     <subpage>status.html</subpage>
   </compound>
@@ -1483,6 +1484,20 @@
     <name>status</name>
     <title>Roadmap and Project Status</title>
     <filename>status.html</filename>
+  </compound>
+  <compound kind="page">
+    <name>supportedFileTypes</name>
+    <title>Supported File-types</title>
+    <filename>supportedFileTypes.html</filename>
+  </compound>
+  <compound kind="page">
+    <name>examples</name>
+    <title>Examples</title>
+    <filename>examples.html</filename>
+    <subpage>01-Hello-Tourmaline.html</subpage>
+    <subpage>02-Logging.html</subpage>
+    <subpage>03-Random.html</subpage>
+    <subpage>04-ECS-Basics.html</subpage>
   </compound>
   <compound kind="page">
     <name>01-Hello-Tourmaline</name>
@@ -1506,23 +1521,9 @@
     <subpage>ECS-Basics-Example.html</subpage>
   </compound>
   <compound kind="page">
-    <name>examples</name>
-    <title>Examples</title>
-    <filename>examples.html</filename>
-    <subpage>01-Hello-Tourmaline.html</subpage>
-    <subpage>02-Logging.html</subpage>
-    <subpage>03-Random.html</subpage>
-    <subpage>04-ECS-Basics.html</subpage>
-  </compound>
-  <compound kind="page">
     <name>ECS-Basics-Example</name>
     <title>examples/04-ECS-Basics/main.cpp</title>
     <filename>ECS-Basics-Example.html</filename>
-  </compound>
-  <compound kind="page">
-    <name>supportedFileTypes</name>
-    <title>Supported File-types</title>
-    <filename>supportedFileTypes.html</filename>
   </compound>
   <compound kind="page">
     <name>index</name>
