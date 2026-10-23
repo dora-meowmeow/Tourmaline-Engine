@@ -1,0 +1,48 @@
+name: Build
+run-name: Compile -> Run Unit Tests -> Update Docs
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  CompileVoid:
+    name: Compiling with Unit Tests (x86-64-glibc/Void Linux)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/void-linux/void-glibc:20261021r2
+    steps:
+      - name: Install dependencies
+        run: |
+          xbps-install -Syu xbps && xbps-install -yu
+          xbps-install -y gcc git cmake make nodejs glfw-devel libGL pkg-config
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Compiling and running tests
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DTOURMALINE_WITH_TESTS=ON
+          make -j20
+
+  UpdateDocs:
+    runs-on: ubuntu-latest
+    name: Updating Docs (Doxygen/1.14.0)
+    needs: [CompileVoid]
+    container:
+      image: ghcr.io/void-linux/void-glibc:20261021r2
+      volumes:
+        - /var/www/html/TourmalineEngine/:/var/www/html/TourmalineEngine
+        - /opt/tourmaline-update-docs.sh:/tourmaline-update-docs.sh
+    steps:
+      - name: Install necessary applications
+        run: |
+          xbps-install -Syu xbps && xbps-install -yu
+          xbps-install -y git doxygen texlive-dvi
+
+      - name: Generate new documentation
+        run: |
+          /tourmaline-update-docs.sh
+
