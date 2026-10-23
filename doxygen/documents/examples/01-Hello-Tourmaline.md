@@ -22,8 +22,6 @@ You must install the following software on your computer.
 ### If you want to generate the documentation, install these as well
 
 - doxygen
-- texlive
-- texlive-dvi
 
 ## 2. Preparing Tourmaline Engine for Compiling
 

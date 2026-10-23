@@ -40,9 +40,10 @@ jobs:
       - name: Install necessary applications
         run: |
           xbps-install -Syu xbps && xbps-install -yu
-          xbps-install -y git doxygen texlive-dvi
+          xbps-install -y git doxygen
 
       - name: Generate new documentation
         run: |
+          git config --global --add safe.directory /var/www/html/TourmalineEngine
           /tourmaline-update-docs.sh
 

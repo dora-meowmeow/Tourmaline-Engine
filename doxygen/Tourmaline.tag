@@ -1526,7 +1526,7 @@
   </compound>
   <compound kind="page">
     <name>index</name>
-    <title>Welcome to Tourmaline Engine Documentations</title>
+    <title>Welcome to Tourmaline</title>
     <filename>index.html</filename>
   </compound>
 </tagfile>

@@ -84,8 +84,8 @@ public:
    * @param minimumEntryCount This will pre-allocate memory for every entity and
    * component entry.
    *
-   * Entry count can be calculated as @f(EntityCount = entityCount *
-   * componentCount @f).
+   * Entry count can be calculated as EntityCount = entityCount *
+   * componentCount.
    */
   World(uint64_t minimumEntryCount = 20'000)
       : entityComponentMap({minimumEntryCount}) {}

@@ -1,4 +1,4 @@
-\mainpage Welcome to Tourmaline Engine Documentations
+\mainpage Welcome to Tourmaline
 
 Tourmaline Engine is a C++23 game engine. It is a pet project of [cat@thenight.club](https://git.thenight.club/cat). This project does not use generative AI or LLMs.
 

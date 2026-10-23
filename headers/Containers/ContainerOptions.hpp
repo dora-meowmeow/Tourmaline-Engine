@@ -48,7 +48,7 @@ struct HashContainerOptions {
    * When reallocating, the newly reallocated container will calculate
    * the desired load factor with the following formula:
    *
-   * @f$ newLoadFactor = (loadFactor + minimizeFactor) / leaningFactor @f$
+   * newLoadFactor = (loadFactor + minimizeFactor) / leaningFactor
    *
    * This value should generally be set to make newLoadFactor be between
    * loadFactor and minimizeFactor. If your container needs to grow gradually,
