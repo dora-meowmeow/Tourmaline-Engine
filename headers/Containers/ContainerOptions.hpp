@@ -85,5 +85,9 @@ struct DualKeyMapOptions {
   /// @brief Base amount of entries to reserve.
   std::uint64_t baseReservation = 2048;
 };
+
+struct LinkedChunksOptions {
+  std::size_t ChunkCapacity = 256;
+};
 } // namespace Tourmaline::Containers
 #endif
