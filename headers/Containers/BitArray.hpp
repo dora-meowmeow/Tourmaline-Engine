@@ -22,15 +22,13 @@ class BitArray {
 public:
   BitArray(BitArrayOptions options) : storedBitCount(options.BitCount) {
     // Count
-    endBitPosition = storedBitCount;
     wholeCount = storedBitCount / sizeBitCount;
-    remainderBits = storedBitCount % sizeBitCount;
+    std::size_t remainderBits = storedBitCount % sizeBitCount;
 
     // Final variable mask
     arraySize = wholeCount;
-    remainderExists = remainderBits > 0;
-    if (remainderExists) {
-      discard = sizeBitCount - remainderBits;
+    if (remainderBits > 0) {
+      std::size_t discard = sizeBitCount - remainderBits;
       sizeRemainderMask = (sizeFullMask << discard) >> discard;
       ++arraySize;
     }
@@ -90,7 +88,7 @@ public:
         return (index * sizeBitCount) + std::countr_zero(array[index]);
       }
 
-      return endBitPosition;
+      return storedBitCount;
     }
 
     // Find next zero
@@ -103,7 +101,7 @@ public:
       return (index * sizeBitCount) + std::countr_one(array[index]);
     }
 
-    return endBitPosition;
+    return storedBitCount;
   }
 
   void SetAll(bool value = false) noexcept {
@@ -128,15 +126,13 @@ public:
     return {array.get(), arraySize};
   };
 
-  std::size_t endBitPosition = 0;
+  std::size_t storedBitCount = 0;
 
   // TODO: add copy constructor and copy assign
 private:
   constexpr static std::size_t sizeFullMask = SIZE_MAX,
                                sizeBitCount = sizeof(size_t) * CHAR_BIT;
-  std::size_t storedBitCount = 0, remainderBits = 0, wholeCount = 0,
-              discard = 0, arraySize = 0, sizeRemainderMask = 0;
-  bool remainderExists = false;
+  std::size_t wholeCount = 0, arraySize = 0, sizeRemainderMask = 0;
   std::unique_ptr<std::size_t[]> array;
 };
 } // namespace Tourmaline::Containers
