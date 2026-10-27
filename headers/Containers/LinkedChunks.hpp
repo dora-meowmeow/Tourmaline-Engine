@@ -9,10 +9,9 @@
 #ifndef GUARD_TOURMALINE_LINKEDCHUNKS_H
 #define GUARD_TOURMALINE_LINKEDCHUNKS_H
 #include "../Systems/Logging.hpp"
-#include "ContainerOptions.hpp"
 
-#include "Corrade/Containers/BitArray.h"
-#include "Corrade/Tags.h"
+#include "BitArray.hpp"
+#include "ContainerOptions.hpp"
 
 #include <climits>
 #include <cstddef>
@@ -73,7 +72,8 @@ public:
     std::size_t slot = chunkPair.EntryPosition;
 
     chunk->slots[slot] = entry;
-    chunk->isSlotTaken.set(slot, true);
+    chunk->isSlotTaken.SetBit(slot, true);
+    chunk->leftmostEmptySlot = chunk->isSlotTaken.FindFirst(0);
     ++entryCount;
 
     return chunkPair;
@@ -106,8 +106,11 @@ public:
 
     Chunk *chunk = chunks[record.ChunkId];
     chunk->slots[record.EntryPosition] = std::nullopt;
-    chunk->isSlotTaken.set(record.EntryPosition, false);
+    chunk->isSlotTaken.SetBit(record.EntryPosition, false);
     --entryCount;
+    if (chunk->leftmostEmptySlot > record.EntryPosition) {
+      chunk->leftmostEmptySlot = record.EntryPosition;
+    }
     return true;
   }
 
@@ -128,15 +131,9 @@ private:
   using Entry = std::optional<EntryType>;
 
   struct Chunk {
-    bool isFull = false;
-    // I want to add a
-    Corrade::Containers::BitArray isSlotTaken{Corrade::ValueInit,
-                                              options.ChunkCapacity};
+    std::size_t leftmostEmptySlot = 0;
+    BitArray isSlotTaken{{options.ChunkCapacity, false}};
     std::array<Entry, options.ChunkCapacity> slots;
-
-    // This is for a future insertion/removal feature
-    Chunk *previous = nullptr;
-    Chunk *next = nullptr;
   };
 
   bool isChunkIDValid(std::size_t chunkID) const noexcept {
@@ -150,48 +147,20 @@ private:
            isEntryPositionValid(record.EntryPosition);
   }
 
-  Record getChunkWithEmptySlot() {
-    std::size_t count = 0;
-    for (Chunk *chunk : chunks) {
-      ++count;
-      if (chunk->isFull) {
+  Record getChunkWithEmptySlot() noexcept {
+    std::size_t size = chunks.size(), empty = 0;
+    for (std::size_t count = 0; count < size; count++) {
+      empty = chunks[count]->leftmostEmptySlot;
+      if (empty >= options.ChunkCapacity) {
         continue;
       }
 
-      std::size_t slot = getNextEmptySlot(chunk);
-      if (slot == fullSlots) {
-        continue;
-      }
-
-      return {--count, slot};
+      return {count, empty};
     }
 
     // All the chunks are full
-    Chunk *endChunk = chunks.back();
-    Chunk *newChunk = new Chunk{};
-    endChunk->next = newChunk;
-    newChunk->previous = endChunk;
-    chunks.push_back(newChunk);
-    return {chunks.size() - 1, 0};
-  }
-
-  std::size_t getNextEmptySlot(Chunk *chunk) const noexcept {
-    if (chunk->isFull) {
-      return fullSlots;
-    }
-
-    // I feel like if I can get the bit array as char
-    // or something I can do this check much faster
-    // (by checking to see if all 8 bits equal to 255, SIMD style)
-    for (std::size_t index = 0; index < options.ChunkCapacity; index++) {
-      if (chunk->isSlotTaken[index]) {
-        continue;
-      }
-      return index;
-    }
-
-    chunk->isFull = true;
-    return fullSlots;
+    chunks.push_back(new Chunk{});
+    return {size, 0};
   }
 
   std::vector<Chunk *> chunks;
