@@ -89,5 +89,10 @@ struct DualKeyMapOptions {
 struct LinkedChunksOptions {
   std::size_t ChunkCapacity = 256;
 };
+
+struct BitArrayOptions {
+  std::size_t BitCount;
+  bool SetAllBits = false;
+};
 } // namespace Tourmaline::Containers
 #endif
