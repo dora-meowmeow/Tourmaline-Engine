@@ -108,9 +108,15 @@ public:
     chunk->slots[record.EntryPosition] = std::nullopt;
     chunk->isSlotTaken.SetBit(record.EntryPosition, false);
     --entryCount;
+
     if (chunk->leftmostEmptySlot > record.EntryPosition) {
       chunk->leftmostEmptySlot = record.EntryPosition;
     }
+
+    if (leftmostEmptyChunk > record.ChunkId) {
+      leftmostEmptyChunk = record.ChunkId;
+    }
+
     return true;
   }
 
@@ -149,7 +155,7 @@ private:
 
   Record getChunkWithEmptySlot() noexcept {
     std::size_t size = chunks.size(), empty = 0;
-    for (std::size_t count = 0; count < size; count++) {
+    for (std::size_t count = leftmostEmptyChunk; count < size; count++) {
       empty = chunks[count]->leftmostEmptySlot;
       if (empty >= options.ChunkCapacity) {
         continue;
@@ -160,11 +166,12 @@ private:
 
     // All the chunks are full
     chunks.push_back(new Chunk{});
+    leftmostEmptyChunk = size;
     return {size, 0};
   }
 
   std::vector<Chunk *> chunks;
-  std::size_t entryCount = 0;
+  std::size_t entryCount = 0, leftmostEmptyChunk = 0;
 };
 }; // namespace Tourmaline::Containers
 #endif
