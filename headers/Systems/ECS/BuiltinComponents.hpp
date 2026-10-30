@@ -30,6 +30,7 @@ public:
 
   /// @brief Default constructor for components.
   Component(bool enabled = true) : isEnabled(enabled) {};
+  virtual ~Component() {};
 };
 
 /**
