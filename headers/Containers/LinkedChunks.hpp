@@ -18,6 +18,7 @@
 
 #include <array>
 #include <optional>
+#include <utility>
 #include <vector>
 
 /**
@@ -28,11 +29,110 @@
 namespace Tourmaline::Containers {
 template <typename EntryType, LinkedChunksOptions options = {}>
 class LinkedChunks {
+  constexpr static std::size_t fullSlots = options.ChunkCapacity + 1;
+  using Entry = std::optional<EntryType>;
+  struct Chunk {
+    std::size_t leftmostEmptySlot = 0;
+    BitArray isSlotTaken{{options.ChunkCapacity, false}};
+    std::array<Entry, options.ChunkCapacity> slots;
+  };
+
 public:
   // I am not a big fan of the name "EntryPosition" might renamed to
   // Slot or SlotId or SlotPosition
   struct Record {
     std::size_t ChunkId = 0, EntryPosition = 0;
+    friend bool operator==(const Record &lhs, const Record &rhs) {
+      return (lhs.ChunkId == rhs.ChunkId) &&
+             (lhs.EntryPosition == rhs.EntryPosition);
+    }
+    friend bool operator!=(const Record &lhs, const Record &rhs) {
+      return (lhs.ChunkId != rhs.ChunkId) ||
+             (lhs.EntryPosition != rhs.EntryPosition);
+    }
+  };
+
+  struct Iterator {
+    // Position specific
+    Iterator(Record position, std::vector<Chunk *> *chunks)
+        : position(position), chunks(chunks), end(chunks->size()) {}
+
+    // End iterator specific
+    Iterator(std::vector<Chunk *> *chunks)
+        : chunks(chunks), end(chunks->size()) {
+      position = {end, 0};
+    }
+
+    Iterator(const Iterator &iterator)
+        : position(iterator.position), chunks(iterator.chunks),
+          end(iterator.end) {}
+
+    Iterator &operator=(const Iterator &iterator) {
+      position = iterator.position;
+      chunks = iterator.chunks;
+      end = iterator.end;
+      return *this;
+    };
+
+    EntryType &operator*() const {
+      return (*chunks)[position.ChunkId]->slots[position.EntryPosition].value();
+    }
+    EntryType *operator->() {
+      return &(*chunks)[position.ChunkId]
+                  ->slots[position.EntryPosition]
+                  .value();
+    }
+
+    Iterator &operator++() {
+      advanceToNextValid();
+      return *this;
+    }
+    Iterator operator++(int) {
+      Iterator hold = *this;
+      advanceToNextValid();
+      return hold;
+    }
+
+    friend bool operator==(const Iterator &lhs, const Iterator &rhs) {
+      return lhs.position == rhs.position;
+    }
+
+    friend bool operator!=(const Iterator &lhs, const Iterator &rhs) {
+      return lhs.position != rhs.position;
+    }
+
+    friend void swap(Iterator &first, Iterator &second) {
+      using std::swap;
+      swap(first.position, second.position);
+      swap(first.chunks, second.chunks);
+      swap(first.end, second.end);
+    }
+
+    Record position;
+
+  private:
+    std::vector<Chunk *> *chunks;
+    std::size_t end;
+    void advanceToNextValid() {
+      do {
+        Systems::Logging::LogFormatted("{} {}", "meow", Systems::Logging::Info,
+                                       position.ChunkId,
+                                       position.EntryPosition);
+        if (++position.EntryPosition < options.ChunkCapacity) {
+          continue;
+        }
+        ++position.ChunkId;
+        position.EntryPosition = 0;
+
+        // This means that the iterator hit the end of this range
+        if (position.ChunkId >= end) {
+          position.ChunkId = end;
+          return;
+        }
+      } while (!(*chunks)[position.ChunkId]
+                    ->slots[position.EntryPosition]
+                    .has_value());
+    }
   };
 
   LinkedChunks() {
@@ -131,17 +231,10 @@ public:
     entryCount = 0;
   }
 
+  Iterator begin() { return Iterator(getFirstFullSlot(), &chunks); }
+  Iterator end() { return Iterator(&chunks); }
+
 private:
-  constexpr static std::size_t fullSlots = options.ChunkCapacity + 1;
-
-  using Entry = std::optional<EntryType>;
-
-  struct Chunk {
-    std::size_t leftmostEmptySlot = 0;
-    BitArray isSlotTaken{{options.ChunkCapacity, false}};
-    std::array<Entry, options.ChunkCapacity> slots;
-  };
-
   bool isChunkIDValid(std::size_t chunkID) const noexcept {
     return chunks.size() > chunkID;
   }
@@ -151,6 +244,19 @@ private:
   bool isRecordValid(const Record &record) const noexcept {
     return isChunkIDValid(record.ChunkId) &&
            isEntryPositionValid(record.EntryPosition);
+  }
+
+  Record getFirstFullSlot() const noexcept {
+    std::size_t size = chunks.size(), full = 0;
+    for (std::size_t count = 0; count < size; count++) {
+      full = chunks[count]->isSlotTaken.FindFirst(1);
+      if (full >= options.ChunkCapacity) {
+        continue;
+      }
+
+      return {count, full};
+    }
+    return {size, 0};
   }
 
   Record getChunkWithEmptySlot() noexcept {
