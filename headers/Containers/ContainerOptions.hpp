@@ -86,7 +86,7 @@ struct DualKeyMapOptions {
   std::uint64_t baseReservation = 2048;
 };
 
-struct LinkedChunksOptions {
+struct ChunkListOptions {
   std::size_t ChunkCapacity = 256;
 };
 

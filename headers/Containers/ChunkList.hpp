@@ -6,8 +6,9 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
-#ifndef GUARD_TOURMALINE_LINKEDCHUNKS_H
-#define GUARD_TOURMALINE_LINKEDCHUNKS_H
+#ifndef GUARD_TOURMALINE_CHUNKLIST_H
+#define GUARD_TOURMALINE_CHUNKLIST_H
+
 #include "../Systems/Logging.hpp"
 
 #include "BitArray.hpp"
@@ -29,22 +30,21 @@
 namespace Tourmaline::Containers {
 // I am not a big fan of the name "SlotPosition" might renamed to
 // Slot or SlotId or SlotPosition
-struct LinkedChunkRecord {
+struct ChunkListRecord {
   std::size_t ChunkId = 0, SlotPosition = 0;
-  friend bool operator==(const LinkedChunkRecord &lhs,
-                         const LinkedChunkRecord &rhs) {
+  friend bool operator==(const ChunkListRecord &lhs,
+                         const ChunkListRecord &rhs) {
     return (lhs.ChunkId == rhs.ChunkId) &&
            (lhs.SlotPosition == rhs.SlotPosition);
   }
-  friend bool operator!=(const LinkedChunkRecord &lhs,
-                         const LinkedChunkRecord &rhs) {
+  friend bool operator!=(const ChunkListRecord &lhs,
+                         const ChunkListRecord &rhs) {
     return (lhs.ChunkId != rhs.ChunkId) ||
            (lhs.SlotPosition != rhs.SlotPosition);
   }
 };
 
-template <typename EntryType, LinkedChunksOptions options = {}>
-class LinkedChunks {
+template <typename EntryType, ChunkListOptions options = {}> class ChunkList {
   constexpr static std::size_t fullSlots = options.ChunkCapacity + 1;
   using Entry = std::optional<EntryType>;
   struct Chunk {
@@ -56,7 +56,7 @@ class LinkedChunks {
 public:
   struct Iterator {
     // Position specific
-    Iterator(LinkedChunkRecord position, std::vector<Chunk *> *chunks)
+    Iterator(ChunkListRecord position, std::vector<Chunk *> *chunks)
         : position(position), chunks(chunks), end(chunks->size()) {}
 
     // End iterator specific
@@ -108,7 +108,7 @@ public:
       swap(first.end, second.end);
     }
 
-    LinkedChunkRecord position;
+    ChunkListRecord position;
 
   private:
     std::vector<Chunk *> *chunks;
@@ -132,26 +132,26 @@ public:
     }
   };
 
-  LinkedChunks() {
-    Systems::Logging::Log("LinkedChunksOptions::ChunkCapacity cannot be 0 or "
+  ChunkList() {
+    Systems::Logging::Log("ChunkListOptions::ChunkCapacity cannot be 0 or "
                           "less! Terminating...",
-                          "LinkedChunks", Systems::Logging::Critical,
+                          "ChunkList", Systems::Logging::Critical,
                           options.ChunkCapacity == 0);
     chunks.push_back(new Chunk{});
   }
-  ~LinkedChunks() { Clear(); }
+  ~ChunkList() { Clear(); }
 
   // No copying since the data is owned by instance of the said class
   // Deleting to mitigate shallow copying
   // Moving is fine
-  LinkedChunks(const LinkedChunks &) = delete;
-  LinkedChunks &operator=(const LinkedChunks &) = delete;
-  LinkedChunks(LinkedChunks &&linkedChunk) noexcept
+  ChunkList(const ChunkList &) = delete;
+  ChunkList &operator=(const ChunkList &) = delete;
+  ChunkList(ChunkList &&linkedChunk) noexcept
       : chunks(std::move(linkedChunk.chunks)),
         entryCount(linkedChunk.entryCount) {
     linkedChunk.entryCount = 0;
   }
-  LinkedChunks &operator=(LinkedChunks &&rightHandSide) noexcept {
+  ChunkList &operator=(ChunkList &&rightHandSide) noexcept {
     if (this == &rightHandSide) {
       return *this;
     }
@@ -163,8 +163,8 @@ public:
     return *this;
   }
 
-  LinkedChunkRecord Insert(const EntryType &entry) noexcept {
-    LinkedChunkRecord chunkPair = getChunkWithEmptySlot();
+  ChunkListRecord Insert(const EntryType &entry) noexcept {
+    ChunkListRecord chunkPair = getChunkWithEmptySlot();
     Chunk *chunk = chunks[chunkPair.ChunkId];
     std::size_t slot = chunkPair.SlotPosition;
 
@@ -176,17 +176,17 @@ public:
     return chunkPair;
   }
 
-  EntryType &Get(const LinkedChunkRecord &record) {
+  EntryType &Get(const ChunkListRecord &record) {
     Systems::Logging::Log(
-        "LinkedChunks was given a record that was out of bounds! Throwing...",
-        "LinkedChunks", Systems::Logging::Error, !isRecordValid(record));
+        "ChunkList was given a record that was out of bounds! Throwing...",
+        "ChunkList/Get", Systems::Logging::Error, !isRecordValid(record));
 
     // Not using at since we already did bounds check above
     Entry &entry = chunks[record.ChunkId]->slots[record.SlotPosition];
     if (!entry.has_value()) {
       Systems::Logging::LogFormatted(
           "There is no valid data at chunk {} slot {}! Throwing...",
-          "LinkedChunks", Systems::Logging::Error, record.ChunkId,
+          "ChunkList/Get", Systems::Logging::Error, record.ChunkId,
           record.SlotPosition);
     }
 
@@ -196,7 +196,7 @@ public:
   // No RemoveChunk because that will make any ID afterwards shift by -1
   // This can be mitigated by storing some kind of UUID system with exact
   // poisions instead.
-  bool Remove(const LinkedChunkRecord &record) noexcept {
+  bool Remove(const ChunkListRecord &record) noexcept {
     if (!isRecordValid(record)) {
       return false;
     }
@@ -238,12 +238,12 @@ private:
   bool isSlotPositionValid(std::size_t entryPosition) const noexcept {
     return options.ChunkCapacity > entryPosition;
   }
-  bool isRecordValid(const LinkedChunkRecord &record) const noexcept {
+  bool isRecordValid(const ChunkListRecord &record) const noexcept {
     return isChunkIDValid(record.ChunkId) &&
            isSlotPositionValid(record.SlotPosition);
   }
 
-  LinkedChunkRecord getFirstFullSlot() const noexcept {
+  ChunkListRecord getFirstFullSlot() const noexcept {
     std::size_t size = chunks.size(), full = 0;
     for (std::size_t count = 0; count < size; count++) {
       full = chunks[count]->isSlotTaken.FindFirst(1);
@@ -256,7 +256,7 @@ private:
     return {size, 0};
   }
 
-  LinkedChunkRecord getChunkWithEmptySlot() noexcept {
+  ChunkListRecord getChunkWithEmptySlot() noexcept {
     std::size_t size = chunks.size(), empty = 0;
     for (std::size_t count = leftmostEmptyChunk; count < size; count++) {
       empty = chunks[count]->leftmostEmptySlot;
