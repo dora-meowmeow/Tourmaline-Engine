@@ -27,6 +27,22 @@
  */
 
 namespace Tourmaline::Containers {
+// I am not a big fan of the name "SlotPosition" might renamed to
+// Slot or SlotId or SlotPosition
+struct LinkedChunkRecord {
+  std::size_t ChunkId = 0, SlotPosition = 0;
+  friend bool operator==(const LinkedChunkRecord &lhs,
+                         const LinkedChunkRecord &rhs) {
+    return (lhs.ChunkId == rhs.ChunkId) &&
+           (lhs.SlotPosition == rhs.SlotPosition);
+  }
+  friend bool operator!=(const LinkedChunkRecord &lhs,
+                         const LinkedChunkRecord &rhs) {
+    return (lhs.ChunkId != rhs.ChunkId) ||
+           (lhs.SlotPosition != rhs.SlotPosition);
+  }
+};
+
 template <typename EntryType, LinkedChunksOptions options = {}>
 class LinkedChunks {
   constexpr static std::size_t fullSlots = options.ChunkCapacity + 1;
@@ -38,23 +54,9 @@ class LinkedChunks {
   };
 
 public:
-  // I am not a big fan of the name "EntryPosition" might renamed to
-  // Slot or SlotId or SlotPosition
-  struct Record {
-    std::size_t ChunkId = 0, EntryPosition = 0;
-    friend bool operator==(const Record &lhs, const Record &rhs) {
-      return (lhs.ChunkId == rhs.ChunkId) &&
-             (lhs.EntryPosition == rhs.EntryPosition);
-    }
-    friend bool operator!=(const Record &lhs, const Record &rhs) {
-      return (lhs.ChunkId != rhs.ChunkId) ||
-             (lhs.EntryPosition != rhs.EntryPosition);
-    }
-  };
-
   struct Iterator {
     // Position specific
-    Iterator(Record position, std::vector<Chunk *> *chunks)
+    Iterator(LinkedChunkRecord position, std::vector<Chunk *> *chunks)
         : position(position), chunks(chunks), end(chunks->size()) {}
 
     // End iterator specific
@@ -75,12 +77,10 @@ public:
     };
 
     EntryType &operator*() const {
-      return (*chunks)[position.ChunkId]->slots[position.EntryPosition].value();
+      return (*chunks)[position.ChunkId]->slots[position.SlotPosition].value();
     }
     EntryType *operator->() {
-      return &(*chunks)[position.ChunkId]
-                  ->slots[position.EntryPosition]
-                  .value();
+      return &(*chunks)[position.ChunkId]->slots[position.SlotPosition].value();
     }
 
     Iterator &operator++() {
@@ -108,21 +108,18 @@ public:
       swap(first.end, second.end);
     }
 
-    Record position;
+    LinkedChunkRecord position;
 
   private:
     std::vector<Chunk *> *chunks;
     std::size_t end;
     void advanceToNextValid() {
       do {
-        Systems::Logging::LogFormatted("{} {}", "meow", Systems::Logging::Info,
-                                       position.ChunkId,
-                                       position.EntryPosition);
-        if (++position.EntryPosition < options.ChunkCapacity) {
+        if (++position.SlotPosition < options.ChunkCapacity) {
           continue;
         }
         ++position.ChunkId;
-        position.EntryPosition = 0;
+        position.SlotPosition = 0;
 
         // This means that the iterator hit the end of this range
         if (position.ChunkId >= end) {
@@ -130,7 +127,7 @@ public:
           return;
         }
       } while (!(*chunks)[position.ChunkId]
-                    ->slots[position.EntryPosition]
+                    ->slots[position.SlotPosition]
                     .has_value());
     }
   };
@@ -166,10 +163,10 @@ public:
     return *this;
   }
 
-  Record Insert(const EntryType &entry) noexcept {
-    Record chunkPair = getChunkWithEmptySlot();
+  LinkedChunkRecord Insert(const EntryType &entry) noexcept {
+    LinkedChunkRecord chunkPair = getChunkWithEmptySlot();
     Chunk *chunk = chunks[chunkPair.ChunkId];
-    std::size_t slot = chunkPair.EntryPosition;
+    std::size_t slot = chunkPair.SlotPosition;
 
     chunk->slots[slot] = entry;
     chunk->isSlotTaken.SetBit(slot, true);
@@ -179,18 +176,18 @@ public:
     return chunkPair;
   }
 
-  EntryType &Get(const Record &record) {
+  EntryType &Get(const LinkedChunkRecord &record) {
     Systems::Logging::Log(
         "LinkedChunks was given a record that was out of bounds! Throwing...",
         "LinkedChunks", Systems::Logging::Error, !isRecordValid(record));
 
     // Not using at since we already did bounds check above
-    Entry &entry = chunks[record.ChunkId]->slots[record.EntryPosition];
+    Entry &entry = chunks[record.ChunkId]->slots[record.SlotPosition];
     if (!entry.has_value()) {
       Systems::Logging::LogFormatted(
           "There is no valid data at chunk {} slot {}! Throwing...",
           "LinkedChunks", Systems::Logging::Error, record.ChunkId,
-          record.EntryPosition);
+          record.SlotPosition);
     }
 
     return entry.value();
@@ -199,18 +196,18 @@ public:
   // No RemoveChunk because that will make any ID afterwards shift by -1
   // This can be mitigated by storing some kind of UUID system with exact
   // poisions instead.
-  bool Remove(const Record &record) noexcept {
+  bool Remove(const LinkedChunkRecord &record) noexcept {
     if (!isRecordValid(record)) {
       return false;
     }
 
     Chunk *chunk = chunks[record.ChunkId];
-    chunk->slots[record.EntryPosition] = std::nullopt;
-    chunk->isSlotTaken.SetBit(record.EntryPosition, false);
+    chunk->slots[record.SlotPosition] = std::nullopt;
+    chunk->isSlotTaken.SetBit(record.SlotPosition, false);
     --entryCount;
 
-    if (chunk->leftmostEmptySlot > record.EntryPosition) {
-      chunk->leftmostEmptySlot = record.EntryPosition;
+    if (chunk->leftmostEmptySlot > record.SlotPosition) {
+      chunk->leftmostEmptySlot = record.SlotPosition;
     }
 
     if (leftmostEmptyChunk > record.ChunkId) {
@@ -238,15 +235,15 @@ private:
   bool isChunkIDValid(std::size_t chunkID) const noexcept {
     return chunks.size() > chunkID;
   }
-  bool isEntryPositionValid(std::size_t entryPosition) const noexcept {
+  bool isSlotPositionValid(std::size_t entryPosition) const noexcept {
     return options.ChunkCapacity > entryPosition;
   }
-  bool isRecordValid(const Record &record) const noexcept {
+  bool isRecordValid(const LinkedChunkRecord &record) const noexcept {
     return isChunkIDValid(record.ChunkId) &&
-           isEntryPositionValid(record.EntryPosition);
+           isSlotPositionValid(record.SlotPosition);
   }
 
-  Record getFirstFullSlot() const noexcept {
+  LinkedChunkRecord getFirstFullSlot() const noexcept {
     std::size_t size = chunks.size(), full = 0;
     for (std::size_t count = 0; count < size; count++) {
       full = chunks[count]->isSlotTaken.FindFirst(1);
@@ -259,7 +256,7 @@ private:
     return {size, 0};
   }
 
-  Record getChunkWithEmptySlot() noexcept {
+  LinkedChunkRecord getChunkWithEmptySlot() noexcept {
     std::size_t size = chunks.size(), empty = 0;
     for (std::size_t count = leftmostEmptyChunk; count < size; count++) {
       empty = chunks[count]->leftmostEmptySlot;
