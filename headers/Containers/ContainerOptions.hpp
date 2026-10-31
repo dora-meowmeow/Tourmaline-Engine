@@ -87,7 +87,9 @@ struct DualKeyMapOptions {
 };
 
 struct ChunkListOptions {
-  std::size_t ChunkCapacity = 256;
+  // Sane~ish default (anywhere from 2000-3000 that is an
+  // interval of 64 is a good pick)
+  std::size_t ChunkCapacity = 2048;
 };
 
 struct BitArrayOptions {
