@@ -17,9 +17,19 @@
 #include <memory>
 #include <span>
 
+/**
+ * @file
+ * @brief An array of mutatable and queriable bits.
+ */
+
 namespace Tourmaline::Containers {
 class BitArray {
 public:
+  /**
+   * @brief Default constructor
+   *
+   * @param options See Tourmaline::Containers::BitArrayOptions
+   */
   BitArray(BitArrayOptions options) : storedBitCount(options.BitCount) {
     // Count
     wholeCount = storedBitCount / sizeBitCount;
@@ -37,6 +47,13 @@ public:
     SetAll(options.SetAllBits);
   };
 
+  /**
+   * @brief Returns true/false based on the state of the bit
+   *
+   * @param index Position of the bit you want to learn the state of.
+   *
+   * @return True if the bit equals to 1, false if it equals to 0.
+   */
   bool GetBit(std::size_t index) const {
     // Guarding
     Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
@@ -50,6 +67,12 @@ public:
     return (container >> offset) & 1;
   }
 
+  /**
+   * @brief Sets the bit's state to 0 or 1
+   *
+   * @param index Position of the bit you want to set the state of.
+   * @param value True sets the bit to 1, false sets the bit to 0.
+   */
   void SetBit(std::size_t index, bool value) {
     Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
                           "BitArray/SetBit", Systems::Logging::Error,
@@ -67,6 +90,12 @@ public:
     return;
   }
 
+  /**
+   * @brief Flips the bit's state from 1 to 0 and vice versa
+   *
+   * @param index Position of the bit you want to set the state of.
+   * @param value True sets the bit to 1, false sets the bit to 0.
+   */
   void FlipBit(std::size_t index) {
     Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
                           "BitArray/FlipBit", Systems::Logging::Error,
@@ -78,6 +107,13 @@ public:
     array[index / sizeBitCount] ^= offsetMask;
   }
 
+  /**
+   * @brief Finds the first bit that is set to 1 or 0.
+   *
+   * @param value True if looking for first bit that is set to 1, false for 0.
+   *
+   * @return Position of the bit.
+   */
   std::size_t FindFirst(bool value) const noexcept {
     // Find next one
     if (value) {
@@ -104,6 +140,11 @@ public:
     return storedBitCount;
   }
 
+  /**
+   * @brief Sets all the bits to 1 or 0.
+   *
+   * @param value True to set all the bits to 1, false to set all the bits to 0.
+   */
   void SetAll(bool value = false) noexcept {
     if (value) {
       for (std::size_t index = 0; index < arraySize; index++) {
@@ -122,10 +163,18 @@ public:
     }
   }
 
-  std::span<const std::size_t> ViewInternalArray() const noexcept {
+  /**
+   * @brief View of the stored bits.
+   *
+   * @return A span of the raw array.
+   */
+  std::span<std::size_t> ViewInternalArray() const noexcept {
     return {array.get(), arraySize};
   };
 
+  /**
+   * @brief Amount of bits stored by this array
+   */
   std::size_t storedBitCount = 0;
 
   // TODO: add copy constructor and copy assign

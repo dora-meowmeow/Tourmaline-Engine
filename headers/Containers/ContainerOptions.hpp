@@ -92,8 +92,29 @@ struct ChunkListOptions {
   std::size_t ChunkCapacity = 2048;
 };
 
+/**
+ * @brief Configuration for BitArray.
+ *
+ * This is used by Tourmaline::Containers::BitArray to determine
+ * how many bits are needed to allocate and what to set each bit to.
+ */
 struct BitArrayOptions {
+  /**
+   * @brief Amount of bits to allocate.
+   *
+   * @note While you can set this to any value you want. Any value that is not a
+   * multiple of your cpu's address size will be not used but allocated.
+   * For example: if you are on a 32-bit system and want 37 bits, the BitArray
+   * will need 64 bits regardless. So the 27 bits will be unused. Whilst if
+   * you had a BitArray of 64 bits it would still use 64 bits.
+   */
   std::size_t BitCount;
+
+  /**
+   * @brief What every bit should be set to
+   *
+   * Setting all the bits to 0 is a tiny bit faster than setting them all to 1.
+   */
   bool SetAllBits = false;
 };
 } // namespace Tourmaline::Containers
