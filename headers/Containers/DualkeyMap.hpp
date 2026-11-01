@@ -31,7 +31,7 @@
 
 /**
  * @file
- * @brief A hashmap that uses two keys to store a value.
+ * @brief A map that uses two keys to store a value.
  */
 
 namespace Tourmaline::Containers {
