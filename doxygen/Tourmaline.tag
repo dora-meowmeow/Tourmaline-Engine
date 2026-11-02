@@ -1108,8 +1108,8 @@
       <type>Matrix &amp;</type>
       <name>rotate</name>
       <anchorfile>classTourmaline_1_1Type_1_1Matrix.html</anchorfile>
-      <anchor>a4679e350b67c7686bc64896d553d09e2</anchor>
-      <arglist>(float angle, Magnum::Math::Vector3&lt; float &gt; rotationAxis, Apply order=Apply::Locally, AngleUnit anglesIn=AngleUnit::Radiants)</arglist>
+      <anchor>a6f7d2d93353bdd030f67ecd38f0168f7</anchor>
+      <arglist>(float angle, Magnum::Math::Vector3&lt; float &gt; rotationAxis, Apply order=Apply::Locally, AngleUnit anglesIn=AngleUnit::Radians)</arglist>
     </member>
     <member kind="function">
       <type>Matrix &amp;</type>
@@ -1122,15 +1122,15 @@
       <type>Matrix &amp;</type>
       <name>rotateEuler</name>
       <anchorfile>classTourmaline_1_1Type_1_1Matrix.html</anchorfile>
-      <anchor>a18214f24664251df7fa9d7df5ba3b4d7</anchor>
-      <arglist>(const Magnum::Math::Vector3&lt; float &gt; &amp;angles, Apply order=Apply::Locally, AngleUnit anglesIn=AngleUnit::Radiants)</arglist>
+      <anchor>a2bf40ebd44cbc1eb6ccc71be13e904ac</anchor>
+      <arglist>(const Magnum::Math::Vector3&lt; float &gt; &amp;angles, Apply order=Apply::Locally, AngleUnit anglesIn=AngleUnit::Radians)</arglist>
     </member>
     <member kind="function">
       <type>Magnum::Math::Vector3&lt; float &gt;</type>
       <name>getEulerAngles</name>
       <anchorfile>classTourmaline_1_1Type_1_1Matrix.html</anchorfile>
-      <anchor>aac1613c35881482e1f587e961edca916</anchor>
-      <arglist>(AngleUnit anglesIn=AngleUnit::Radiants) const</arglist>
+      <anchor>a7b96374949f502371cb925857969269c</anchor>
+      <arglist>(AngleUnit anglesIn=AngleUnit::Radians) const</arglist>
     </member>
     <member kind="function">
       <type>Magnum::Math::Quaternion&lt; float &gt;</type>

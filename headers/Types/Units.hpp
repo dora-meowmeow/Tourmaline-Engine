@@ -11,25 +11,25 @@
 #define GUARD_TOURMALINE_TYPE_UNITS_H
 /**
  * @file
- * @brief Unit types definition
+ * @brief Unit types definitions
  */
 namespace Tourmaline::Type {
 /**
  * @brief Which type of angles you want to use.
  *
- * This is mostly used to ask wheter to use Magnum::Math::Rad Or
+ * This is mostly used to ask whether to use Magnum::Math::Rad Or
  * Magnum::Math::Deg inside a function.
  */
-enum class AngleUnit { Radiants = 0, Degrees = 1 };
+enum class AngleUnit { Radians = 0, Degrees = 1 };
 
 /**
- * @brief Wheter or not something should be applied local or globally.
+ * @brief Whether something should be applied local or globally.
  *
- * Usually used by matrix functions to decide; if matrix being multiplied should
+ * Usually used by matrix functions to decide; if the matrix being multiplied should
  * be on the right (this is known as local), or left (this is known as global).
  *
  * Most of the time local (putting the pure transformation to the right) is the
- * desired outcome. However if you want to affect something from perspective of
+ * desired outcome. However if you want to affect something from the perspective of
  * the world, try using global.
  *
  * @see [3blue1brown's introduction on matrix multiplication and
