@@ -25,7 +25,7 @@ Type::Matrix::getEulerAngles(Tourmaline::Type::AngleUnit anglesIn) const {
   Vector3<Rad<float>> result =
       Magnum::Math::Quaternion<float>::fromMatrix(this->rotation()).toEuler();
 
-  if (anglesIn == AngleUnit::Radiants) {
+  if (anglesIn == AngleUnit::Radians) {
     return Vector3<float>(result);
   }
   return Vector3<float>(Vector3<Deg<float>>(result));
@@ -34,7 +34,7 @@ Type::Matrix::getEulerAngles(Tourmaline::Type::AngleUnit anglesIn) const {
 Type::Matrix &Type::Matrix::rotateEuler(const Vector3<float> &angles,
                                         Apply order, AngleUnit anglesIn) {
   Matrix4<float> rotation;
-  if (anglesIn == AngleUnit::Radiants) [[likely]] {
+  if (anglesIn == AngleUnit::Radians) [[likely]] {
     rotation = Matrix4::rotationX(Rad(angles.x())) *
                Matrix4::rotationY(Rad(angles.y())) *
                Matrix4::rotationZ(Rad(angles.z()));
@@ -69,7 +69,7 @@ Type::Matrix &Type::Matrix::rotate(float angle,
   }
 
   Quaternion<float> rotation;
-  if (anglesIn == AngleUnit::Radiants) [[likely]] {
+  if (anglesIn == AngleUnit::Radians) [[likely]] {
     rotation = Quaternion<float>::rotation(Rad<float>(angle),
                                            rotationAxis.normalized());
   } else {

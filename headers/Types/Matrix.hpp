@@ -25,7 +25,7 @@ namespace Tourmaline::Type {
  * @brief Magnum::Math::Matrix4 with Quality of Life features.
  *
  * This class mainly adds functions to make working with Magnum::Math::Matrix4
- * more concise and easy.
+ * more concise and easier.
  *
  * @see Magnum::Math::Matrix4
  * @see [What is a
@@ -46,7 +46,7 @@ public:
   static constexpr uint8_t Columns = Matrix4<float>::Cols;
 
   /**
-   * @brief Rows * Columns. Basically every cell/element of the matrix.
+   * @brief Rows * Columns. Basically the count of every cell/element of the matrix.
    */
   static constexpr uint8_t Elements = Rows * Columns;
 
@@ -84,11 +84,11 @@ public:
 
   // Translation
   /**
-   * @brief Adds offset to the position/translation of a matrix.
+   * @brief Adds an offset to the position/translation of a matrix.
    *
    * @param offset You can think of this as how much you want to move the
    * matrix.
-   * @param order Wheter or not the offset is applied locally or from a global
+   * @param order Whether the offset is applied locally or from a global
    * axis.
    *
    * @return A reference to the matrix itself for method chaining.
@@ -101,7 +101,7 @@ public:
   /**
    * @brief Sets the position/translation for the matrix.
    *
-   * @param position New position/translation to put the matrix on.
+   * @param position New position/translation to put the matrix in.
    *
    * @return A reference to the matrix itself for method chaining.
    */
@@ -114,11 +114,11 @@ public:
    *
    * @param angle Rotation angle on given axis. Positive means
    * counter-clockwise.
-   * @param rotationAxis This can be thought as a normal of a 2D plane where the
-   * rotation will occur. This value cannot have magnitude of zero.
-   * @param order Wheter or not the rotation should be applied locally or from
+   * @param rotationAxis This can be thought of as a normal to the 2D plane where the
+   * rotation will occur. This value cannot have a magnitude of zero.
+   * @param order Whether the rotation should be applied locally or from
    * a global axis.
-   * @param anglesIn Specifies if angles are in radiants or degrees.
+   * @param anglesIn Specifies if angles are in radians or degrees.
    *
    * @return A reference to the matrix itself for method chaining.
    *
@@ -127,13 +127,13 @@ public:
    */
   Matrix &rotate(float angle, Magnum::Math::Vector3<float> rotationAxis,
                  Apply order = Apply::Locally,
-                 AngleUnit anglesIn = AngleUnit::Radiants);
+                 AngleUnit anglesIn = AngleUnit::Radians);
 
   /**
    * @brief Rotate a matrix using quaternions.
    *
    * @param quaternion Quaternion to use for rotation.
-   * @param order Wheter or not the rotation should be applied locally or from
+   * @param order Whether the rotation should be applied locally or from
    * a global axis.
    *
    * @return A reference to the matrix itself for method chaining.
@@ -149,11 +149,11 @@ public:
   /**
    * @brief Rotates the matrix using Euler angles.
    *
-   * @param angles Rotation angles on XY, XZ, and YZ planes. Positive means
+   * @param angles Rotation angles on the XY, XZ, and YZ planes. Positive means
    * counter-clockwise.
-   * @param order Wheter or not the rotation should be applied locally or from
+   * @param order Whether the rotation should be applied locally or from
    * a global axis.
-   * @param anglesIn Specifies if angles are in radiants or degrees.
+   * @param anglesIn Specifies if angles are in radians or degrees.
    *
    * @return A reference to the matrix itself for method chaining.
    *
@@ -169,19 +169,19 @@ public:
    */
   Matrix &rotateEuler(const Magnum::Math::Vector3<float> &angles,
                       Apply order = Apply::Locally,
-                      AngleUnit anglesIn = AngleUnit::Radiants);
+                      AngleUnit anglesIn = AngleUnit::Radians);
   // Rotation Get
   /**
    * @brief Returns the current rotation on the matrix as Euler angles.
    *
-   * @param anglesIn Which unit should the angles be in.
+   * @param anglesIn Which unit the angles should be in.
    *
-   * @return The Euler angles in XY, XZ, and YZ planes.
+   * @return The Euler angles on the XY, XZ, and YZ planes.
    *
    * @see Tourmaline::Type::AngleUnit
    */
   Magnum::Math::Vector3<float>
-  getEulerAngles(AngleUnit anglesIn = AngleUnit::Radiants) const;
+  getEulerAngles(AngleUnit anglesIn = AngleUnit::Radians) const;
 
   /**
    * @brief Returns the current rotation on the matrix as a quaternion.
@@ -195,11 +195,11 @@ public:
 
   // Scaling
   /**
-   * @brief Scales the matrix by given amount.
+   * @brief Scales the matrix by the given amount.
    *
-   * @param scaleBy How much on X, Y, and Z axis (individually) the matrix
-   * should scale.
-   * @param order Wheter or not if the offset is applied locally or from global
+   * @param scaleBy How much on the X, Y, and Z axes (individually) the matrix
+   * should scale by.
+   * @param order Whether the offset is applied locally or from a global
    * axis.
    *
    * @return A reference to the matrix itself for method chaining.
@@ -210,11 +210,11 @@ public:
                 Apply order = Apply::Locally);
 
   /**
-   * @brief Scales the matrix by given amount.
+   * @brief Scales the matrix by the given amount.
    *
-   * @param scaleBy How much on X, Y, and Z axis (equally) the matrix should
-   * scale.
-   * @param order Wheter or not if the offset is applied locally or from global
+   * @param scaleBy How much on the X, Y, and Z axes (equally) the matrix should
+   * scale by.
+   * @param order Whether the offset is applied locally or from a global
    * axis.
    *
    * @return A reference to the matrix itself for method chaining.
@@ -226,7 +226,7 @@ public:
   /**
    * @brief Sets the scale of the matrix.
    *
-   * @param scale on X, Y, and Z axis (individually) what the matrix's scale
+   * @param scale What the matrix's scale on the X, Y, and Z axes (individually) 
    * should be equal to.
    *
    * @return A reference to the matrix itself for method chaining.
@@ -238,7 +238,7 @@ public:
   /**
    * @brief Sets the scale of the matrix.
    *
-   * @param scale on X, Y, and Z axis (equally) what the matrix's scale
+   * @param scale What the matrix's scale on the X, Y, and Z axis (equally)
    * should be equal to.
    *
    * @return A reference to the matrix itself for method chaining.
