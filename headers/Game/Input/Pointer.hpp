@@ -79,7 +79,7 @@ struct Pointer {
   PointerButtonState GetButtonState(PointerButtonType button) const noexcept;
 
   /**
-   * @brief Quality of Life function to check state.
+   * @brief Quality of Life function to check for pointer button inactivity.
    *
    * @return Returns true if state is equal to
    * [PointerButtonState::Inactive](@ref
@@ -88,7 +88,8 @@ struct Pointer {
   bool IsInactive(PointerButtonType button) const noexcept;
 
   /**
-   * @brief Quality of Life function to check state.
+   * @brief Quality of Life function to check if a pointer button is active.
+   * Inverse of IsInactive.
    *
    * @return Returns true if state __**IS NOT**__ equal to
    * [PointerButtonState::Inactive](@ref
@@ -97,7 +98,8 @@ struct Pointer {
   bool IsActive(PointerButtonType button) const noexcept;
 
   /**
-   * @brief Quality of Life function to check state.
+   * @brief Quality of Life function to check whether a pointer button
+   * is currently down (pressed or held).
    *
    * @return Returns true if state is equal to either
    * [PointerButtonState::Pressed](@ref
@@ -108,7 +110,8 @@ struct Pointer {
   bool IsDown(PointerButtonType button) const noexcept;
 
   /**
-   * @brief Quality of Life function to check state.
+   * @brief Quality of Life function to check if a pointer button is
+   * pressed.
    *
    * @return Returns true if state is equal to
    * [PointerButtonState::Pressed](@ref
@@ -117,7 +120,8 @@ struct Pointer {
   bool IsPressed(PointerButtonType button) const noexcept;
 
   /**
-   * @brief Quality of Life function to check state.
+   * @brief Quality of Life function to check if a pointer button has
+   * been released.
    *
    * @return Returns true if state is equal to
    * [PointerButtonState::Released](@ref
@@ -126,7 +130,7 @@ struct Pointer {
   bool IsReleased(PointerButtonType button) const noexcept;
 
   /**
-   * @brief Quality of Life function to check state.
+   * @brief Quality of Life function to check if a pointer button is held.
    *
    * @return Returns true if state is equal to
    * [PointerButtonState::Held](@ref

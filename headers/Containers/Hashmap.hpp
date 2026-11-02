@@ -159,8 +159,8 @@ public:
   }
 
   /**
-   * @brief Fetches the value as a view (const/read-only) of the key-value pair
-   * matching the specified key.
+   * @brief Fetches the value of the key-value pair
+   * matching the specified key as a view (const/read-only).
    *
    * @param key The key of the key-value pair to fetch.
    *
