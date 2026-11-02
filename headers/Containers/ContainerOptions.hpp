@@ -117,10 +117,10 @@ struct BitArrayOptions {
    * @brief Amount of bits to allocate.
    *
    * @note While you can set this to any value you want. Any value that is not a
-   * multiple of your cpu's address size will be not used but allocated.
-   * For example: if you are on a 32-bit system and want 37 bits, the BitArray
-   * will need 64 bits regardless. So the 27 bits will be unused. Whilst if
-   * you had a BitArray of 64 bits it would still use 64 bits.
+   * multiple of your cpu's address size will be allocated, but NOT used.
+   * For example: if you are on a 32-bit system and want a 37 bit BitArray, it
+   * will need to have 64 bits allocated regardless. The remaining 27 bits will be unused. Whereas if
+   * you had a BitArray of 64 bits, it would allocate the same 64 bits, but use all of them.
    */
   std::size_t BitCount;
 
