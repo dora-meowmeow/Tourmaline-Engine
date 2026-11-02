@@ -113,11 +113,11 @@ public:
           Magnum::GL::SamplerWrapping::ClampToEdge);
 
   /**
-   * @brief Imports an 3D Object's mesh as a GL::Mesh.
+   * @brief Imports a 3D Object's mesh as a GL::Mesh.
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
-   * @param index Some 3D file-types support multiple meshes in same file. You
+   * @param index Some 3D file-types support multiple meshes in the same file. You
    * can select which object you want by setting this value.
    *
    * @return The 3D Object's mesh as a GL::Mesh.
@@ -132,11 +132,11 @@ public:
                                    uint64_t index = 0);
 
   /**
-   * @brief Imports an 3D Object's mesh as a GL::Mesh.
+   * @brief Imports a 3D Object's mesh as a GL::Mesh.
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
-   * @param name Some 3D file-types support multiple meshes in same file. You
+   * @param name Some 3D file-types support multiple meshes in the same file. You
    * can select which object you want by setting this value.
    *
    * @return The 3D Object's mesh as a GL::Mesh.
@@ -151,12 +151,12 @@ public:
                                    Corrade::Containers::StringView name);
 
   /**
-   * @brief Imports all of the meshes in a 3D assets as a GL::Mesh.
+   * @brief Imports all of the meshes in a 3D asset as a GL::Mesh.
    *
    * @param path Path to the asset. See @ref supportedFileTypes to learn
    * which file-types are supported.
    *
-   * @return An array containing the 3D assets' meshes as
+   * @return An array containing the 3D asset's meshes as
    * Tourmaline::Systems::Importer::MeshInfo.
    *
    * @warning If this function fails to find the specified asset at the given
