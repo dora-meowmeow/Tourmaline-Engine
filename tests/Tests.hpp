@@ -11,6 +11,8 @@
 
 #include "Corrade/Containers/String.h"
 #include "Corrade/TestSuite/Tester.h"
+
+#include "Containers/BitArray.hpp"
 #include "Systems/ECS.hpp"
 
 #define CORRADE_VERIFY_TYPE(x, y) CORRADE_VERIFY(typeid(x) == typeid(y))
@@ -38,6 +40,10 @@ public:
     // Serialization
     addTests({&Tests::Serialization_CanSerialize,
               &Tests::Serialization_CanDeserialize});
+
+    // BitArray
+    addTests({&Tests::BitArray_SetBits, &Tests::BitArray_FlipBits,
+              &Tests::BitArray_FindFirst, &Tests::BitArray_SetAll});
   }
 
   // Tourmaline::Systems::Random
@@ -64,6 +70,13 @@ public:
   static Corrade::Containers::String serialDataFileName;
   void Serialization_CanSerialize();
   void Serialization_CanDeserialize();
+
+  // Tourmaline::Containers::BitArray
+  Tourmaline::Containers::BitArray bitArray{{92, false}};
+  void BitArray_SetBits();
+  void BitArray_FlipBits();
+  void BitArray_FindFirst();
+  void BitArray_SetAll();
 
   // Helpers
   void Helper_SwitchSTDOUT(bool fakeSTD);
