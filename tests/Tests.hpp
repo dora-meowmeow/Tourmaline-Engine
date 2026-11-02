@@ -28,13 +28,11 @@ public:
                   randomBatchCount);
 
     // ECS
-    /*
     addBenchmarks(
         {&Tests::ECS_Benchmark_GoalCreate, &Tests::ECS_Benchmark_FetchAndStep},
         1);
     addBenchmarks({&Tests::ECS_Benchmark_Step}, stepBatchCount);
     addBenchmarks({&Tests::ECS_Benchmark_60Steps}, multiStepBatchCount);
-    */
 
     // Logging
     Tourmaline::Systems::Logging::WithANSIColour = false; // Less headache
