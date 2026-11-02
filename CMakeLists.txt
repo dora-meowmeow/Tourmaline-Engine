@@ -187,6 +187,7 @@ if(TOURMALINE_WITH_TESTS)
     "tests/Logging.cpp"
     "tests/Serialization.cpp"
     "tests/BitArray.cpp"
+    "tests/Hashlist.cpp"
   )
 
   target_link_libraries(TourmalineTest

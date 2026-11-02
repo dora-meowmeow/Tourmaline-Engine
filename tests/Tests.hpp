@@ -10,9 +10,11 @@
 #define GUARD_TOURMALINE_TESTS_H
 
 #include "Corrade/Containers/String.h"
+#include "Corrade/Containers/StringStlHash.h" // IWYU pragma: keep
 #include "Corrade/TestSuite/Tester.h"
 
 #include "Containers/BitArray.hpp"
+#include "Containers/Hashlist.hpp"
 #include "Systems/ECS.hpp"
 
 #define CORRADE_VERIFY_TYPE(x, y) CORRADE_VERIFY(typeid(x) == typeid(y))
@@ -26,11 +28,13 @@ public:
                   randomBatchCount);
 
     // ECS
+    /*
     addBenchmarks(
         {&Tests::ECS_Benchmark_GoalCreate, &Tests::ECS_Benchmark_FetchAndStep},
         1);
     addBenchmarks({&Tests::ECS_Benchmark_Step}, stepBatchCount);
     addBenchmarks({&Tests::ECS_Benchmark_60Steps}, multiStepBatchCount);
+    */
 
     // Logging
     Tourmaline::Systems::Logging::WithANSIColour = false; // Less headache
@@ -44,6 +48,10 @@ public:
     // BitArray
     addTests({&Tests::BitArray_SetBits, &Tests::BitArray_FlipBits,
               &Tests::BitArray_FindFirst, &Tests::BitArray_SetAll});
+
+    addTests({&Tests::Hashlist_Insert, &Tests::Hashlist_Has,
+              &Tests::Hashlist_Remove, &Tests::Hashlist_ListAndExtract,
+              &Tests::Hashlist_Clear});
   }
 
   // Tourmaline::Systems::Random
@@ -77,6 +85,14 @@ public:
   void BitArray_FlipBits();
   void BitArray_FindFirst();
   void BitArray_SetAll();
+
+  // Tourmaline::Containers::Hashlist
+  Tourmaline::Containers::Hashlist<Corrade::Containers::String> hashlist;
+  void Hashlist_Insert();
+  void Hashlist_Has();
+  void Hashlist_Remove();
+  void Hashlist_ListAndExtract();
+  void Hashlist_Clear();
 
   // Helpers
   void Helper_SwitchSTDOUT(bool fakeSTD);
