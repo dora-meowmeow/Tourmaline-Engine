@@ -67,10 +67,10 @@ enum class SystemPriority {
 };
 
 /**
- * @brief This sets when should the hook be triggered.
+ * @brief Represents the moment when the hook will be triggered.
  *
- * Creation will trigger when a component is added to an entity. Destruction for
- * when you remove the component from an entity. Both for either of those cases.
+ * A value set to "Creation" will trigger when a component is added to an entity. "Destruction" for
+ * when the component is removed from an entity. "Both" will trigger in both cases.
  */
 enum HookTo : uint8_t { Creation = 1, Destruction = 2, Both = 3 };
 

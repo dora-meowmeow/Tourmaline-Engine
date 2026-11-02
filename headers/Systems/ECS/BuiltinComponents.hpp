@@ -47,7 +47,7 @@ namespace Tourmaline::Systems::Components {
  */
 struct Transform : public ECS::Component {
   /**
-   * @brief Transformation Matrix used to move an object in 3D space.
+   * @brief Transformation Matrix used to manipulate an object in 3D space.
    *
    * @see [What is a transformation
    * matrix?](https://www.geeksforgeeks.org/maths/transformation-matrix/)
