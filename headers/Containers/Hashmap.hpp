@@ -74,21 +74,18 @@ public:
    *
    * @param key Key of the key-value pair to remove.
    *
+   * @return True if deleted, false otherwise.
+   *
    * @note This function will not deconstruct or erase any data inside pointers.
    * If you are storing pointers with this map, you must manually clear them.
-   *
-   * @warning If you try to remove a key-value pair that does not exist,
-   * this will throw a runtime exception (Tourmaline::Systems::Logging::Error).
-   * Please check the presence of the key in the map with Has function first.
    */
-  void Remove(const Key &key) {
+  bool Remove(const Key &key) {
     std::size_t keyHash = std::hash<Key>{}(key),
                 keyHashPosition = keyHash % storage.size();
 
-    // Throws
-    Systems::Logging::Log("Trying to remove a non-existant key! Throwing...",
-                          "Hashmap", Systems::Logging::Error,
-                          storage[keyHashPosition].empty());
+    if (storage[keyHashPosition].empty()) {
+      return false;
+    }
     std::erase_if(storage[keyHashPosition],
                   [keyHash, &key](const hashStorage &hash) {
                     return hash.hash == keyHash && hash.key == key;
@@ -98,6 +95,8 @@ public:
     if (currentLoadFactor <= Options.minimizeFactor) {
       rehash();
     }
+
+    return true;
   }
 
   /**

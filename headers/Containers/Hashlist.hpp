@@ -74,20 +74,18 @@ public:
    *
    * @param entry Entry to be removed from the list.
    *
+   * @return True if deleted, false otherwise.
+   *
    * @note This function will not deconstruct or erase any data inside pointers.
    * If you are storing pointers with this list, you must manually clear them.
-   *
-   * @warning If you try to remove an entry that does not exist,
-   * this will throw a runtime exception (Tourmaline::Systems::Logging::Error).
-   * Please check the existence of the entry with the Has function first.
    */
-  void Remove(const Entry &entry) {
+  bool Remove(const Entry &entry) {
     std::size_t entryHash = std::hash<Entry>{}(entry),
                 entryHashPosition = entryHash % storage.size();
-    // Throws
-    Systems::Logging::Log("Trying to remove a non-existant entry! Throwing...",
-                          "Hashmap", Systems::Logging::Error,
-                          storage[entryHashPosition].empty());
+
+    if (storage[entryHashPosition].empty()) {
+      return false;
+    }
 
     std::erase_if(storage[entryHashPosition],
                   [entryHash, &entry](const hashStorage &hash) {
@@ -98,6 +96,8 @@ public:
     if (currentLoadFactor <= Options.minimizeFactor) {
       rehash();
     }
+
+    return true;
   }
 
   /**
