@@ -68,7 +68,7 @@ struct ChunkListRecord {
  * @brief An array of chunks which themselves are pre-defined fixed sized
  * arrays.
  *
- * A decent alternative to std::vector for medium to large amount of data.
+ * A decent alternative to std::vector for a medium to large amount of data.
  *
  * The data always stays in the same place even when there is a growth or an
  * entry being removed.
@@ -91,7 +91,7 @@ public:
    */
   struct Iterator {
     /**
-     * @brief Position specific iterator.
+     * @brief Position specific iterator constructor.
      *
      * @param position Record to start from.
      * @param chunks Pointer to the ChunkList.
@@ -100,11 +100,11 @@ public:
         : position(position), chunks(chunks), end(chunks->size()) {}
 
     /**
-     * @brief End iterator Specific.
+     * @brief End iterator Specific constructor.
      *
      * @param chunks Pointer to the ChunkList.
      *
-     * end iterator position is deduced automatically.
+     * The End iterator's position is deduced automatically.
      */
     Iterator(std::vector<Chunk *> *chunks)
         : chunks(chunks), end(chunks->size()) {
@@ -184,7 +184,7 @@ public:
     }
 
     /**
-     * @brief Where in the ChunkList the iterator currently is in.
+     * @brief Where in the ChunkList the iterator is currently in.
      */
     ChunkListRecord position;
 
@@ -213,7 +213,7 @@ public:
   /**
    * @brief Default constructor.
    *
-   * @warning This will output a log with level of Critical(which will cause
+   * @warning This will output a log with a level of Critical(which will cause
    * std::terminate to be called), if ChunkListOptions::ChunkCapacity
    * is set to 0.
    */
@@ -233,7 +233,7 @@ public:
   /**
    * @brief Copying is not allowed.
    *
-   * No copying since the data is owned by instance of this class. Deleting
+   * No copying since the data is owned by the instance of this class. Deleting
    * to mitigate shallow copying.
    */
   ChunkList(const ChunkList &) = delete;
@@ -241,7 +241,7 @@ public:
   /**
    * @brief Copying is not allowed.
    *
-   * No copying since the data is owned by instance of this class. Deleting
+   * No copying since the data is owned by the instance of this class. Deleting
    * to mitigate shallow copying.
    */
   ChunkList &operator=(const ChunkList &) = delete;
@@ -271,7 +271,7 @@ public:
   }
 
   /**
-   * @brief Inserts data to a chunk by copying.
+   * @brief Inserts data into a chunk by copying.
    *
    * @param entry Data to copy.
    *
@@ -291,7 +291,7 @@ public:
   }
 
   /**
-   * @brief Fetches the data and returns a reference to it.
+   * @brief Fetches data at a given location and returns a reference to it.
    *
    * @param record A record containg the location information.
    *
@@ -318,7 +318,7 @@ public:
   // This can be mitigated by storing some kind of UUID system with exact
   // poisions instead.
   /**
-   * @brief Deletes data at a location.
+   * @brief Deletes data at a given location.
    *
    * @param record A record containg the location information.
    *
@@ -378,7 +378,7 @@ public:
   Iterator begin() { return Iterator(getFirstFullSlot(), &chunks); }
 
   /**
-   * @brief Gives an iterator that points to chunk one after last valid chunk.
+   * @brief Gives an iterator that points to the chunk one after the last valid chunk.
    *
    * @return An iterator with data outside of the container.
    */
