@@ -211,11 +211,7 @@ public:
       entry.clear();
     }
 
-    count = 0;
-    currentLoadFactor = 0.0f;
-    bucketCount = Options.minimumBucketCount;
-    std::vector<bucket> newStorage;
-    storage.swap(newStorage);
+    Clear();
     return result;
   }
 
@@ -264,9 +260,12 @@ public:
    * If you are storing pointers with this map, you must manually clear them.
    */
   void Clear() noexcept {
-    storage.clear();
     count = 0;
     currentLoadFactor = 0.0f;
+    bucketCount = Options.minimumBucketCount;
+    std::vector<bucket> newStorage;
+    storage.swap(newStorage);
+    storage.resize(Options.minimumBucketCount);
   }
 
   /**
