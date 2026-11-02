@@ -94,12 +94,12 @@ struct DualKeyMapOptions {
  */
 struct ChunkListOptions {
   /**
-   * @brief How many slots should each chunk have.
+   * @brief How many slots each chunk should have.
    *
-   * @note The default value is picked after several tests showed it to be most
+   * @note The default value is picked after several tests showed it to be the most
    * optimal. We still decided to allow chunk sizes to be variable for
-   * flexibility. However we do suggest staying in 2000 to 3000 slots (intervals
-   * of 64 is even better) per chunk range for most use cases.
+   * flexibility. However we do suggest staying in the 2000–3000 slot
+   * per chunk range (intervals of 64 are even better) for most use cases.
    *
    * @warning This value cannot be 0!
    */
