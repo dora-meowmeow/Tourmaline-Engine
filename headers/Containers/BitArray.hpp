@@ -48,11 +48,11 @@ public:
   };
 
   /**
-   * @brief Returns true/false based on the state of the bit
+   * @brief Returns true/false based on the state of a given bit
    *
    * @param index Position of the bit you want to learn the state of.
    *
-   * @return True if the bit equals to 1, false if it equals to 0.
+   * @return True if the bit equals 1, false if it equals 0.
    */
   bool GetBit(std::size_t index) const {
     // Guarding
@@ -68,7 +68,7 @@ public:
   }
 
   /**
-   * @brief Sets the bit's state to 0 or 1
+   * @brief Sets a given bit's state to 0 or 1
    *
    * @param index Position of the bit you want to set the state of.
    * @param value True sets the bit to 1, false sets the bit to 0.
@@ -91,10 +91,9 @@ public:
   }
 
   /**
-   * @brief Flips the bit's state from 1 to 0 and vice versa
+   * @brief Flips a given bit's state from 1 to 0 and vice versa
    *
-   * @param index Position of the bit you want to set the state of.
-   * @param value True sets the bit to 1, false sets the bit to 0.
+   * @param index Position of the bit you want to flip the state of.
    */
   void FlipBit(std::size_t index) {
     Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
@@ -108,9 +107,9 @@ public:
   }
 
   /**
-   * @brief Finds the first bit that is set to 1 or 0.
+   * @brief Finds the first bit that is set to either 1 or 0.
    *
-   * @param value True if looking for first bit that is set to 1, false for 0.
+   * @param value True if looking for the first bit that is set to 1, false for 0.
    *
    * @return Position of the bit.
    */
