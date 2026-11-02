@@ -86,9 +86,23 @@ struct DualKeyMapOptions {
   std::uint64_t baseReservation = 2048;
 };
 
+/**
+ * @brief Configuration for ChunkList.
+ *
+ * This is used by Tourmaline::Containers::ChunkList to determine how the chunks
+ * inside it should be.
+ */
 struct ChunkListOptions {
-  // Sane~ish default (anywhere from 2000-3000 that is an
-  // interval of 64 is a good pick)
+  /**
+   * @brief How many slots should each chunk have.
+   *
+   * @note The default value is picked after several tests showed it to be most
+   * optimal. We still decided to allow chunk sizes to be variable for
+   * flexibility. However we do suggest staying in 2000 to 3000 slots (intervals
+   * of 64 is even better) per chunk range for most use cases.
+   *
+   * @warning This value cannot be 0!
+   */
   std::size_t ChunkCapacity = 2048;
 };
 

@@ -24,19 +24,39 @@
 
 /**
  * @file
- * @brief Pre-defined sized arrays linked to each other. DO NOT USE!
+ * @brief Pre-defined fixed sized arrays stored together. The data does not
+ * move.
  */
 
 namespace Tourmaline::Containers {
-// I am not a big fan of the name "SlotPosition" might renamed to
-// Slot or SlotId or SlotPosition
+/**
+ * @brief A record of where the data was placed.
+ *
+ * Can be used to access the data with Tourmaline::Containers::ChunkList::Get or
+ * deleted with Tourmaline::Containers::ChunkList::Remove.
+ */
 struct ChunkListRecord {
-  std::size_t ChunkId = 0, SlotPosition = 0;
+  /**
+   * @brief Which chunk stores the data.
+   */
+  std::size_t ChunkId = 0;
+  /**
+   * @brief Which slot in the chunk stores the data.
+   */
+  std::size_t SlotPosition = 0;
+
+  /**
+   * @brief This struct supports operator==.
+   */
   friend bool operator==(const ChunkListRecord &lhs,
                          const ChunkListRecord &rhs) {
     return (lhs.ChunkId == rhs.ChunkId) &&
            (lhs.SlotPosition == rhs.SlotPosition);
   }
+
+  /**
+   * @brief This struct supports operator!=.
+   */
   friend bool operator!=(const ChunkListRecord &lhs,
                          const ChunkListRecord &rhs) {
     return (lhs.ChunkId != rhs.ChunkId) ||
@@ -44,6 +64,18 @@ struct ChunkListRecord {
   }
 };
 
+/**
+ * @brief An array of chunks which themselves are pre-defined fixed sized
+ * arrays.
+ *
+ * A decent alternative to std::vector for medium to large amount of data.
+ *
+ * The data always stays in the same place even when there is a growth or an
+ * entry being removed.
+ *
+ * @tparam EntryType What type of data should be stored.
+ * @tparam See Tourmaline::Containers::ChunkListOptions.
+ */
 template <typename EntryType, ChunkListOptions options = {}> class ChunkList {
   constexpr static std::size_t fullSlots = options.ChunkCapacity + 1;
   using Entry = std::optional<EntryType>;
@@ -54,21 +86,41 @@ template <typename EntryType, ChunkListOptions options = {}> class ChunkList {
   };
 
 public:
+  /**
+   * @brief Forward iterator for ChunkList.
+   */
   struct Iterator {
-    // Position specific
+    /**
+     * @brief Position specific iterator.
+     *
+     * @param position Record to start from.
+     * @param chunks Pointer to the ChunkList.
+     */
     Iterator(ChunkListRecord position, std::vector<Chunk *> *chunks)
         : position(position), chunks(chunks), end(chunks->size()) {}
 
-    // End iterator specific
+    /**
+     * @brief End iterator Specific.
+     *
+     * @param chunks Pointer to the ChunkList.
+     *
+     * end iterator position is deduced automatically.
+     */
     Iterator(std::vector<Chunk *> *chunks)
         : chunks(chunks), end(chunks->size()) {
       position = {end, 0};
     }
 
+    /**
+     * @brief Supports copy-construction.
+     */
     Iterator(const Iterator &iterator)
         : position(iterator.position), chunks(iterator.chunks),
           end(iterator.end) {}
 
+    /**
+     * @brief Supports copy-assignment.
+     */
     Iterator &operator=(const Iterator &iterator) {
       position = iterator.position;
       chunks = iterator.chunks;
@@ -76,31 +128,54 @@ public:
       return *this;
     };
 
+    /**
+     * @brief Supports operator* for dereferencing.
+     */
     EntryType &operator*() const {
       return (*chunks)[position.ChunkId]->slots[position.SlotPosition].value();
     }
+
+    /**
+     * @brief Supports operator->.
+     */
     EntryType *operator->() {
       return &(*chunks)[position.ChunkId]->slots[position.SlotPosition].value();
     }
 
+    /**
+     * @brief Supports prefix operator++.
+     */
     Iterator &operator++() {
       advanceToNextValid();
       return *this;
     }
+
+    /**
+     * @brief Supports postfix operator++.
+     */
     Iterator operator++(int) {
       Iterator hold = *this;
       advanceToNextValid();
       return hold;
     }
 
+    /**
+     * @brief Supports operator==.
+     */
     friend bool operator==(const Iterator &lhs, const Iterator &rhs) {
       return lhs.position == rhs.position;
     }
 
+    /**
+     * @brief Supports operator!=.
+     */
     friend bool operator!=(const Iterator &lhs, const Iterator &rhs) {
       return lhs.position != rhs.position;
     }
 
+    /**
+     * @brief Supports swapping.
+     */
     friend void swap(Iterator &first, Iterator &second) {
       using std::swap;
       swap(first.position, second.position);
@@ -108,6 +183,9 @@ public:
       swap(first.end, second.end);
     }
 
+    /**
+     * @brief Where in the ChunkList the iterator currently is in.
+     */
     ChunkListRecord position;
 
   private:
@@ -132,6 +210,13 @@ public:
     }
   };
 
+  /**
+   * @brief Default constructor.
+   *
+   * @warning This will output a log with level of Critical(which will cause
+   * std::terminate to be called), if ChunkListOptions::ChunkCapacity
+   * is set to 0.
+   */
   ChunkList() {
     Systems::Logging::Log("ChunkListOptions::ChunkCapacity cannot be 0 or "
                           "less! Terminating...",
@@ -139,18 +224,40 @@ public:
                           options.ChunkCapacity == 0);
     chunks.push_back(new Chunk{});
   }
+
+  /**
+   * @brief Default destructor.
+   */
   ~ChunkList() { Clear(); }
 
-  // No copying since the data is owned by instance of the said class
-  // Deleting to mitigate shallow copying
-  // Moving is fine
+  /**
+   * @brief Copying is not allowed.
+   *
+   * No copying since the data is owned by instance of this class. Deleting
+   * to mitigate shallow copying.
+   */
   ChunkList(const ChunkList &) = delete;
+
+  /**
+   * @brief Copying is not allowed.
+   *
+   * No copying since the data is owned by instance of this class. Deleting
+   * to mitigate shallow copying.
+   */
   ChunkList &operator=(const ChunkList &) = delete;
+
+  /**
+   * @brief Moving is allowed.
+   */
   ChunkList(ChunkList &&linkedChunk) noexcept
       : chunks(std::move(linkedChunk.chunks)),
         entryCount(linkedChunk.entryCount) {
     linkedChunk.entryCount = 0;
   }
+
+  /**
+   * @brief Moving is allowed.
+   */
   ChunkList &operator=(ChunkList &&rightHandSide) noexcept {
     if (this == &rightHandSide) {
       return *this;
@@ -163,6 +270,13 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Inserts data to a chunk by copying.
+   *
+   * @param entry Data to copy.
+   *
+   * @return Location of that data as a record.
+   */
   ChunkListRecord Insert(const EntryType &entry) noexcept {
     ChunkListRecord chunkPair = getChunkWithEmptySlot();
     Chunk *chunk = chunks[chunkPair.ChunkId];
@@ -176,6 +290,13 @@ public:
     return chunkPair;
   }
 
+  /**
+   * @brief Fetches the data and returns a reference to it.
+   *
+   * @param record A record containg the location information.
+   *
+   * @return Reference to the data.
+   */
   EntryType &Get(const ChunkListRecord &record) {
     Systems::Logging::Log(
         "ChunkList was given a record that was out of bounds! Throwing...",
@@ -196,6 +317,13 @@ public:
   // No RemoveChunk because that will make any ID afterwards shift by -1
   // This can be mitigated by storing some kind of UUID system with exact
   // poisions instead.
+  /**
+   * @brief Deletes data at a location.
+   *
+   * @param record A record containg the location information.
+   *
+   * @return True if the data was destroyed, false otherwise.
+   */
   bool Remove(const ChunkListRecord &record) noexcept {
     if (!isRecordValid(record)) {
       return false;
@@ -217,9 +345,23 @@ public:
     return true;
   }
 
+  /**
+   * @brief How many total entries are in this container.
+   *
+   * @return Number of entries in this container (Filled slots in each chunk).
+   */
   std::size_t CountEntries() const noexcept { return entryCount; }
+
+  /**
+   * @brief How many chunks are in this container.
+   *
+   * @return Number of chunks currently allocated.
+   */
   std::size_t CountChunks() const noexcept { return chunks.size(); }
 
+  /**
+   * @brief Clears the container and every entry inside it.
+   */
   void Clear() {
     for (Chunk *chunk : chunks) {
       delete chunk;
@@ -228,7 +370,18 @@ public:
     entryCount = 0;
   }
 
+  /**
+   * @brief Gives an iterator that points to the first slot with data in it.
+   *
+   * @return An iterator.
+   */
   Iterator begin() { return Iterator(getFirstFullSlot(), &chunks); }
+
+  /**
+   * @brief Gives an iterator that points to chunk one after last valid chunk.
+   *
+   * @return An iterator with data outside of the container.
+   */
   Iterator end() { return Iterator(&chunks); }
 
 private:
