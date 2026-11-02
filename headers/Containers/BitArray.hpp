@@ -111,7 +111,8 @@ public:
    *
    * @param value True if looking for the first bit that is set to 1, false for 0.
    *
-   * @return Position of the bit.
+   * @return Position of the bit. If no bit is found with the requested value,
+   * the function will return a value greater than or equal to storedBitCount.
    */
   std::size_t FindFirst(bool value) const noexcept {
     // Find next one
