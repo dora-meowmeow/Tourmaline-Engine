@@ -9,11 +9,32 @@
     <concept>Tourmaline::Concepts::Either</concept>
   </compound>
   <compound kind="file">
+    <name>BitArray.hpp</name>
+    <path>headers/Containers/</path>
+    <filename>BitArray_8hpp.html</filename>
+    <includes id="Logging_8hpp" name="Logging.hpp" local="yes" import="no" module="no" objc="no">../Systems/Logging.hpp</includes>
+    <includes id="ContainerOptions_8hpp" name="ContainerOptions.hpp" local="yes" import="no" module="no" objc="no">ContainerOptions.hpp</includes>
+    <class kind="class">Tourmaline::Containers::BitArray</class>
+  </compound>
+  <compound kind="file">
+    <name>ChunkList.hpp</name>
+    <path>headers/Containers/</path>
+    <filename>ChunkList_8hpp.html</filename>
+    <includes id="Logging_8hpp" name="Logging.hpp" local="yes" import="no" module="no" objc="no">../Systems/Logging.hpp</includes>
+    <includes id="BitArray_8hpp" name="BitArray.hpp" local="yes" import="no" module="no" objc="no">BitArray.hpp</includes>
+    <includes id="ContainerOptions_8hpp" name="ContainerOptions.hpp" local="yes" import="no" module="no" objc="no">ContainerOptions.hpp</includes>
+    <class kind="struct">Tourmaline::Containers::ChunkListRecord</class>
+    <class kind="class">Tourmaline::Containers::ChunkList</class>
+    <class kind="struct">Tourmaline::Containers::ChunkList::Iterator</class>
+  </compound>
+  <compound kind="file">
     <name>ContainerOptions.hpp</name>
     <path>headers/Containers/</path>
     <filename>ContainerOptions_8hpp.html</filename>
     <class kind="struct">Tourmaline::Containers::HashContainerOptions</class>
     <class kind="struct">Tourmaline::Containers::DualKeyMapOptions</class>
+    <class kind="struct">Tourmaline::Containers::ChunkListOptions</class>
+    <class kind="struct">Tourmaline::Containers::BitArrayOptions</class>
   </compound>
   <compound kind="file">
     <name>DualkeyMap.hpp</name>
@@ -186,6 +207,232 @@
       <anchorfile>structTourmaline_1_1Game_1_1Program_1_1Args.html</anchorfile>
       <anchor>a5eb7eff49d9a26d93315df587beaa682</anchor>
       <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Tourmaline::Containers::BitArray</name>
+    <filename>classTourmaline_1_1Containers_1_1BitArray.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>BitArray</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1BitArray.html</anchorfile>
+      <anchor>a7ac8b086bd0c87d00136e5c281242c04</anchor>
+      <arglist>(BitArrayOptions options)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>GetBit</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1BitArray.html</anchorfile>
+      <anchor>aed6ed97f44ee3d9a726b02ca476998c0</anchor>
+      <arglist>(std::size_t index) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetBit</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1BitArray.html</anchorfile>
+      <anchor>a69d80b444cf56e9f611864a3a6d76c7c</anchor>
+      <arglist>(std::size_t index, bool value)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>FlipBit</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1BitArray.html</anchorfile>
+      <anchor>a92a90f0ad66a1e1c75fa457f48c4c3fb</anchor>
+      <arglist>(std::size_t index)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::size_t</type>
+      <name>FindFirst</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1BitArray.html</anchorfile>
+      <anchor>a82f66d4bc826594e4479dceb85c96181</anchor>
+      <arglist>(bool value) const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>SetAll</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1BitArray.html</anchorfile>
+      <anchor>ad88a9dc35195bd49be4ed54fb191571e</anchor>
+      <arglist>(bool value=false) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::span&lt; std::size_t &gt;</type>
+      <name>ViewInternalArray</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1BitArray.html</anchorfile>
+      <anchor>a639d7d2daad95b5b86f1b6209b069a7c</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="variable">
+      <type>std::size_t</type>
+      <name>storedBitCount</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1BitArray.html</anchorfile>
+      <anchor>a22af5fc53dd6ab04f24e9aaa2fc7f341</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>Tourmaline::Containers::BitArrayOptions</name>
+    <filename>structTourmaline_1_1Containers_1_1BitArrayOptions.html</filename>
+    <member kind="variable">
+      <type>std::size_t</type>
+      <name>BitCount</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1BitArrayOptions.html</anchorfile>
+      <anchor>a3de439044307297cabb8928429027df9</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>SetAllBits</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1BitArrayOptions.html</anchorfile>
+      <anchor>a59e9b3e421d0e509d83bce5ed03da81a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>Tourmaline::Containers::ChunkList</name>
+    <filename>classTourmaline_1_1Containers_1_1ChunkList.html</filename>
+    <templarg>typename EntryType</templarg>
+    <templarg>ChunkListOptions options</templarg>
+    <class kind="struct">Tourmaline::Containers::ChunkList::Iterator</class>
+    <member kind="function">
+      <type></type>
+      <name>ChunkList</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>aa3763dd86b3a8c9aa2b7c52062df4d63</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>~ChunkList</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>a54dbfc989d425064deb6668d49cafcff</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ChunkList</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>a972610d3fe8ca1ec4882de4840783b67</anchor>
+      <arglist>(const ChunkList &amp;)=delete</arglist>
+    </member>
+    <member kind="function">
+      <type>ChunkList &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>add9b740303aa2d73cbdd169a6544414a</anchor>
+      <arglist>(const ChunkList &amp;)=delete</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ChunkList</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>af468a6acd5bb290b78eabc08d045216f</anchor>
+      <arglist>(ChunkList &amp;&amp;linkedChunk) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>ChunkList &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>aa500a02721970e5acf9dc2f7f39fa008</anchor>
+      <arglist>(ChunkList &amp;&amp;rightHandSide) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>ChunkListRecord</type>
+      <name>Insert</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>abbed9ab11d81b86a51ddc30058331ad1</anchor>
+      <arglist>(const EntryType &amp;entry) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>EntryType &amp;</type>
+      <name>Get</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>a43de93f22300607793860f5ae64e47d2</anchor>
+      <arglist>(const ChunkListRecord &amp;record)</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>Remove</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>ae3ae617c18471167540530e768687ae3</anchor>
+      <arglist>(const ChunkListRecord &amp;record) noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::size_t</type>
+      <name>CountEntries</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>a04840dd82ef4049ce5397ecad04687e3</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>std::size_t</type>
+      <name>CountChunks</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>a457e7d0e2f27144590968d92871e7fba</anchor>
+      <arglist>() const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>Clear</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>a164042e7a89f43bb4ded0f0a9e17577c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator</type>
+      <name>begin</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>a2d5842ae209c21ed75d95ebb1ed018a7</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator</type>
+      <name>end</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>a17d76c7442ea0007184e09c344f33296</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>Tourmaline::Containers::ChunkListOptions</name>
+    <filename>structTourmaline_1_1Containers_1_1ChunkListOptions.html</filename>
+    <member kind="variable">
+      <type>std::size_t</type>
+      <name>ChunkCapacity</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkListOptions.html</anchorfile>
+      <anchor>a29588848df06d5c7937931964fc68133</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>Tourmaline::Containers::ChunkListRecord</name>
+    <filename>structTourmaline_1_1Containers_1_1ChunkListRecord.html</filename>
+    <member kind="variable">
+      <type>std::size_t</type>
+      <name>ChunkId</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkListRecord.html</anchorfile>
+      <anchor>a9d169ad20a61d1f841af7370d95d92a8</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::size_t</type>
+      <name>SlotPosition</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkListRecord.html</anchorfile>
+      <anchor>a8103a6f5b62c3429179bb27fe675030c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="friend">
+      <type>friend bool</type>
+      <name>operator==</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkListRecord.html</anchorfile>
+      <anchor>a89e0c4a11c8044d24bd9a83e7e3b07b7</anchor>
+      <arglist>(const ChunkListRecord &amp;lhs, const ChunkListRecord &amp;rhs)</arglist>
+    </member>
+    <member kind="friend">
+      <type>friend bool</type>
+      <name>operator!=</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkListRecord.html</anchorfile>
+      <anchor>a0d3918913c6f29b80828500c709f269b</anchor>
+      <arglist>(const ChunkListRecord &amp;lhs, const ChunkListRecord &amp;rhs)</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -622,6 +869,94 @@
       <anchorfile>classTourmaline_1_1Systems_1_1Importer.html</anchorfile>
       <anchor>a68e92d2572a48d76338d534a77a50d95</anchor>
       <arglist>(Corrade::Containers::StringView path)</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>Tourmaline::Containers::ChunkList::Iterator</name>
+    <filename>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</filename>
+    <member kind="function">
+      <type></type>
+      <name>Iterator</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a93890bd7fbdf6d8e25a21f8bfe2f4a3a</anchor>
+      <arglist>(ChunkListRecord position, std::vector&lt; Chunk * &gt; *chunks)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Iterator</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>acd587dac102d40e0b3638064d9335650</anchor>
+      <arglist>(std::vector&lt; Chunk * &gt; *chunks)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>Iterator</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a30f6e5e330a26cc34486c23ee4aa155f</anchor>
+      <arglist>(const Iterator &amp;iterator)</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator &amp;</type>
+      <name>operator=</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a27c09853a187b60ae489e5269c675231</anchor>
+      <arglist>(const Iterator &amp;iterator)</arglist>
+    </member>
+    <member kind="function">
+      <type>EntryType &amp;</type>
+      <name>operator*</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a13a833e57b228eb1b55adca5b731e5a9</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>EntryType *</type>
+      <name>operator-&gt;</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a6605b46152323841e8187be913a07089</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator &amp;</type>
+      <name>operator++</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a328b11a91ce65c5e870a678ce6b6138e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Iterator</type>
+      <name>operator++</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a962b86bb84fe9191b67154cc9b1f752f</anchor>
+      <arglist>(int)</arglist>
+    </member>
+    <member kind="variable">
+      <type>ChunkListRecord</type>
+      <name>position</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a9b3689f8f7d3a0fd9915e95c9a08fd9e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="friend">
+      <type>friend bool</type>
+      <name>operator==</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a649732d4adaa4dacbf1b9ae82309988d</anchor>
+      <arglist>(const Iterator &amp;lhs, const Iterator &amp;rhs)</arglist>
+    </member>
+    <member kind="friend">
+      <type>friend bool</type>
+      <name>operator!=</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a93c87a67ed2a218cd480af6da4db7e1a</anchor>
+      <arglist>(const Iterator &amp;lhs, const Iterator &amp;rhs)</arglist>
+    </member>
+    <member kind="friend">
+      <type>friend void</type>
+      <name>swap</name>
+      <anchorfile>structTourmaline_1_1Containers_1_1ChunkList_1_1Iterator.html</anchorfile>
+      <anchor>a7377b7bdac56cae3c7786d292d8b1d6c</anchor>
+      <arglist>(Iterator &amp;first, Iterator &amp;second)</arglist>
     </member>
   </compound>
   <compound kind="class">
