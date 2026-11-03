@@ -10,7 +10,7 @@
 #include "Systems/Logging.hpp"
 
 #include "Corrade/Containers/String.h"
-#include "Corrade/Containers/StringStl.h"
+#include "Corrade/Containers/StringStl.h" // IWYU pragma: keep
 #include "Corrade/Containers/StringView.h"
 #include "Corrade/Tags.h"
 #include "Corrade/Utility/Format.h"

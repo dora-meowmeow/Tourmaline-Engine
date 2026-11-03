@@ -7,7 +7,7 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "Systems/ECS.hpp"
-#include "Systems/ECS/BuiltinComponents.hpp"
+#include "Systems/ECS.hpp"                   // IWYU pragma: keep
+#include "Systems/ECS/BuiltinComponents.hpp" // IWYU pragma: keep
 
 // Empty until future use

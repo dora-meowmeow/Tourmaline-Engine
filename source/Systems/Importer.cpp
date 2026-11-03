@@ -17,9 +17,9 @@
 
 #include "Magnum/GL/Texture.h"
 #include "Magnum/GL/TextureFormat.h"
-#include "Magnum/ImageView.h"
+#include "Magnum/ImageView.h" // IWYU pragma: keep
 #include "Magnum/MeshTools/Compile.h"
-#include "Magnum/Trade/MeshData.h"
+#include "Magnum/Trade/MeshData.h" // IWYU pragma: keep
 
 using namespace Tourmaline::Systems;
 using namespace Magnum;

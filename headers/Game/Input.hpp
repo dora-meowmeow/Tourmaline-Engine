@@ -11,5 +11,5 @@
  * @file
  * @brief Collection of all input headers
  */
-#include "Input/Keyboard.hpp"
-#include "Input/Pointer.hpp"
+#include "Input/Keyboard.hpp" // IWYU pragma: keep
+#include "Input/Pointer.hpp"  // IWYU pragma: keep
