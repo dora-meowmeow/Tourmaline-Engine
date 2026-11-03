@@ -9,13 +9,10 @@
 #ifndef GUARD_TOURMALINE_TESTS_H
 #define GUARD_TOURMALINE_TESTS_H
 
-#include "Corrade/Containers/String.h"
 #include "Corrade/Containers/StringStlHash.h" // IWYU pragma: keep
 #include "Corrade/TestSuite/Tester.h"
 
-#include "Containers/BitArray.hpp"
-#include "Containers/Hashlist.hpp"
-#include "Systems/ECS.hpp"
+#include "Systems/Logging.hpp"
 
 #define CORRADE_VERIFY_TYPE(x, y) CORRADE_VERIFY(typeid(x) == typeid(y))
 
@@ -47,6 +44,7 @@ public:
     addTests({&Tests::BitArray_SetBits, &Tests::BitArray_FlipBits,
               &Tests::BitArray_FindFirst, &Tests::BitArray_SetAll});
 
+    // Hashlist
     addTests({&Tests::Hashlist_Insert, &Tests::Hashlist_Has,
               &Tests::Hashlist_Remove, &Tests::Hashlist_ListAndExtract,
               &Tests::Hashlist_Clear});
@@ -58,34 +56,28 @@ public:
   void Random_Benchmark_Generating1kIntegers();
 
   // Tourmaline::Systems::ECS
-  static constexpr uint32_t ecsGoal = 50'000, multiStepBatchCount = 5,
-                            stepBatchCount = 20;
-  static Tourmaline::Systems::ECS::World world;
+  static constexpr uint32_t multiStepBatchCount = 5, stepBatchCount = 20;
   void ECS_Benchmark_GoalCreate();
   void ECS_Benchmark_FetchAndStep();
   void ECS_Benchmark_60Steps();
   void ECS_Benchmark_Step();
 
   // Tourmaline::Systems::Logging
-  static Corrade::Containers::String fakeStdOutName;
   void Logging_ConsoleAndFileSync();
   void Logging_FileSwitching();
   void Logging_ErrorAndCritical();
 
   // Tourmaline::Systems::Serialization
-  static Corrade::Containers::String serialDataFileName;
   void Serialization_CanSerialize();
   void Serialization_CanDeserialize();
 
   // Tourmaline::Containers::BitArray
-  Tourmaline::Containers::BitArray bitArray{{92, false}};
   void BitArray_SetBits();
   void BitArray_FlipBits();
   void BitArray_FindFirst();
   void BitArray_SetAll();
 
   // Tourmaline::Containers::Hashlist
-  Tourmaline::Containers::Hashlist<Corrade::Containers::String> hashlist;
   void Hashlist_Insert();
   void Hashlist_Has();
   void Hashlist_Remove();

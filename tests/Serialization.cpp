@@ -7,10 +7,13 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "Corrade/Containers/ArrayView.h" // IWYU pragma: keep
 #include "Corrade/Containers/Optional.h"
 #include "Corrade/Containers/String.h"
+
 #include "Corrade/TestSuite/Compare/String.h"
 #include "Corrade/TestSuite/Tester.h"
+
 #include "Corrade/Utility/Path.h"
 
 #include "Systems/Serialization.hpp"
@@ -19,7 +22,7 @@
 using namespace Tourmaline;
 using namespace Systems;
 
-Corrade::Containers::String Tests::serialDataFileName = "Test_SerialData.data";
+Corrade::Containers::StringView serialDataFileName = "Test_SerialData.data";
 
 struct dummierData : public Serialization::Serializable<dummierData> {
   int16_t a;

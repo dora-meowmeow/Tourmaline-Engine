@@ -8,7 +8,10 @@
  */
 #include "Corrade/Containers/String.h"
 #include "Corrade/TestSuite/Tester.h"
+
+#include "Containers/Hashlist.hpp"
 #include "Tests.hpp"
+
 #include <array>
 
 using namespace Tourmaline::Systems;
@@ -17,8 +20,10 @@ using namespace Corrade;
 // Dummy data
 // Duplicates are knowingly added
 constexpr std::size_t randomDataCount = 20;
-constexpr std::size_t duplicateCount = 3; // This is 1 original and 3 duplicates
-constexpr std::size_t uniqueCount = 20 - 3;
+constexpr std::size_t uniqueCount =
+    20 - 3; // This is 1 original and 3 duplicates
+
+Tourmaline::Containers::Hashlist<Corrade::Containers::String> hashlist;
 std::array<Containers::String, randomDataCount> randomData{
     "Magnum Graphics is awesome!",
     "The shark plushies are filling my room! D:",

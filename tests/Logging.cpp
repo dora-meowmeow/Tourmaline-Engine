@@ -24,7 +24,7 @@ using namespace Tourmaline;
 using namespace Systems;
 using namespace Corrade;
 
-Corrade::Containers::String Tests::fakeStdOutName = "fakestdout.txt",
+Corrade::Containers::String fakeStdOutName = "fakestdout.txt",
                             position = "LoggingTest";
 
 void Tests::Logging_ConsoleAndFileSync() {
@@ -51,7 +51,7 @@ void Tests::Logging_ConsoleAndFileSync() {
     }
 
     Helper_SwitchSTDOUT(false);
-    CORRADE_COMPARE_AS(outfile, Tests::fakeStdOutName,
+    CORRADE_COMPARE_AS(outfile, fakeStdOutName,
                        Corrade::TestSuite::Compare::File);
   } catch (...) {
     CORRADE_EXPECT_FAIL(
@@ -138,7 +138,7 @@ void Tests::Helper_SwitchSTDOUT(bool fakeSTD) {
   fflush(stdout);
 
   if (fakeSTD) {
-    FILE *fakeStdOut = fopen(Tests::fakeStdOutName.data(), "w");
+    FILE *fakeStdOut = fopen(fakeStdOutName.data(), "w");
     dup2(fileno(fakeStdOut), STDOUT_FILENO);
     fclose(fakeStdOut);
     return;

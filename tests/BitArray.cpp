@@ -14,6 +14,7 @@
 
 using namespace Tourmaline::Systems;
 
+Tourmaline::Containers::BitArray bitArray{{92, false}};
 void Tests::BitArray_SetBits() {
   for (uint8_t index = 0; index < 20; index++) {
     bitArray.SetBit(Random::Generate(91, 0), 1);

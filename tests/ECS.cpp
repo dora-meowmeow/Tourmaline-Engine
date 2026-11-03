@@ -17,7 +17,8 @@
 using namespace Tourmaline;
 using namespace Systems;
 
-Tourmaline::Systems::ECS::World Tests::world{ecsGoal};
+constexpr uint32_t ecsGoal = 50'000;
+Tourmaline::Systems::ECS::World world{ecsGoal};
 
 void moveWithRandom(const ECS::Entity &, Components::Transform &transform) {
   transform.Matrix.translate({Random::Generate(10.f) - 5,
@@ -34,7 +35,7 @@ void rotate(const ECS::Entity &, Components::Transform &transform) {
 }
 
 void Tests::ECS_Benchmark_GoalCreate() {
-  CORRADE_INFO(Corrade::Utility::format("Goal is {} entities", Tests::ecsGoal));
+  CORRADE_INFO(Corrade::Utility::format("Goal is {} entities", ecsGoal));
   CORRADE_BENCHMARK(1) {
     for (uint64_t x = 0; x < ecsGoal; x++) {
       ECS::Entity entity = world.CreateEntity();
