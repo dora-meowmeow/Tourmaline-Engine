@@ -39,6 +39,7 @@ const char *Logging::LogLevelToString[Logging::Trace + 1]{
 std::fstream Logging::File;
 
 bool Logging::WithANSIColour = true;
+Logging::LogLevel Logging::MinimumLogSeverity = Logging::Trace;
 
 Corrade::Containers::Function<void()> Logging::TerminationFunction = [] {};
 
@@ -76,6 +77,15 @@ void Logging::LogToFile(String file, bool clearContent) {
 
 void Logging::Log(StringView message, StringView position,
                   Logging::LogLevel severity, bool condition) {
+  if (MinimumLogSeverity < severity) {
+    // These won't contain anything if you are supressing errors
+    if (severity == Logging::Error) {
+      throw std::runtime_error("");
+    }
+
+    return;
+  }
+
   if (condition) {
     static String output{Corrade::ValueInit,
                          4096}; // This is done to stop allocations
