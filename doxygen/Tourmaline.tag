@@ -351,6 +351,13 @@
     </member>
     <member kind="function">
       <type>bool</type>
+      <name>Has</name>
+      <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
+      <anchor>a2e891ab40564ea9526bf1017da2f8fce</anchor>
+      <arglist>(const ChunkListRecord &amp;record) const noexcept</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
       <name>Remove</name>
       <anchorfile>classTourmaline_1_1Containers_1_1ChunkList.html</anchorfile>
       <anchor>ae3ae617c18471167540530e768687ae3</anchor>
@@ -699,10 +706,10 @@
       <arglist>(Entry entry)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>bool</type>
       <name>Remove</name>
       <anchorfile>classTourmaline_1_1Containers_1_1Hashlist.html</anchorfile>
-      <anchor>a9f53d4a00138d744b7ef9e8b4df2d474</anchor>
+      <anchor>a55ed380ca6423b797e35395a1dca7fd1</anchor>
       <arglist>(const Entry &amp;entry)</arglist>
     </member>
     <member kind="function">
@@ -761,10 +768,10 @@
       <arglist>(Key key, Value value)</arglist>
     </member>
     <member kind="function">
-      <type>void</type>
+      <type>bool</type>
       <name>Remove</name>
       <anchorfile>classTourmaline_1_1Containers_1_1Hashmap.html</anchorfile>
-      <anchor>acb419af54253e9c84be860f289b5c4f8</anchor>
+      <anchor>a0cfa31c8e7719c9c9c1efd6b0ce4c88a</anchor>
       <arglist>(const Key &amp;key)</arglist>
     </member>
     <member kind="function">
@@ -1062,6 +1069,13 @@
       <name>WithANSIColour</name>
       <anchorfile>classTourmaline_1_1Systems_1_1Logging.html</anchorfile>
       <anchor>a786a3ad00cfe82431ec22469a6a4b484</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static LogLevel</type>
+      <name>MinimumLogSeverity</name>
+      <anchorfile>classTourmaline_1_1Systems_1_1Logging.html</anchorfile>
+      <anchor>a85a1e2b1f76b23111673b6eca50c0501</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -1803,10 +1817,16 @@
     <filename>conceptTourmaline_1_1Systems_1_1ECS_1_1isAComponent.html</filename>
   </compound>
   <compound kind="page">
+    <name>cmake</name>
+    <title>CMake flags for when compiling Tourmaline</title>
+    <filename>cmake.html</filename>
+  </compound>
+  <compound kind="page">
     <name>about</name>
     <title>About</title>
     <filename>about.html</filename>
     <subpage>supportedFileTypes.html</subpage>
+    <subpage>cmake.html</subpage>
     <subpage>faq.html</subpage>
     <subpage>status.html</subpage>
   </compound>
