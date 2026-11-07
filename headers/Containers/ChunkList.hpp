@@ -315,12 +315,12 @@ public:
   }
 
   /**
-   * @brief Checks to see if the record points to a slot with a value.
+   * @brief Checks to see if a given record points to a slot with a value.
    *
    * @param record A record containg the location information.
    *
    * @return True, if the record points to a slot with a value. False, if either
-   * slot doesn't contain data OR the record is invalid.
+   * the slot doesn't contain data OR the record is invalid.
    */
   bool Has(const ChunkListRecord &record) const noexcept {
     // Not using at since we already did bounds check above

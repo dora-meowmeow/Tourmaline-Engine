@@ -110,7 +110,7 @@ public:
   static bool WithANSIColour;
 
   /**
-   * @brief What is the lowest severity that should be printed.
+   * @brief Specifies the lowest log severity that should be printed.
    *
    * This is set to LogLevel::Trace by default so every Log message of any
    * severity is printed.
