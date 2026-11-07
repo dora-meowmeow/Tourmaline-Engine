@@ -28,6 +28,7 @@ Corrade::Containers::String fakeStdOutName = "fakestdout.txt",
                             position = "LoggingTest";
 
 void Tests::Logging_ConsoleAndFileSync() {
+  Tourmaline::Systems::Logging::WithANSIColour = false; // less headaches
   Corrade::Containers::String outfile = "Test_WritingToFile.txt";
   try {
     Logging::LogToFile(outfile, true);
@@ -57,10 +58,12 @@ void Tests::Logging_ConsoleAndFileSync() {
     CORRADE_EXPECT_FAIL(
         "The fail could be due to a permission issue. Skipping.");
     CORRADE_VERIFY(false);
+    Tourmaline::Systems::Logging::WithANSIColour = true;
   }
 }
 
 void Tests::Logging_FileSwitching() {
+  Tourmaline::Systems::Logging::WithANSIColour = false;
   Corrade::Containers::String outfile = "Test_FileSwitching.txt",
                               otherfile =
                                   "Test_FileSwitchingTotallyUnrealted.txt";
@@ -84,7 +87,7 @@ void Tests::Logging_FileSwitching() {
     CORRADE_EXPECT_FAIL(
         "The fail could be due to a permission issue. Skipping.");
     CORRADE_VERIFY(false);
-    return;
+    Tourmaline::Systems::Logging::WithANSIColour = true;
   }
 
   Helper_SwitchSTDOUT(false);
@@ -92,6 +95,7 @@ void Tests::Logging_FileSwitching() {
 }
 
 void Tests::Logging_ErrorAndCritical() {
+  Tourmaline::Systems::Logging::WithANSIColour = false;
   // Just so the console stays clean
   Helper_SwitchSTDOUT(true);
   bool thrown = false, triedToTerminate = false,
@@ -130,6 +134,7 @@ void Tests::Logging_ErrorAndCritical() {
 
   Helper_SwitchSTDOUT(false);
   CORRADE_VERIFY(thrown && triedToTerminate && calledTerminateFunction);
+  Tourmaline::Systems::Logging::WithANSIColour = true;
 }
 
 void Tests::Helper_SwitchSTDOUT(bool fakeSTD) {

@@ -32,7 +32,6 @@ public:
     addBenchmarks({&Tests::ECS_Benchmark_60Steps}, multiStepBatchCount);
 
     // Logging
-    Tourmaline::Systems::Logging::WithANSIColour = false; // Less headache
     addTests({&Tests::Logging_ConsoleAndFileSync, &Tests::Logging_FileSwitching,
               &Tests::Logging_ErrorAndCritical});
 

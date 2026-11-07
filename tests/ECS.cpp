@@ -7,8 +7,8 @@
  * obtain one at http://mozilla.org/MPL/2.0/.
  */
 #include "Systems/ECS.hpp"
-#include "Corrade/Utility/Format.h"
 #include "Systems/ECS/BuiltinComponents.hpp"
+#include "Systems/Logging.hpp"
 #include "Systems/Random.hpp"
 
 #include "Corrade/TestSuite/Tester.h"
@@ -35,7 +35,8 @@ void rotate(const ECS::Entity &, Components::Transform &transform) {
 }
 
 void Tests::ECS_Benchmark_GoalCreate() {
-  CORRADE_INFO(Corrade::Utility::format("Goal is {} entities", ecsGoal));
+  Logging::LogFormatted("Goal is {} entities", "Benchmark", Logging::Debug,
+                        ecsGoal);
   CORRADE_BENCHMARK(1) {
     for (uint64_t x = 0; x < ecsGoal; x++) {
       ECS::Entity entity = world.CreateEntity();
