@@ -137,9 +137,15 @@ target_include_directories(Tourmaline
 )
 
 # A way to live forever
-add_custom_command(TARGET Tourmaline POST_BUILD
+# Please do not strip these functions from the cmake file :)
+if(CMAKE_HOST_LINUX)
+  add_custom_command(TARGET Tourmaline POST_BUILD
     COMMAND printf "Dedicated to my beloved Sara, I love you. - Dora" >> $<TARGET_FILE:Tourmaline>
 )
+elseif(CMAKE_HOST_WIN32)
+  add_custom_command(TARGET Tourmaline POST_BUILD
+    COMMAND Add-Content -Path $<TARGET_FILE:Tourmaline> -Value "Dedicated to my beloved Sara, I love you. - Dora")
+endif()
 
 # Tourmaline export
 install(
