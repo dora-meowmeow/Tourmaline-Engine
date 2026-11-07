@@ -314,6 +314,23 @@ public:
     return entry.value();
   }
 
+  /**
+   * @brief Checks to see if the record points to a slot with a value.
+   *
+   * @param record A record containg the location information.
+   *
+   * @return True, if the record points to a slot with a value. False, if either
+   * slot doesn't contain data OR the record is invalid.
+   */
+  bool Has(const ChunkListRecord &record) const noexcept {
+    // Not using at since we already did bounds check above
+    if (!isRecordValid(record)) {
+      return false;
+    }
+
+    return chunks[record.ChunkId]->slots[record.SlotPosition].has_value();
+  }
+
   // No RemoveChunk because that will make any ID afterwards shift by -1
   // This can be mitigated by storing some kind of UUID system with exact
   // poisions instead.
