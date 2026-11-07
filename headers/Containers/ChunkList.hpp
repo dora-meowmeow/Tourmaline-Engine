@@ -282,7 +282,27 @@ public:
     Chunk *chunk = chunks[chunkPair.ChunkId];
     std::size_t slot = chunkPair.SlotPosition;
 
-    chunk->slots[slot] = entry;
+    chunk->slots[slot].emplace(entry);
+    chunk->isSlotTaken.SetBit(slot, true);
+    chunk->leftmostEmptySlot = chunk->isSlotTaken.FindFirst(0);
+    ++entryCount;
+
+    return chunkPair;
+  }
+
+  /**
+   * @brief Inserts data into a chunk by moving.
+   *
+   * @param entry Data to move.
+   *
+   * @return Location of that data as a record.
+   */
+  ChunkListRecord Insert(EntryType &&entry) noexcept {
+    ChunkListRecord chunkPair = getChunkWithEmptySlot();
+    Chunk *chunk = chunks[chunkPair.ChunkId];
+    std::size_t slot = chunkPair.SlotPosition;
+
+    chunk->slots[slot].emplace(std::move(entry));
     chunk->isSlotTaken.SetBit(slot, true);
     chunk->leftmostEmptySlot = chunk->isSlotTaken.FindFirst(0);
     ++entryCount;
@@ -395,7 +415,8 @@ public:
   Iterator begin() { return Iterator(getFirstFullSlot(), &chunks); }
 
   /**
-   * @brief Gives an iterator that points to the chunk one after the last valid chunk.
+   * @brief Gives an iterator that points to the chunk one after the last valid
+   * chunk.
    *
    * @return An iterator with data outside of the container.
    */
