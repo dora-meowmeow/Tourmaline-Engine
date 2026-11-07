@@ -35,6 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Updating Docs (Doxygen/1.14.0)
     needs: [CompileVoid]
+    if: github.event_name == 'push'
     container:
       image: ghcr.io/void-linux/void-glibc:20261021r2
       volumes:
