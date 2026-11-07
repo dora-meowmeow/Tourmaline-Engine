@@ -12,8 +12,6 @@
 #include "Corrade/Containers/StringStlHash.h" // IWYU pragma: keep
 #include "Corrade/TestSuite/Tester.h"
 
-#include "Systems/Logging.hpp"
-
 #define CORRADE_VERIFY_TYPE(x, y) CORRADE_VERIFY(typeid(x) == typeid(y))
 
 class Tests : public Corrade::TestSuite::Tester {
@@ -47,6 +45,19 @@ public:
     addTests({&Tests::Hashlist_Insert, &Tests::Hashlist_Has,
               &Tests::Hashlist_Remove, &Tests::Hashlist_ListAndExtract,
               &Tests::Hashlist_Clear});
+
+    // ChunkList
+    addTests({&Tests::ChunkList_Insert, &Tests::ChunkList_Get,
+              &Tests::ChunkList_Remove, &Tests::ChunkList_Iterator,
+              &Tests::ChunkList_Clear});
+    // ChunkList Benchmarking
+    addBenchmarks({&Tests::ChunkList_Benchmark_IteratorNoGaps,
+                   &Tests::ChunkList_Benchmark_NonIteratorNoGaps},
+                  chunklistBatchCount);
+    addTests({&Tests::ChunkList_Benchmark_HelperMakeGaps});
+    addBenchmarks({&Tests::ChunkList_Benchmark_IteratorWithGaps,
+                   &Tests::ChunkList_Benchmark_NonIteratorWithGaps},
+                  chunklistBatchCount);
   }
 
   // Tourmaline::Systems::Random
@@ -82,6 +93,20 @@ public:
   void Hashlist_Remove();
   void Hashlist_ListAndExtract();
   void Hashlist_Clear();
+
+  // Tourmaline::Containers::ChunkList
+  void ChunkList_Insert();
+  void ChunkList_Get();
+  void ChunkList_Remove();
+  void ChunkList_Iterator();
+  void ChunkList_Clear();
+
+  static constexpr uint32_t chunklistBatchCount = 20;
+  void ChunkList_Benchmark_IteratorNoGaps();
+  void ChunkList_Benchmark_NonIteratorNoGaps();
+  void ChunkList_Benchmark_HelperMakeGaps();
+  void ChunkList_Benchmark_IteratorWithGaps();
+  void ChunkList_Benchmark_NonIteratorWithGaps();
 
   // Helpers
   void Helper_SwitchSTDOUT(bool fakeSTD);

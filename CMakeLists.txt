@@ -188,6 +188,7 @@ if(TOURMALINE_WITH_TESTS)
     "tests/Serialization.cpp"
     "tests/BitArray.cpp"
     "tests/Hashlist.cpp"
+    "tests/ChunkList.cpp"
   )
 
   target_link_libraries(TourmalineTest
