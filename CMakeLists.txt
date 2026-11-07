@@ -23,7 +23,8 @@ set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/Tourmaline")
 set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_INCLUDEDIR}/TourmalineExternal")
 
 # Arguments
-option(TOURMALINE_WITH_TESTS ON)
+option(TOURMALINE_WITH_TESTS "" OFF)
+option(TOURMALINE_WITH_BENCHMARKS "" ON)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -fsanitize=address -coverage")
@@ -180,6 +181,9 @@ install(DIRECTORY TourmalineExternal/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Unit Tests
 if(TOURMALINE_WITH_TESTS)
+  if(TOURMALINE_WITH_BENCHMARKS)
+    add_compile_definitions(TOURMALINE_WITH_BENCHMARKS)
+  endif()
   add_executable(TourmalineTest
     "tests/Tests.cpp"
     "tests/Random.cpp"

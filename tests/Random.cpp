@@ -9,7 +9,6 @@
 
 #include "Systems/Random.hpp"
 #include "Corrade/TestSuite/Tester.h"
-#include "Systems/Logging.hpp"
 #include "Tests.hpp"
 
 #include <array>
@@ -32,9 +31,11 @@ void Tests::Random_SetSeed() {
   }
   Random::SetSeed(originalSeed);
 
+#ifdef TOURMALINE_WITH_BENCHMARKS
   Logging::LogFormatted(
       "GeneratingIntegers benchmark will generate {} random integers.",
       "Benchmark", Logging::Debug, benchmarkGoal);
+#endif
 }
 
 void Tests::Random_Benchmark_GeneratingIntegers() {

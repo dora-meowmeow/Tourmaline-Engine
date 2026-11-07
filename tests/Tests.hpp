@@ -12,6 +12,8 @@
 #include "Corrade/Containers/StringStlHash.h" // IWYU pragma: keep
 #include "Corrade/TestSuite/Tester.h"
 
+#include "Systems/Logging.hpp" // IWYU pragma: keep
+
 #define CORRADE_VERIFY_TYPE(x, y) CORRADE_VERIFY(typeid(x) == typeid(y))
 
 class Tests : public Corrade::TestSuite::Tester {
@@ -19,15 +21,18 @@ public:
   Tests() {
     // Random
     addTests({&Tests::Random_SetSeed});
+#ifdef TOURMALINE_WITH_BENCHMARKS
     addBenchmarks({&Tests::Random_Benchmark_GeneratingIntegers},
                   randomBatchCount);
-
+#endif
     // ECS
+#ifdef TOURMALINE_WITH_BENCHMARKS
     addBenchmarks(
         {&Tests::ECS_Benchmark_GoalCreate, &Tests::ECS_Benchmark_FetchAndStep},
         1);
     addBenchmarks({&Tests::ECS_Benchmark_Step}, stepBatchCount);
     addBenchmarks({&Tests::ECS_Benchmark_60Steps}, multiStepBatchCount);
+#endif
 
     // Logging
     addTests({&Tests::Logging_ConsoleAndFileSync, &Tests::Logging_FileSwitching,
@@ -51,6 +56,7 @@ public:
               &Tests::ChunkList_Remove, &Tests::ChunkList_Iterator,
               &Tests::ChunkList_Clear});
     // ChunkList Benchmarking
+#ifdef TOURMALINE_WITH_BENCHMARKS
     addBenchmarks({&Tests::ChunkList_Benchmark_IteratorNoGaps,
                    &Tests::ChunkList_Benchmark_NonIteratorNoGaps},
                   chunklistBatchCount);
@@ -58,6 +64,7 @@ public:
     addBenchmarks({&Tests::ChunkList_Benchmark_IteratorWithGaps,
                    &Tests::ChunkList_Benchmark_NonIteratorWithGaps},
                   chunklistBatchCount);
+#endif
   }
 
   // Tourmaline::Systems::Random

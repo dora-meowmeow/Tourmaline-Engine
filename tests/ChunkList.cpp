@@ -11,7 +11,6 @@
 #include "Containers/Hashlist.hpp"
 #include "Corrade/TestSuite/Tester.h"
 
-#include "Systems/Logging.hpp"
 #include "Systems/Random.hpp"
 #include "Tests.hpp"
 
@@ -117,9 +116,10 @@ void Tests::ChunkList_Clear() {
 
   CORRADE_VERIFY(chunkList.CountEntries() == goal &&
                  chunkList.CountChunks() == chunks);
-
+#ifdef TOURMALINE_WITH_BENCHMARKS
   Logging::LogFormatted("Entry count is {} for benchmark runs.", "Benchmark",
                         Logging::Debug, chunkList.CountEntries());
+#endif
 }
 
 void Tests::ChunkList_Benchmark_IteratorNoGaps() {
