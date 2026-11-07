@@ -9,12 +9,15 @@
 
 #include "Systems/Random.hpp"
 #include "Corrade/TestSuite/Tester.h"
+#include "Systems/Logging.hpp"
 #include "Tests.hpp"
 
 #include <array>
 #include <cstdint>
 
 using namespace Tourmaline::Systems;
+
+constexpr uint32_t benchmarkGoal = 100'000;
 
 void Tests::Random_SetSeed() {
   uint64_t originalSeed = Random::GetSeed();
@@ -28,11 +31,15 @@ void Tests::Random_SetSeed() {
                     expectedValues[x]);
   }
   Random::SetSeed(originalSeed);
+
+  Logging::LogFormatted(
+      "GeneratingIntegers benchmark will generate {} random integers.",
+      "Benchmark", Logging::Debug, benchmarkGoal);
 }
 
-void Tests::Random_Benchmark_Generating1kIntegers() {
+void Tests::Random_Benchmark_GeneratingIntegers() {
   CORRADE_BENCHMARK(randomBatchCount) {
-    for (uint32_t x = 0; x < 1000; x++) {
+    for (uint32_t x = 0; x < benchmarkGoal; x++) {
       Tourmaline::Systems::Random::Generate(INT32_MAX - 1, INT32_MIN + 1);
     }
   }
