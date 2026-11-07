@@ -28,7 +28,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DTOURMALINE_WITH_TESTS=ON
+          cmake .. -DTOURMALINE_WITH_TESTS=ON -DTOURMALINE_WITH_BENCHMARKS=ON
           make -j20
 
   UpdateDocs:
