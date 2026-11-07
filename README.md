@@ -25,3 +25,4 @@ Tourmaline Engine is a C++23 game engine. It is a pet project of [cat@thenight.c
 # License
 
 Tourmaline Engine's source code is subject to the terms of the Mozilla Public License, v. 2.0. <http://mozilla.org/MPL/2.0/>.
+
