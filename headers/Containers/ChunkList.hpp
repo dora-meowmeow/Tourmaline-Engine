@@ -18,6 +18,7 @@
 #include <cstddef>
 
 #include <array>
+#include <iterator> // IWYU pragma: keep
 #include <optional>
 #include <utility>
 #include <vector>
@@ -218,10 +219,11 @@ public:
    * is set to 0.
    */
   ChunkList() {
-    Systems::Logging::Log("ChunkListOptions::ChunkCapacity cannot be 0 or "
-                          "less! Terminating...",
-                          "ChunkList", Systems::Logging::Critical,
-                          options.ChunkCapacity == 0);
+    if (options.ChunkCapacity == 0) {
+      Systems::Logging::Log("ChunkListOptions::ChunkCapacity cannot be 0 or "
+                            "less! Terminating...",
+                            "ChunkList", Systems::Logging::Critical);
+    }
     chunks.push_back(new Chunk{});
   }
 
@@ -318,9 +320,11 @@ public:
    * @return Reference to the data.
    */
   EntryType &Get(const ChunkListRecord &record) {
-    Systems::Logging::Log(
-        "ChunkList was given a record that was out of bounds! Throwing...",
-        "ChunkList/Get", Systems::Logging::Error, !isRecordValid(record));
+    if (!isRecordValid(record)) {
+      Systems::Logging::Log(
+          "ChunkList was given a record that was out of bounds! Throwing...",
+          "ChunkList/Get", Systems::Logging::Error);
+    }
 
     // Not using at since we already did bounds check above
     Entry &entry = chunks[record.ChunkId]->slots[record.SlotPosition];

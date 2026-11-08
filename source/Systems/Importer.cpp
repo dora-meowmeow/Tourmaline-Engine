@@ -34,8 +34,10 @@ Containers::Pointer<Trade::AbstractImporter> Importer::sceneImporter =
     pluginManager.loadAndInstantiate("AnySceneImporter");
 
 Trade::ImageData2D Importer::LoadImage2D(Containers::StringView path) {
-  Logging::Log("AnyImageImporter plugin failed to be loaded. Terminating...",
-               "Importer/LoadImage2D", Logging::Critical, !imageImporter);
+  if (!imageImporter) {
+    Logging::Log("AnyImageImporter plugin failed to be loaded. Terminating...",
+                 "Importer/LoadImage2D", Logging::Critical);
+  }
 
   if (!imageImporter->openFile(path)) {
     Logging::LogFormatted("Could not open file {}! Throwing...",
@@ -66,8 +68,10 @@ GL::Texture2D Importer::LoadTexture2D(Containers::StringView path,
 }
 
 GL::Mesh Importer::LoadMesh(Containers::StringView path, uint64_t index) {
-  Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
-               "Importer/LoadMesh", Logging::Critical, !sceneImporter);
+  if (!sceneImporter) {
+    Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
+                 "Importer/LoadMesh", Logging::Critical);
+  }
 
   if (!sceneImporter->openFile(path)) {
     Logging::LogFormatted("Could not open file {}! Throwing...",
@@ -79,8 +83,10 @@ GL::Mesh Importer::LoadMesh(Containers::StringView path, uint64_t index) {
 
 GL::Mesh Importer::LoadMesh(Containers::StringView path,
                             Containers::StringView name) {
-  Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
-               "Importer/LoadMesh", Logging::Critical, !sceneImporter);
+  if (!sceneImporter) {
+    Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
+                 "Importer/LoadMesh", Logging::Critical);
+  }
 
   if (!sceneImporter->openFile(path)) {
     Logging::LogFormatted("Could not open file {}! Throwing...",
@@ -97,8 +103,10 @@ std::vector<Importer::MeshInfo>
 Importer::LoadAllMeshes(Corrade::Containers::StringView path) {
   std::vector<Importer::MeshInfo> result;
 
-  Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
-               "Importer/LoadAllMeshes", Logging::Critical, !sceneImporter);
+  if (!sceneImporter) {
+    Logging::Log("AnySceneImporter plugin failed to be loaded. Terminating...",
+                 "Importer/LoadAllMeshes", Logging::Critical);
+  }
 
   if (!sceneImporter->openFile(path)) {
     Logging::LogFormatted("Could not open file {}! Throwing...",

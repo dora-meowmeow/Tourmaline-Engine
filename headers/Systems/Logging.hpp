@@ -59,12 +59,10 @@ public:
    * optional, is highly recommended.
    * @param severity How severe this log message is. See
    * Tourmaline::Systems::Logging::LogLevel.
-   * @param condition The log message will only be sent when this is set to
-   * true, otherwise it will be ignored.
    */
   static void Log(Corrade::Containers::StringView message,
                   Corrade::Containers::StringView position = "Unknown",
-                  LogLevel severity = LogLevel::Info, bool condition = true);
+                  LogLevel severity = LogLevel::Info);
 
   /**
    * @brief Formatting logging function.

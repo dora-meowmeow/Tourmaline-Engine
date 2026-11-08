@@ -58,8 +58,11 @@ public:
     // Empty bucket
     if (!storage[keyHashPosition].empty()) {
       // Throws
-      Systems::Logging::Log("Trying to insert the same key twice! Throwing...",
-                            "Hashmap", Systems::Logging::Error, Has(key));
+      if (Has(key)) {
+        Systems::Logging::Log(
+            "Trying to insert the same key twice! Throwing...", "Hashmap",
+            Systems::Logging::Error);
+      }
     } else {
       storage[keyHashPosition].reserve(Options.reservedBucketSpace);
     }
@@ -142,9 +145,11 @@ public:
     std::size_t keyHash = std::hash<Key>{}(key),
                 keyHashPosition = keyHash % storage.size();
 
-    Systems::Logging::Log(
-        "Trying to access a non-existant bucket for a key! Throwing...",
-        "Hashmap", Systems::Logging::Error, storage[keyHashPosition].empty());
+    if (storage[keyHashPosition].empty()) {
+      Systems::Logging::Log(
+          "Trying to access a non-existant bucket for a key! Throwing...",
+          "Hashmap", Systems::Logging::Error);
+    }
 
     for (hashStorage &hash : storage[keyHashPosition]) {
       if (hash.hash == keyHash && hash.key == key) {
@@ -175,9 +180,11 @@ public:
     std::size_t keyHash = std::hash<Key>{}(key),
                 keyHashPosition = keyHash % storage.size();
 
-    Systems::Logging::Log(
-        "Trying to access a non-existant bucket for a key! Throwing...",
-        "Hashmap", Systems::Logging::Error, storage[keyHashPosition].empty());
+    if (storage[keyHashPosition].empty()) {
+      Systems::Logging::Log(
+          "Trying to access a non-existant bucket for a key! Throwing...",
+          "Hashmap", Systems::Logging::Error);
+    }
 
     for (const hashStorage &hash : storage[keyHashPosition]) {
       if (hash.hash == keyHash && hash.key == key) {

@@ -58,9 +58,11 @@ public:
     // Empty bucket
     if (!storage[entryHashPosition].empty()) {
       // Throws
-      Systems::Logging::Log(
-          "Trying to insert the same entry twice! Throwing...", "Hashmap",
-          Systems::Logging::Error, Has(entry));
+      if (Has(entry)) {
+        Systems::Logging::Log(
+            "Trying to insert the same entry twice! Throwing...", "Hashmap",
+            Systems::Logging::Error);
+      }
     } else {
       storage[entryHashPosition].reserve(Options.reservedBucketSpace);
     }

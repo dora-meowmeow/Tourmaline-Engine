@@ -76,7 +76,7 @@ void Logging::LogToFile(String file, bool clearContent) {
 }
 
 void Logging::Log(StringView message, StringView position,
-                  Logging::LogLevel severity, bool condition) {
+                  Logging::LogLevel severity) {
   if (MinimumLogSeverity < severity) {
     // These won't contain anything if you are supressing errors
     if (severity == Logging::Error) {
@@ -86,40 +86,38 @@ void Logging::Log(StringView message, StringView position,
     return;
   }
 
-  if (condition) {
-    static String output{Corrade::ValueInit,
-                         4096}; // This is done to stop allocations
-    std::size_t formattedSize = formatInto(
-        output, " [{}@{}] {}\n", LogLevelToString[severity], position, message);
+  static String output{Corrade::ValueInit,
+                       4096}; // This is done to stop allocations
+  std::size_t formattedSize = formatInto(
+      output, " [{}@{}] {}\n", LogLevelToString[severity], position, message);
 
-    if (WithANSIColour) {
-      std::print(
-          "\033{}{}\033[0m", LogLevelToColour[severity],
-          std::string_view{output.begin(), output.begin() + formattedSize});
-    } else {
-      std::print("{}", std::string_view{output.begin(),
-                                        output.begin() + formattedSize});
-    }
+  if (WithANSIColour) {
+    std::print(
+        "\033{}{}\033[0m", LogLevelToColour[severity],
+        std::string_view{output.begin(), output.begin() + formattedSize});
+  } else {
+    std::print(
+        "{}", std::string_view{output.begin(), output.begin() + formattedSize});
+  }
 
-    if (Logging::File.is_open()) {
-      Logging::File.write(output.data(), formattedSize);
-      Logging::File.flush(); // Terrible but necessary sadly
-    }
+  if (Logging::File.is_open()) {
+    Logging::File.write(output.data(), formattedSize);
+    Logging::File.flush(); // Terrible but necessary sadly
+  }
 
-    if (severity == Logging::LogLevel::Error) {
-      throw std::runtime_error(output.data());
-    }
+  if (severity == Logging::LogLevel::Error) {
+    throw std::runtime_error(output.data());
+  }
 
-    if (severity == Logging::LogLevel::Critical) {
-      // Copying output incase TerminationFunction
-      // also uses Logging (this overrides output).
-      String hold = output;
-      TerminationFunction();
+  if (severity == Logging::LogLevel::Critical) {
+    // Copying output incase TerminationFunction
+    // also uses Logging (this overrides output).
+    String hold = output;
+    TerminationFunction();
 
-      // We are calling it here again so TerminationFunction
-      // can run before throw.
-      throw std::runtime_error(hold.data());
-      std::terminate();
-    }
+    // We are calling it here again so TerminationFunction
+    // can run before throw.
+    throw std::runtime_error(hold.data());
+    std::terminate();
   }
 }

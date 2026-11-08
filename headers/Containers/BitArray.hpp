@@ -56,9 +56,10 @@ public:
    */
   bool GetBit(std::size_t index) const {
     // Guarding
-    Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
-                          "BitArray/GetBit", Systems::Logging::Error,
-                          index >= storedBitCount);
+    if (index >= storedBitCount) {
+      Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
+                            "BitArray/GetBit", Systems::Logging::Error);
+    }
 
     // Flipping so 0 points to end and last bit is sizeBitCount
     std::size_t container = array[index / sizeBitCount],
@@ -74,9 +75,10 @@ public:
    * @param value True sets the bit to 1, false sets the bit to 0.
    */
   void SetBit(std::size_t index, bool value) {
-    Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
-                          "BitArray/SetBit", Systems::Logging::Error,
-                          index >= storedBitCount);
+    if (index >= storedBitCount) {
+      Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
+                            "BitArray/SetBit", Systems::Logging::Error);
+    }
     std::size_t offsetMask = static_cast<std::size_t>(1)
                              << index % sizeBitCount;
 
@@ -96,9 +98,10 @@ public:
    * @param index Position of the bit you want to flip the state of.
    */
   void FlipBit(std::size_t index) {
-    Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
-                          "BitArray/FlipBit", Systems::Logging::Error,
-                          index >= storedBitCount);
+    if (index >= storedBitCount) {
+      Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
+                            "BitArray/FlipBit", Systems::Logging::Error);
+    }
     std::size_t offsetMask = static_cast<std::size_t>(1)
                              << index % sizeBitCount;
 
@@ -117,9 +120,10 @@ public:
    * the function will return a value greater than or equal to storedBitCount.
    */
   std::size_t FindFirst(bool value, std::size_t start = 0) const {
-    Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
-                          "BitArray/FindFirst", Systems::Logging::Error,
-                          start >= storedBitCount);
+    if (start >= storedBitCount) {
+      Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
+                            "BitArray/FindFirst", Systems::Logging::Error);
+    }
 
     std::size_t index = start / sizeBitCount, skipBits = start % sizeBitCount;
 
