@@ -90,7 +90,8 @@ void Tests::ChunkList_Iterator() {
 
   CORRADE_FAIL_IF(
       count != goal - removeEntryCount,
-      "Count was not equal to expected value. Some entries were skipped!");
+      "Count was not equal to expected value. Some entries were skipped!"
+          << count << goal << removeEntryCount << goal - removeEntryCount);
   CORRADE_VERIFY(true);
 }
 
