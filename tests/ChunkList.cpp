@@ -11,6 +11,7 @@
 #include "Containers/Hashlist.hpp"
 #include "Corrade/TestSuite/Tester.h"
 
+#include "Systems/Logging.hpp"
 #include "Systems/Random.hpp"
 #include "Tests.hpp"
 
@@ -19,7 +20,7 @@
 using namespace Corrade;
 using namespace Tourmaline::Systems;
 
-constexpr std::size_t goal = 10'000, chunks = 5, chunkCapacity = goal / chunks,
+constexpr std::size_t goal = 50'000, chunks = 20, chunkCapacity = goal / chunks,
                       removeEntryCount = goal / 100;
 constexpr std::size_t benchmarkRemoveEntryCount = removeEntryCount * 10;
 Tourmaline::Containers::ChunkList<uint32_t, {chunkCapacity}> chunkList;
@@ -126,17 +127,17 @@ void Tests::ChunkList_Clear() {
 void Tests::ChunkList_Benchmark_IteratorNoGaps() {
   CORRADE_BENCHMARK(chunklistBatchCount) {
     for (uint32_t &val : chunkList) {
-      val *= 2;
+      val += 5;
     }
   }
 }
 
 void Tests::ChunkList_Benchmark_NonIteratorNoGaps() {
   CORRADE_BENCHMARK(chunklistBatchCount) {
-    for (uint32_t index = 0; index < removeEntryCount; index++) {
+    for (uint32_t index = 0; index < goal; index++) {
       Tourmaline::Containers::ChunkListRecord record{index / chunkCapacity,
                                                      index % chunkCapacity};
-      chunkList.Get(record) *= 2;
+      chunkList.Get(record) += 5;
     }
   }
 }
@@ -167,18 +168,18 @@ void Tests::ChunkList_Benchmark_IteratorWithGaps() {
   // Actual test
   CORRADE_BENCHMARK(chunklistBatchCount) {
     for (uint32_t &val : chunkList) {
-      val *= 2;
+      val += 5;
     }
   }
 }
 
 void Tests::ChunkList_Benchmark_NonIteratorWithGaps() {
   CORRADE_BENCHMARK(chunklistBatchCount) {
-    for (uint32_t index = 0; index < removeEntryCount; index++) {
+    for (uint32_t index = 0; index < goal; index++) {
       Tourmaline::Containers::ChunkListRecord record{index / chunkCapacity,
                                                      index % chunkCapacity};
       if (chunkList.Has(record)) {
-        chunkList.Get(record) *= 2;
+        chunkList.Get(record) += 5;
       }
     }
   }
