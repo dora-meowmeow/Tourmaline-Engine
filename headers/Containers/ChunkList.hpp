@@ -20,6 +20,7 @@
 #include <array>
 #include <iterator> // IWYU pragma: keep
 #include <optional>
+#include <span>
 #include <utility>
 #include <vector>
 
@@ -95,20 +96,19 @@ public:
      * @brief Position specific iterator constructor.
      *
      * @param position Record to start from.
-     * @param chunks Pointer to the ChunkList.
+     * @param chunks Copy of the ChunkList's internal data.
      */
-    Iterator(ChunkListRecord position, std::vector<Chunk *> *chunks)
-        : position(position), chunks(chunks), end(chunks->size()) {}
+    Iterator(ChunkListRecord position, std::span<Chunk *> chunks)
+        : position(position), chunks(chunks), end(chunks.size()) {}
 
     /**
      * @brief End iterator Specific constructor.
      *
-     * @param chunks Pointer to the ChunkList.
+     * @param chunks Copy of the ChunkList's internal data.
      *
      * The End iterator's position is deduced automatically.
      */
-    Iterator(std::vector<Chunk *> *chunks)
-        : chunks(chunks), end(chunks->size()) {
+    Iterator(std::span<Chunk *> chunks) : chunks(chunks), end(chunks.size()) {
       position = {end, 0};
     }
 
@@ -133,14 +133,14 @@ public:
      * @brief Supports operator* for dereferencing.
      */
     EntryType &operator*() const {
-      return (*chunks)[position.ChunkId]->slots[position.SlotPosition].value();
+      return chunks[position.ChunkId]->slots[position.SlotPosition].value();
     }
 
     /**
      * @brief Supports operator->.
      */
     EntryType *operator->() {
-      return &(*chunks)[position.ChunkId]->slots[position.SlotPosition].value();
+      return &chunks[position.ChunkId]->slots[position.SlotPosition].value();
     }
 
     /**
@@ -190,8 +190,9 @@ public:
     ChunkListRecord position;
 
   private:
-    std::vector<Chunk *> *chunks;
+    std::span<Chunk *> chunks;
     std::size_t end;
+
     void advanceToNextValid() {
       do {
         if (++position.SlotPosition < options.ChunkCapacity) {
@@ -205,9 +206,8 @@ public:
           position.ChunkId = end;
           return;
         }
-      } while (!(*chunks)[position.ChunkId]
-                    ->slots[position.SlotPosition]
-                    .has_value());
+      } while (
+          !chunks[position.ChunkId]->slots[position.SlotPosition].has_value());
     }
   };
 
@@ -416,7 +416,7 @@ public:
    *
    * @return An iterator.
    */
-  Iterator begin() { return Iterator(getFirstFullSlot(), &chunks); }
+  Iterator begin() { return Iterator(getFirstFullSlot(), chunks); }
 
   /**
    * @brief Gives an iterator that points to the chunk one after the last valid
@@ -424,7 +424,7 @@ public:
    *
    * @return An iterator with data outside of the container.
    */
-  Iterator end() { return Iterator(&chunks); }
+  Iterator end() { return Iterator(chunks); }
 
 private:
   bool isChunkIDValid(std::size_t chunkID) const noexcept {
