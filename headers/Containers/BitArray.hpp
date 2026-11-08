@@ -33,7 +33,7 @@ public:
   BitArray(BitArrayOptions options) : storedBitCount(options.BitCount) {
     // Count
     wholeCount = storedBitCount / sizeBitCount;
-    std::size_t remainderBits = storedBitCount % sizeBitCount;
+    remainderBits = storedBitCount % sizeBitCount;
 
     // Final variable mask
     arraySize = wholeCount;
@@ -109,15 +109,37 @@ public:
   /**
    * @brief Finds the first bit that is set to either 1 or 0.
    *
-   * @param value True if looking for the first bit that is set to 1, false for 0.
+   * @param value True if looking for the first bit that is set to 1,
+   * false for 0.
+   * @param start Where to begin the search from (inclusive).
    *
    * @return Position of the bit. If no bit is found with the requested value,
    * the function will return a value greater than or equal to storedBitCount.
    */
-  std::size_t FindFirst(bool value) const noexcept {
+  std::size_t FindFirst(bool value, std::size_t start = 0) const {
+    Systems::Logging::Log("An out-of-bounds index was given! Throwing...",
+                          "BitArray/FindFirst", Systems::Logging::Error,
+                          start >= storedBitCount);
+
+    std::size_t index = start / sizeBitCount, skipBits = start % sizeBitCount;
+
+    // TODO: Merge the logic of find 1 and find 0
+
     // Find next one
     if (value) {
-      for (std::size_t index = 0; index < arraySize; index++) {
+      // Trying to pass the awkward placement
+      if (skipBits) {
+        std::size_t result = 0;
+        if (array[index] != 0) {
+          result = std::countr_zero(array[index] >> skipBits);
+          if (result < (sizeBitCount - skipBits)) {
+            return (index * sizeBitCount) + skipBits + result;
+          }
+        }
+        ++index;
+      }
+
+      for (; index < arraySize; index++) {
         if (array[index] == 0) {
           continue;
         }
@@ -128,8 +150,20 @@ public:
     }
 
     // Find next zero
-    std::size_t comparisonMask;
-    for (std::size_t index = 0; index < arraySize; index++) {
+    bool isMiddle = index < wholeCount;
+    std::size_t comparisonMask = isMiddle ? sizeFullMask : sizeRemainderMask;
+    if (skipBits) {
+      std::size_t result = 0;
+      if (array[index] != comparisonMask) {
+        result = std::countr_one(array[index] >> skipBits);
+        if (result < (isMiddle ? sizeBitCount : remainderBits) - skipBits) {
+          return (index * sizeBitCount) + skipBits + result;
+        }
+      }
+      ++index;
+    }
+
+    for (; index < arraySize; index++) {
       comparisonMask = index < wholeCount ? sizeFullMask : sizeRemainderMask;
       if (array[index] == comparisonMask) {
         continue;
@@ -181,7 +215,8 @@ public:
 private:
   constexpr static std::size_t sizeFullMask = SIZE_MAX,
                                sizeBitCount = sizeof(size_t) * CHAR_BIT;
-  std::size_t wholeCount = 0, arraySize = 0, sizeRemainderMask = 0;
+  std::size_t wholeCount = 0, arraySize = 0, remainderBits = 0,
+              sizeRemainderMask = 0;
   std::unique_ptr<std::size_t[]> array;
 };
 } // namespace Tourmaline::Containers
