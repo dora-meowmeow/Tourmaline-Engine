@@ -69,8 +69,9 @@ enum class SystemPriority {
 /**
  * @brief Represents the moment when the hook will be triggered.
  *
- * A value set to "Creation" will trigger when a component is added to an entity. "Destruction" for
- * when the component is removed from an entity. "Both" will trigger in both cases.
+ * A value set to "Creation" will trigger when a component is added to an
+ * entity. "Destruction" for when the component is removed from an entity.
+ * "Both" will trigger in both cases.
  */
 enum HookTo : uint8_t { Creation = 1, Destruction = 2, Both = 3 };
 
@@ -450,13 +451,14 @@ public:
   template <isAComponent Component>
   [[nodiscard("Pointless call of GetComponent")]]
   Component &GetComponent(const Entity &entity) {
-    auto result = entityComponentMap.Query(entity, typeid(Component));
-    if (result.empty()) {
+    auto result = entityComponentMap.QueryForValue(entity, typeid(Component));
+    if (!result.has_value()) {
       Logging::LogFormatted("Entity {} does not have component {}!",
                             "ECS/GetComponent", Logging::Error,
                             entity.asString(), typeid(Component).name());
     }
-    return static_cast<Component &>(*result.begin()->second.get());
+
+    return static_cast<Component &>(*result->get());
   }
 
   /**
@@ -484,13 +486,11 @@ public:
       calledAllComponents.Insert(typeid(Component));
     }
 
-    auto queryResult =
-        entityComponentMap.Query(std::nullopt, typeid(Component));
+    std::type_index type = typeid(Component);
+    auto queryResult = entityComponentMap.QueryWithKey(type);
     result.clear();
     for (const auto &pair : queryResult) {
-      result.emplace_back(
-          std::get<std::reference_wrapper<const Entity>>(pair.first).get(),
-          static_cast<Component &>(*pair.second));
+      result.emplace_back(pair.first, static_cast<Component &>(*pair.second));
     }
 
     return result;
@@ -510,7 +510,8 @@ public:
   template <isAComponent Component>
   [[nodiscard("Pointless call of HasComponent")]]
   bool HasComponent(const Entity &entity) {
-    return entityComponentMap.Query(entity, typeid(Component)).size();
+    return entityComponentMap.QueryForValue(entity, typeid(Component))
+        .has_value();
   }
 
   /**
@@ -533,7 +534,7 @@ public:
                   "from an entity. This is not allowed!");
 
     triggerHooks<Component>(entity, HookTo::Destruction);
-    size_t result = entityComponentMap.Remove(entity, typeid(Component));
+    size_t result = entityComponentMap.RemoveValue(entity, typeid(Component));
     if (result) {
       refreshAndInvalidateCaches<Component>();
     }

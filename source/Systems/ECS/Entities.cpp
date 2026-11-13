@@ -37,11 +37,12 @@ Entity World::CreateEntity(const Components::Transform &transformMatrix,
   }
 
   // Default components
-  auto newComponent = entityComponentMap.Insert(
-      newEntity, typeid(Components::Transform),
-      std::make_unique<Components::Transform>(transformMatrix));
-  ECS::Component *componentPointer = std::get<2>(newComponent).get();
-  triggerHooks<Components::Transform>(newEntity, componentPointer,
+  ECS::Component *newComponent =
+      entityComponentMap
+          .Insert(newEntity, typeid(Components::Transform),
+                  std::make_unique<Components::Transform>(transformMatrix))
+          .get();
+  triggerHooks<Components::Transform>(newEntity, newComponent,
                                       HookTo::Creation);
 
   refreshAndInvalidateCaches<Components::Transform>();
@@ -113,7 +114,7 @@ bool World::DestroyEntity(Entity entity) {
   if (usedEntityUUIDs.Has(entity)) {
     triggerHooks<Components::Transform>(entity, HookTo::Destruction);
   }
-  size_t result = entityComponentMap.Remove(entity, std::nullopt);
+  size_t result = entityComponentMap.RemoveKey(entity);
   if (result) {
     refreshAndInvalidateCaches<Components::Transform>();
     usedEntityUUIDs.Remove(entity);
